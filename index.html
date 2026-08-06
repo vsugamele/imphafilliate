@@ -82,6 +82,17 @@ tr:hover td{background:var(--bg2)}
 h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
 .drop{border:2px dashed var(--border2);border-radius:var(--r);padding:26px;text-align:center;color:var(--tx3);font-size:13px;cursor:pointer}
 .drop:hover{border-color:var(--ac);color:var(--tx2)}
+.diss{display:none;margin-top:8px;background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;font-size:12.5px}
+.diss.on{display:block}
+.diss h4{margin:10px 0 6px;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ac2)}
+.diss h4:first-child{margin-top:0}
+.diss .sumtxt{color:var(--tx2);white-space:pre-wrap}
+.apoint{display:flex;gap:8px;padding:6px 0;border-top:1px solid var(--border)}
+.apoint:first-child{border-top:0}
+.adot{flex:0 0 8px;width:8px;height:8px;border-radius:50%;margin-top:5px}
+.aptitle{font-weight:700;font-size:12px}
+.apbadge{font-size:9px;border:1px solid;border-radius:999px;padding:0 6px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+.apdesc{color:var(--tx2);margin:2px 0 0}
 @media(max-width:640px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -227,7 +238,7 @@ const SB_URL = 'https://sxiqbhcnkzrrenzgncss.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4aXFiaGNua3pycmVuemduY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3NDQ3MDQsImV4cCI6MjA2MjMyMDcwNH0.Ssw2dio8yPEFDZk3Zhh4PTBiXYndJR0nPm1jrXAHgBE';
 const db = supabase.createClient(SB_URL, SB_KEY);
 
-let products = [], creatives = [], lang = 'en', currentView = 'dash';
+let products = [], creatives = [], dissections = {}, lang = 'en', currentView = 'dash';
 
 const $ = id => document.getElementById(id);
 const esc = s => (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -326,6 +337,7 @@ async function loadCreatives(){
   const {data, error} = await db.from('aff_creatives').select('*').eq('product_id', pid).order('code');
   if(error){ toast('Erro: '+error.message); return; }
   creatives = data || [];
+  await loadDissections(creatives.map(c=>c.id));
   const batches = [...new Set(creatives.map(c=>c.batch).filter(Boolean))].sort();
   const ads = [...new Set(creatives.map(c=>c.ad_group).filter(Boolean))].sort((a,b)=>parseInt(a.replace(/\D/g,''))-parseInt(b.replace(/\D/g,'')));
   $('libBatch').innerHTML = '<option value="">Todos os squads</option>' + batches.map(b=>`<option>${esc(b)}</option>`).join('');
@@ -359,10 +371,12 @@ function renderCreatives(){
       ${videoUrl?`<video controls preload="none" src="${videoUrl}"></video>`:''}
       <div class="prev">${esc(txt.slice(0,140))}${txt.length>140?'…':''}</div>
       <div class="full" id="full-${c.id}">${esc(txt)}</div>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-sm" onclick="document.getElementById('full-${c.id}').classList.toggle('on')">📄 transcrição</button>
         <button class="btn-sm" onclick="copyTx('${c.id}')">📋 copiar</button>
+        ${dissections[c.id] ? `<button class="btn-sm" onclick="document.getElementById('diss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="dissbtn-${c.id}" onclick="dissectCreative('${c.id}')">🔬 dissecar</button>`}
       </div>
+      ${renderDissBlock(c.id)}
     </div>`;
   }).join('');
 }
@@ -378,6 +392,61 @@ function copyTx(id){
   const c = creatives.find(x=>x.id===id);
   const txt = (lang==='pt' && c.transcript_pt) ? c.transcript_pt : c.transcript_en;
   navigator.clipboard.writeText(txt||'').then(()=>toast('Transcrição copiada!'));
+}
+
+const SEV = {
+  critico: {c:'var(--red)', label:'Crítico'},
+  atencao: {c:'#f59e0b', label:'Atenção'},
+  revisar: {c:'#eab308', label:'Revisar'},
+  bom: {c:'var(--green)', label:'Bom'},
+};
+
+async function loadDissections(ids){
+  if(!ids.length){ dissections = {}; return; }
+  const {data, error} = await db.from('aff_dissections').select('*').in('creative_id', ids).order('created_at', {ascending:false});
+  if(error){ console.error(error); return; }
+  dissections = {};
+  (data||[]).forEach(d=>{ if(!dissections[d.creative_id]) dissections[d.creative_id] = d; });
+}
+
+function renderDissBlock(id){
+  const d = dissections[id];
+  if(!d) return '';
+  const pts = (d.attention_points||[]).map(p=>{
+    const sev = SEV[p.severity] || SEV.revisar;
+    return `<div class="apoint"><span class="adot" style="background:${sev.c}"></span><div>
+      <span class="aptitle">${esc(p.title||'')}</span><span class="apbadge" style="color:${sev.c};border-color:${sev.c}">${sev.label}</span>
+      <p class="apdesc">${esc(p.description||'')}</p>
+    </div></div>`;
+  }).join('');
+  return `<div class="diss" id="diss-${id}">
+    <h4>Resumo da edição</h4><div class="sumtxt">${esc(d.summary||'—')}</div>
+    <h4>Pontos de atenção</h4>${pts||'<div class="muted">—</div>'}
+    <h4>Insight estratégico</h4><div class="sumtxt">${esc(d.strategic_insight||'—')}</div>
+    <div style="margin-top:10px"><button class="btn-sm" onclick="dissectCreative('${id}')">🔁 redissecar</button></div>
+  </div>`;
+}
+
+async function dissectCreative(id){
+  const btn = document.getElementById('dissbtn-'+id);
+  if(btn){ btn.disabled = true; btn.textContent = '🔬 dissecando...'; }
+  toast('Dissecando criativo... isso pode levar alguns segundos.');
+  const {data, error} = await db.functions.invoke('dissect-creative', {body:{creative_id:id}});
+  if(error){
+    toast('Erro: ' + error.message);
+    if(btn){ btn.disabled = false; btn.textContent = '🔬 dissecar'; }
+    return;
+  }
+  if(data?.error){
+    toast('Erro: ' + data.error);
+    if(btn){ btn.disabled = false; btn.textContent = '🔬 dissecar'; }
+    return;
+  }
+  dissections[id] = data.data;
+  toast('Dissecação pronta!');
+  renderCreatives();
+  const el = document.getElementById('diss-'+id);
+  if(el) el.classList.add('on');
 }
 
 async function uploadCreative(){
