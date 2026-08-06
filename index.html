@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AffHub — Gestão de Afiliado</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0f;--bg2:#111118;--card:#16161f;--card2:#1e1e2a;--border:#2a2a3a;--border2:#333346;
+  --tx:#e8e8f0;--tx2:#9898b0;--tx3:#6a6a82;
+  --ac:#6c5ce7;--ac2:#a29bfe;--acdim:rgba(108,92,231,.15);
+  --green:#00b894;--greendim:rgba(0,184,148,.12);--orange:#fdcb6e;--red:#e17055;--reddim:rgba(225,112,85,.12);--blue:#74b9ff;
+  --r:12px;--rs:8px;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1300px;margin:0 auto;padding:20px 20px 80px}
+button{font-family:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;background:var(--card);border:1px solid var(--border);color:var(--tx);padding:9px 12px;border-radius:var(--rs);font-size:13.5px;width:100%}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ac)}
+label{font-size:12px;color:var(--tx2);display:block;margin-bottom:4px}
+.btn{background:var(--ac);color:#fff;border:none;padding:10px 18px;border-radius:var(--rs);font-size:13.5px;font-weight:600}
+.btn:hover{background:#5a4bd4}
+.btn-sec{background:var(--card2);color:var(--tx);border:1px solid var(--border)}
+.btn-sm{background:var(--card2);color:var(--tx2);border:1px solid var(--border);padding:5px 10px;border-radius:6px;font-size:12px}
+.btn-sm:hover{color:var(--tx);border-color:var(--border2)}
+/* login */
+#loginView{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:20px}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:34px;width:360px;display:flex;flex-direction:column;gap:14px}
+.login-box h1{font-size:22px;font-weight:800}
+.login-box .sub{font-size:13px;color:var(--tx2);margin-top:-8px}
+/* nav */
+nav{display:flex;gap:6px;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);margin-bottom:22px;flex-wrap:wrap;position:sticky;top:0;background:var(--bg);z-index:40}
+nav .logo{font-weight:800;font-size:17px;margin-right:14px}
+nav .logo span{color:var(--ac2)}
+nav button.tab{background:transparent;border:1px solid transparent;color:var(--tx2);padding:8px 14px;border-radius:var(--rs);font-size:13.5px;font-weight:600}
+nav button.tab.on{background:var(--acdim);color:var(--ac2);border-color:var(--ac)}
+nav .spacer{margin-left:auto}
+nav .user{font-size:12px;color:var(--tx3)}
+/* cards / kpis */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px}
+.kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--tx3)}
+.kpi .val{font-size:22px;font-weight:800;margin-top:2px}
+.kpi .val.pos{color:var(--green)}.kpi .val.neg{color:var(--red)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:18px}
+.panel h3{font-size:14px;margin-bottom:12px;color:var(--ac2)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1;min-width:140px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--tx3);font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:1px solid var(--border)}
+td{padding:8px 10px;border-bottom:1px solid var(--border);color:var(--tx2)}
+td b{color:var(--tx)}
+tr:hover td{background:var(--bg2)}
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;border:1px solid var(--border);color:var(--tx2)}
+.tag.g{background:var(--greendim);color:var(--green);border-color:transparent}
+.tag.r{background:var(--reddim);color:var(--red);border-color:transparent}
+.tag.a{background:var(--acdim);color:var(--ac2);border-color:transparent}
+/* biblioteca */
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.filters select,.filters input{width:auto;min-width:140px}
+.filters input[type=text]{flex:1;min-width:180px}
+.lang-toggle{display:flex;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);overflow:hidden}
+.lang-toggle button{background:transparent;border:none;color:var(--tx2);padding:8px 12px;font-size:12px;font-weight:600}
+.lang-toggle button.on{background:var(--ac);color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.ccard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px}
+.ccard:hover{border-color:var(--border2)}
+.ccard .head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ccard .code{font-weight:700;font-size:13px}
+.ccard .prev{font-size:12.5px;color:var(--tx2);max-height:56px;overflow:hidden}
+.ccard .full{display:none;font-size:12.5px;color:var(--tx2);white-space:pre-wrap;max-height:240px;overflow-y:auto;background:var(--card2);border-radius:var(--rs);padding:10px;border:1px solid var(--border)}
+.ccard .full.on{display:block}
+.ccard video{width:100%;border-radius:var(--rs);background:#000;max-height:300px}
+.ccard select.fase{width:auto;font-size:12px;padding:5px 8px}
+.muted{color:var(--tx3);font-size:12.5px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ac);color:#fff;padding:10px 22px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .25s;z-index:99}
+#toast.on{opacity:1}
+.hidden{display:none!important}
+h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
+.drop{border:2px dashed var(--border2);border-radius:var(--r);padding:26px;text-align:center;color:var(--tx3);font-size:13px;cursor:pointer}
+.drop:hover{border-color:var(--ac);color:var(--tx2)}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="loginView">
+  <div class="login-box">
+    <h1>Aff<span style="color:var(--ac2)">Hub</span></h1>
+    <div class="sub">Gestão de projetos de afiliado</div>
+    <div><label>E-mail</label><input id="loginEmail" type="email" autocomplete="email"></div>
+    <div><label>Senha</label><input id="loginPass" type="password" autocomplete="current-password"></div>
+    <button class="btn" onclick="doLogin()">Entrar</button>
+    <button class="btn btn-sec" onclick="doSignup()">Criar conta</button>
+    <div class="muted" id="loginMsg"></div>
+  </div>
+</div>
+
+<div id="appView" class="hidden">
+<div class="wrap">
+  <nav>
+    <div class="logo">Aff<span>Hub</span></div>
+    <button class="tab on" data-v="dash" onclick="go('dash')">📊 Dashboard</button>
+    <button class="tab" data-v="lib" onclick="go('lib')">🎬 Biblioteca</button>
+    <button class="tab" data-v="ads" onclick="go('ads')">📈 Ads</button>
+    <button class="tab" data-v="costs" onclick="go('costs')">💸 Custos</button>
+    <button class="tab" data-v="prods" onclick="go('prods')">📦 Produtos</button>
+    <div class="spacer"></div>
+    <span class="user" id="userEmail"></span>
+    <button class="btn-sm" onclick="doLogout()">sair</button>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <div id="v-dash">
+    <h2 class="page">Visão geral</h2>
+    <div class="row" style="margin-bottom:14px">
+      <div style="max-width:220px"><label>Produto</label><select id="dashProduct" onchange="loadDash()"></select></div>
+      <div style="max-width:160px"><label>Período</label>
+        <select id="dashPeriod" onchange="loadDash()">
+          <option value="7">Últimos 7 dias</option>
+          <option value="30" selected>Últimos 30 dias</option>
+          <option value="90">Últimos 90 dias</option>
+        </select></div>
+    </div>
+    <div class="kpis" id="dashKpis"></div>
+    <div class="panel"><h3>Performance por anúncio</h3><div id="dashAds" class="muted">Sem dados de ads ainda — importe uma planilha na aba Ads.</div></div>
+    <div class="panel"><h3>Custos de ferramentas no período</h3><div id="dashCosts" class="muted">—</div></div>
+  </div>
+
+  <!-- BIBLIOTECA -->
+  <div id="v-lib" class="hidden">
+    <h2 class="page">Biblioteca de criativos</h2>
+    <div class="filters">
+      <select id="libProduct" onchange="loadCreatives()"></select>
+      <select id="libBatch" onchange="renderCreatives()"><option value="">Todos os squads</option></select>
+      <select id="libAd" onchange="renderCreatives()"><option value="">Todos os ADs</option></select>
+      <select id="libFase" onchange="renderCreatives()">
+        <option value="">Todas as fases</option>
+        <option value="biblioteca">📚 Biblioteca</option>
+        <option value="p1_teste">🧪 P1 Teste</option>
+        <option value="p2_validacao">✅ P2 Validação</option>
+        <option value="p3_escala">🚀 P3 Escala</option>
+        <option value="p4_cemiterio">⚰️ P4 Cemitério</option>
+        <option value="descartado">🗑 Descartado</option>
+      </select>
+      <input type="text" id="libSearch" placeholder="Buscar na transcrição..." oninput="renderCreatives()">
+      <div class="lang-toggle">
+        <button class="on" data-l="en" onclick="setLang('en')">🇺🇸 EN</button>
+        <button data-l="pt" onclick="setLang('pt')">🇧🇷 PT</button>
+      </div>
+      <span class="muted" id="libCount"></span>
+    </div>
+    <div class="panel">
+      <h3>➕ Subir criativo novo</h3>
+      <div class="row">
+        <div><label>Código (ex: AD11-H1)</label><input id="upCode"></div>
+        <div><label>Grupo/AD</label><input id="upGroup" placeholder="AD11"></div>
+        <div><label>Hook</label><input id="upHook" placeholder="H1"></div>
+        <div><label>Origem</label><select id="upOrigem"><option value="producao_propria">Produção própria</option><option value="espionagem">Espionagem</option><option value="variacao_ia">Variação IA</option></select></div>
+      </div>
+      <div style="margin-top:10px"><label>Vídeo (mp4/mov, até 200MB)</label><input type="file" id="upFile" accept="video/*"></div>
+      <div style="margin-top:10px"><button class="btn" onclick="uploadCreative()">Enviar</button> <span class="muted" id="upMsg"></span></div>
+    </div>
+    <div class="grid" id="libGrid"></div>
+  </div>
+
+  <!-- ADS -->
+  <div id="v-ads" class="hidden">
+    <h2 class="page">Resultados de Ads</h2>
+    <div class="panel">
+      <h3>📥 Importar planilha (CSV exportado do Gerenciador Meta)</h3>
+      <div class="row">
+        <div style="max-width:220px"><label>Produto</label><select id="adsProduct"></select></div>
+        <div><label>Arquivo CSV</label><input type="file" id="adsFile" accept=".csv,text/csv"></div>
+        <div style="max-width:140px"><button class="btn" onclick="importAdsCsv()">Importar</button></div>
+      </div>
+      <div class="muted" id="adsImportMsg" style="margin-top:8px">Exporte do Gerenciador: nível anúncio, com colunas de nome da campanha/conjunto/anúncio, valor gasto, impressões, cliques, compras e valor de conversão. Detecto as colunas automaticamente (PT ou EN).</div>
+    </div>
+    <div class="panel"><h3>Resumo por anúncio</h3><div id="adsTable" class="muted">—</div></div>
+  </div>
+
+  <!-- CUSTOS -->
+  <div id="v-costs" class="hidden">
+    <h2 class="page">Custos de ferramentas</h2>
+    <div class="panel">
+      <h3>➕ Lançar custo</h3>
+      <div class="row">
+        <div><label>Nome</label><input id="costName" placeholder="ex: Google Flow, OpenRouter"></div>
+        <div style="max-width:150px"><label>Valor</label><input id="costAmount" type="number" step="0.01"></div>
+        <div style="max-width:110px"><label>Moeda</label><select id="costCur"><option>BRL</option><option>USD</option></select></div>
+        <div style="max-width:150px"><label>Ciclo</label><select id="costCycle"><option value="mensal">Mensal</option><option value="anual">Anual</option><option value="unico">Único</option><option value="por_uso">Por uso</option></select></div>
+        <div style="max-width:160px"><label>Categoria</label><select id="costCat"><option value="ferramenta">Ferramenta</option><option value="ia">IA</option><option value="servico">Serviço</option><option value="trafego_extra">Tráfego extra</option><option value="outro">Outro</option></select></div>
+        <div style="max-width:170px"><label>Produto (opcional)</label><select id="costProduct"><option value="">Geral</option></select></div>
+        <div style="max-width:150px"><label>Data</label><input id="costDate" type="date"></div>
+        <div style="max-width:120px"><button class="btn" onclick="addCost()">Salvar</button></div>
+      </div>
+    </div>
+    <div class="panel"><h3>Lançamentos</h3><div id="costsTable" class="muted">—</div></div>
+  </div>
+
+  <!-- PRODUTOS -->
+  <div id="v-prods" class="hidden">
+    <h2 class="page">Produtos / Ofertas</h2>
+    <div class="panel">
+      <h3>➕ Novo produto</h3>
+      <div class="row">
+        <div><label>Nome</label><input id="prodName"></div>
+        <div><label>Slug (url)</label><input id="prodSlug" placeholder="ex: linfaflow"></div>
+        <div><label>Rede/Plataforma</label><input id="prodNetwork" placeholder="ex: H&W Hub"></div>
+        <div style="max-width:140px"><label>Payout</label><input id="prodPayout" type="number" step="0.01"></div>
+        <div style="max-width:110px"><label>Moeda</label><select id="prodCur"><option>USD</option><option>BRL</option></select></div>
+        <div style="max-width:120px"><button class="btn" onclick="addProduct()">Criar</button></div>
+      </div>
+    </div>
+    <div class="panel"><h3>Lista</h3><div id="prodsTable">—</div></div>
+  </div>
+
+</div>
+</div>
+<div id="toast">ok</div>
+
+<script>
+const SB_URL = 'https://sxiqbhcnkzrrenzgncss.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4aXFiaGNua3pycmVuemduY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3NDQ3MDQsImV4cCI6MjA2MjMyMDcwNH0.Ssw2dio8yPEFDZk3Zhh4PTBiXYndJR0nPm1jrXAHgBE';
+const db = supabase.createClient(SB_URL, SB_KEY);
+
+let products = [], creatives = [], lang = 'en', currentView = 'dash';
+
+const $ = id => document.getElementById(id);
+const esc = s => (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmt = (n, cur='R$') => cur + ' ' + (Number(n)||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const toast = m => { const t=$('toast'); t.textContent=m; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),1800); };
+
+// ---------- AUTH ----------
+async function doLogin(){
+  const {error} = await db.auth.signInWithPassword({email:$('loginEmail').value, password:$('loginPass').value});
+  if(error){ $('loginMsg').textContent = 'Erro: ' + error.message; return; }
+  init();
+}
+async function doSignup(){
+  const {error} = await db.auth.signUp({email:$('loginEmail').value, password:$('loginPass').value});
+  $('loginMsg').textContent = error ? 'Erro: ' + error.message : 'Conta criada! Confirme o e-mail (se pedido) e faça login. Obs: o acesso aos dados só funciona pra e-mails autorizados do time.';
+}
+async function doLogout(){ await db.auth.signOut(); location.reload(); }
+
+async function init(){
+  const {data:{session}} = await db.auth.getSession();
+  if(!session){ $('loginView').classList.remove('hidden'); $('appView').classList.add('hidden'); return; }
+  $('loginView').classList.add('hidden'); $('appView').classList.remove('hidden');
+  $('userEmail').textContent = session.user.email;
+  const {data, error} = await db.from('aff_products').select('*').order('created_at');
+  if(error){ toast('Erro: '+error.message); return; }
+  products = data || [];
+  if(!products.length){ toast('Seu e-mail não está na whitelist do time (aff_team).'); }
+  fillProductSelects();
+  loadDash(); loadCreatives(); loadCosts(); loadAdsSummary(); renderProducts();
+}
+
+function fillProductSelects(){
+  const opts = products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  ['dashProduct','libProduct','adsProduct'].forEach(id=>{ $(id).innerHTML = opts; });
+  $('costProduct').innerHTML = '<option value="">Geral</option>' + opts;
+}
+
+function go(v){
+  currentView = v;
+  document.querySelectorAll('nav .tab').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  ['dash','lib','ads','costs','prods'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
+}
+
+// ---------- DASHBOARD ----------
+async function loadDash(){
+  const pid = $('dashProduct').value; if(!pid) { $('dashKpis').innerHTML=''; return; }
+  const days = parseInt($('dashPeriod').value);
+  const since = new Date(Date.now() - days*864e5).toISOString().slice(0,10);
+  const [{data:ads}, {data:costs}, prod] = await Promise.all([
+    db.from('aff_ad_results').select('*').eq('product_id', pid).gte('date', since),
+    db.from('aff_tool_costs').select('*').gte('date', since),
+    Promise.resolve(products.find(p=>p.id===pid)),
+  ]);
+  const spend = (ads||[]).reduce((s,r)=>s+Number(r.spend||0),0);
+  const rev = (ads||[]).reduce((s,r)=>s+Number(r.revenue||0),0);
+  const buys = (ads||[]).reduce((s,r)=>s+Number(r.purchases||0),0);
+  const toolCost = (costs||[]).filter(c=>!c.product_id || c.product_id===pid).reduce((s,c)=>s+Number(c.amount||0),0);
+  const roas = spend>0 ? rev/spend : 0;
+  const cpa = buys>0 ? spend/buys : 0;
+  const lucro = rev - spend - toolCost;
+  $('dashKpis').innerHTML = `
+    <div class="kpi"><div class="lbl">Gasto em ads</div><div class="val">${fmt(spend)}</div></div>
+    <div class="kpi"><div class="lbl">Faturamento</div><div class="val">${fmt(rev)}</div></div>
+    <div class="kpi"><div class="lbl">ROAS</div><div class="val ${roas>=1.5?'pos':roas>0&&roas<1?'neg':''}">${roas.toFixed(2)}</div></div>
+    <div class="kpi"><div class="lbl">Compras</div><div class="val">${buys}</div></div>
+    <div class="kpi"><div class="lbl">CPA médio</div><div class="val">${buys?fmt(cpa):'—'}</div></div>
+    <div class="kpi"><div class="lbl">Ferramentas</div><div class="val">${fmt(toolCost)}</div></div>
+    <div class="kpi"><div class="lbl">Lucro estimado</div><div class="val ${lucro>=0?'pos':'neg'}">${fmt(lucro)}</div></div>`;
+  renderAdsAgg(ads||[], 'dashAds');
+  $('dashCosts').innerHTML = (costs||[]).length
+    ? '<table><tr><th>Nome</th><th>Categoria</th><th>Valor</th><th>Data</th></tr>' +
+      costs.filter(c=>!c.product_id||c.product_id===pid).map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.category)}</td><td>${fmt(c.amount, c.currency==='USD'?'US$':'R$')}</td><td>${c.date}</td></tr>`).join('') + '</table>'
+    : 'Nenhum custo lançado no período.';
+}
+
+function renderAdsAgg(ads, elId){
+  if(!ads.length){ $(elId).innerHTML = 'Sem dados de ads no período.'; return; }
+  const agg = {};
+  ads.forEach(r=>{
+    const k = r.ad_name || r.adset_name || r.campaign_name || '—';
+    agg[k] = agg[k] || {spend:0,rev:0,buys:0,imp:0,clicks:0,v3:0};
+    agg[k].spend+=Number(r.spend||0); agg[k].rev+=Number(r.revenue||0); agg[k].buys+=Number(r.purchases||0);
+    agg[k].imp+=Number(r.impressions||0); agg[k].clicks+=Number(r.clicks||0); agg[k].v3+=Number(r.video_3s_views||0);
+  });
+  const rows = Object.entries(agg).map(([k,v])=>({name:k,...v, roas:v.spend?v.rev/v.spend:0, cpa:v.buys?v.spend/v.buys:null, hook:v.imp?100*v.v3/v.imp:null, ctr:v.imp?100*v.clicks/v.imp:null}))
+    .sort((a,b)=>b.spend-a.spend);
+  $(elId).innerHTML = '<table><tr><th>Anúncio</th><th>Gasto</th><th>Fat.</th><th>ROAS</th><th>Compras</th><th>CPA</th><th>CTR</th><th>Hook rate</th></tr>' +
+    rows.map(r=>`<tr><td><b>${esc(r.name)}</b></td><td>${fmt(r.spend)}</td><td>${fmt(r.rev)}</td>
+      <td><span class="tag ${r.roas>=1.5?'g':r.roas<1&&r.spend>0?'r':''}">${r.roas.toFixed(2)}</span></td>
+      <td>${r.buys}</td><td>${r.cpa?fmt(r.cpa):'—'}</td><td>${r.ctr?r.ctr.toFixed(2)+'%':'—'}</td><td>${r.hook?r.hook.toFixed(1)+'%':'—'}</td></tr>`).join('') + '</table>';
+}
+
+// ---------- BIBLIOTECA ----------
+async function loadCreatives(){
+  const pid = $('libProduct').value; if(!pid){ $('libGrid').innerHTML=''; return; }
+  const {data, error} = await db.from('aff_creatives').select('*').eq('product_id', pid).order('code');
+  if(error){ toast('Erro: '+error.message); return; }
+  creatives = data || [];
+  const batches = [...new Set(creatives.map(c=>c.batch).filter(Boolean))].sort();
+  const ads = [...new Set(creatives.map(c=>c.ad_group).filter(Boolean))].sort((a,b)=>parseInt(a.replace(/\D/g,''))-parseInt(b.replace(/\D/g,'')));
+  $('libBatch').innerHTML = '<option value="">Todos os squads</option>' + batches.map(b=>`<option>${esc(b)}</option>`).join('');
+  $('libAd').innerHTML = '<option value="">Todos os ADs</option>' + ads.map(a=>`<option>${esc(a)}</option>`).join('');
+  renderCreatives();
+}
+
+function setLang(l){ lang=l; document.querySelectorAll('.lang-toggle button').forEach(b=>b.classList.toggle('on',b.dataset.l===l)); renderCreatives(); }
+
+const FASES = {biblioteca:'📚 Biblioteca',p1_teste:'🧪 P1 Teste',p2_validacao:'✅ P2 Validação',p3_escala:'🚀 P3 Escala',p4_cemiterio:'⚰️ P4 Cemitério',descartado:'🗑 Descartado'};
+
+function renderCreatives(){
+  const b=$('libBatch').value, a=$('libAd').value, f=$('libFase').value, q=$('libSearch').value.toLowerCase();
+  const list = creatives.filter(c=>{
+    if(b && c.batch!==b) return false;
+    if(a && c.ad_group!==a) return false;
+    if(f && c.fase!==f) return false;
+    if(q && !((c.transcript_en||'').toLowerCase().includes(q) || (c.transcript_pt||'').toLowerCase().includes(q) || (c.code||'').toLowerCase().includes(q))) return false;
+    return true;
+  });
+  $('libCount').textContent = list.length + ' criativos';
+  $('libGrid').innerHTML = list.map(c=>{
+    const txt = (lang==='pt' && c.transcript_pt) ? c.transcript_pt : (c.transcript_en||'');
+    const videoUrl = c.video_path ? `${SB_URL}/storage/v1/object/public/aff-creatives/${c.video_path}` : null;
+    return `<div class="ccard">
+      <div class="head"><span class="code">${esc(c.code)}</span>
+        <select class="fase" onchange="setFase('${c.id}', this.value)">
+          ${Object.entries(FASES).map(([k,v])=>`<option value="${k}" ${c.fase===k?'selected':''}>${v}</option>`).join('')}
+        </select></div>
+      <div class="muted">${esc(c.batch||'')} · ${esc(c.ad_group||'')} ${esc(c.hook_label||'')} · ${c.duration_sec?Math.round(c.duration_sec)+'s':''} ${c.word_count?'· '+c.word_count+'w':''}</div>
+      ${videoUrl?`<video controls preload="none" src="${videoUrl}"></video>`:''}
+      <div class="prev">${esc(txt.slice(0,140))}${txt.length>140?'…':''}</div>
+      <div class="full" id="full-${c.id}">${esc(txt)}</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-sm" onclick="document.getElementById('full-${c.id}').classList.toggle('on')">📄 transcrição</button>
+        <button class="btn-sm" onclick="copyTx('${c.id}')">📋 copiar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function setFase(id, fase){
+  const {error} = await db.from('aff_creatives').update({fase}).eq('id', id);
+  if(error){ toast('Erro: '+error.message); return; }
+  const c = creatives.find(x=>x.id===id); if(c) c.fase = fase;
+  toast('Fase atualizada: ' + FASES[fase]);
+}
+
+function copyTx(id){
+  const c = creatives.find(x=>x.id===id);
+  const txt = (lang==='pt' && c.transcript_pt) ? c.transcript_pt : c.transcript_en;
+  navigator.clipboard.writeText(txt||'').then(()=>toast('Transcrição copiada!'));
+}
+
+async function uploadCreative(){
+  const pid = $('libProduct').value, file = $('upFile').files[0];
+  const code = $('upCode').value.trim();
+  if(!pid || !code){ $('upMsg').textContent='Preencha ao menos o código.'; return; }
+  let video_path = null;
+  const prod = products.find(p=>p.id===pid);
+  if(file){
+    $('upMsg').textContent = 'Enviando vídeo...';
+    const path = `${prod.slug}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
+    const {error} = await db.storage.from('aff-creatives').upload(path, file);
+    if(error){ $('upMsg').textContent = 'Erro no upload: '+error.message; return; }
+    video_path = path;
+  }
+  const {error} = await db.from('aff_creatives').insert({
+    product_id: pid, code, ad_group: $('upGroup').value||null, hook_label: $('upHook').value||null,
+    origem: $('upOrigem').value, fase: 'biblioteca', video_path,
+  });
+  if(error){ $('upMsg').textContent = 'Erro: '+error.message; return; }
+  $('upMsg').textContent = '✅ Criativo salvo!';
+  ['upCode','upGroup','upHook'].forEach(i=>$(i).value='');
+  $('upFile').value='';
+  loadCreatives();
+}
+
+// ---------- ADS CSV ----------
+function parseCsv(text){
+  const delim = (text.split('\n')[0].match(/;/g)||[]).length > (text.split('\n')[0].match(/,/g)||[]).length ? ';' : ',';
+  const rows = []; let cur = [], field = '', inQ = false;
+  for(let i=0;i<text.length;i++){
+    const ch = text[i];
+    if(inQ){ if(ch==='"'){ if(text[i+1]==='"'){field+='"';i++;} else inQ=false; } else field+=ch; }
+    else if(ch==='"') inQ=true;
+    else if(ch===delim){ cur.push(field); field=''; }
+    else if(ch==='\n'||ch==='\r'){ if(field||cur.length){cur.push(field);rows.push(cur);cur=[];field='';} if(ch==='\r'&&text[i+1]==='\n')i++; }
+    else field+=ch;
+  }
+  if(field||cur.length){cur.push(field);rows.push(cur);}
+  return rows;
+}
+
+const COLMAP = [
+  ['campaign_name', ['nome da campanha','campaign name']],
+  ['adset_name', ['nome do conjunto de anúncios','ad set name','nome do conjunto']],
+  ['ad_name', ['nome do anúncio','ad name']],
+  ['date', ['dia','day','data','date','início dos relatórios','reporting starts']],
+  ['spend', ['valor usado','amount spent','gasto']],
+  ['impressions', ['impressões','impressions']],
+  ['clicks', ['cliques no link','link clicks','cliques (todos)','clicks (all)','cliques']],
+  ['video_3s_views', ['reproduções de vídeo de 3 segundos','3-second video plays','thruplay']],
+  ['purchases', ['compras','purchases','resultados','results']],
+  ['revenue', ['valor de conversão de compras','purchases conversion value','valor de conversão','conversion value']],
+];
+
+function mapHeaders(headers){
+  const map = {};
+  headers.forEach((h, i)=>{
+    const hl = h.toLowerCase().trim();
+    for(const [field, aliases] of COLMAP){
+      if(map[field]!==undefined) continue;
+      if(aliases.some(a=>hl.includes(a))){ map[field]=i; break; }
+    }
+  });
+  return map;
+}
+
+async function importAdsCsv(){
+  const pid = $('adsProduct').value, file = $('adsFile').files[0];
+  if(!pid || !file){ $('adsImportMsg').textContent='Selecione produto e arquivo.'; return; }
+  const text = await file.text();
+  const rows = parseCsv(text);
+  if(rows.length<2){ $('adsImportMsg').textContent='CSV vazio.'; return; }
+  const map = mapHeaders(rows[0]);
+  if(map.spend===undefined || map.date===undefined){ $('adsImportMsg').textContent='Não achei colunas de data/gasto. Verifique o export (nível anúncio, com "Dia" e "Valor usado").'; return; }
+  const num = v => Number((v||'0').toString().replace(/\./g,'').replace(',','.').replace(/[^\d.-]/g,'')) || 0;
+  const numEn = v => Number((v||'0').toString().replace(/,/g,'').replace(/[^\d.-]/g,'')) || 0;
+  const looksBR = rows.slice(1,6).some(r => /,\d{2}$/.test((r[map.spend]||'').trim()));
+  const N = looksBR ? num : numEn;
+  const recs = rows.slice(1).filter(r=>r.length>1 && r[map.date]).map(r=>({
+    product_id: pid,
+    date: (r[map.date]||'').slice(0,10),
+    platform: 'meta',
+    campaign_name: map.campaign_name!==undefined ? r[map.campaign_name] : null,
+    adset_name: map.adset_name!==undefined ? r[map.adset_name] : null,
+    ad_name: map.ad_name!==undefined ? r[map.ad_name] : null,
+    spend: N(r[map.spend]),
+    impressions: Math.round(N(r[map.impressions]||0)),
+    clicks: Math.round(N(r[map.clicks]||0)),
+    video_3s_views: map.video_3s_views!==undefined ? Math.round(N(r[map.video_3s_views])) : null,
+    purchases: map.purchases!==undefined ? Math.round(N(r[map.purchases])) : 0,
+    revenue: map.revenue!==undefined ? N(r[map.revenue]) : 0,
+    source: 'planilha',
+    raw: Object.fromEntries(rows[0].map((h,i)=>[h, r[i]])),
+  })).filter(r=>/^\d{4}-\d{2}-\d{2}$/.test(r.date));
+  if(!recs.length){ $('adsImportMsg').textContent='Nenhuma linha válida (datas precisam estar em YYYY-MM-DD no export).'; return; }
+  let ok=0, err=0;
+  for(let i=0;i<recs.length;i+=50){
+    const {error} = await db.from('aff_ad_results').upsert(recs.slice(i,i+50), {onConflict:'product_id,date,platform,campaign_name,adset_name,ad_name', ignoreDuplicates:false});
+    if(error){ err++; console.error(error); } else ok += Math.min(50, recs.length-i);
+  }
+  $('adsImportMsg').textContent = `✅ ${ok} linhas importadas${err?` (${err} lotes com erro — ver console)`:''}.`;
+  loadAdsSummary(); loadDash();
+}
+
+async function loadAdsSummary(){
+  const pid = $('adsProduct').value || (products[0]&&products[0].id); if(!pid) return;
+  const {data} = await db.from('aff_ad_results').select('*').eq('product_id', pid).order('date',{ascending:false}).limit(2000);
+  renderAdsAgg(data||[], 'adsTable');
+}
+
+// ---------- CUSTOS ----------
+async function addCost(){
+  const name = $('costName').value.trim(), amount = Number($('costAmount').value);
+  if(!name || !amount){ toast('Preencha nome e valor'); return; }
+  const {error} = await db.from('aff_tool_costs').insert({
+    name, amount, currency: $('costCur').value, billing_cycle: $('costCycle').value,
+    category: $('costCat').value, product_id: $('costProduct').value || null,
+    date: $('costDate').value || new Date().toISOString().slice(0,10),
+  });
+  if(error){ toast('Erro: '+error.message); return; }
+  toast('Custo lançado!'); $('costName').value=''; $('costAmount').value='';
+  loadCosts(); loadDash();
+}
+
+async function loadCosts(){
+  const {data} = await db.from('aff_tool_costs').select('*').order('date',{ascending:false}).limit(200);
+  if(!data || !data.length){ $('costsTable').textContent='Nenhum custo lançado.'; return; }
+  const prodName = id => (products.find(p=>p.id===id)||{}).name || 'Geral';
+  $('costsTable').innerHTML = '<table><tr><th>Nome</th><th>Categoria</th><th>Valor</th><th>Ciclo</th><th>Produto</th><th>Data</th><th></th></tr>' +
+    data.map(c=>`<tr><td><b>${esc(c.name)}</b></td><td>${esc(c.category)}</td><td>${fmt(c.amount, c.currency==='USD'?'US$':'R$')}</td><td>${esc(c.billing_cycle)}</td><td>${esc(prodName(c.product_id))}</td><td>${c.date}</td>
+    <td><button class="btn-sm" onclick="delCost('${c.id}')">🗑</button></td></tr>`).join('') + '</table>';
+}
+async function delCost(id){ await db.from('aff_tool_costs').delete().eq('id',id); loadCosts(); loadDash(); }
+
+// ---------- PRODUTOS ----------
+async function addProduct(){
+  const name=$('prodName').value.trim(), slug=$('prodSlug').value.trim().toLowerCase();
+  if(!name||!slug){ toast('Preencha nome e slug'); return; }
+  const {error} = await db.from('aff_products').insert({name, slug, network:$('prodNetwork').value||null, payout:Number($('prodPayout').value)||null, payout_currency:$('prodCur').value});
+  if(error){ toast('Erro: '+error.message); return; }
+  toast('Produto criado!');
+  const {data} = await db.from('aff_products').select('*').order('created_at');
+  products = data||[]; fillProductSelects(); renderProducts();
+}
+function renderProducts(){
+  $('prodsTable').innerHTML = products.length ? '<table><tr><th>Nome</th><th>Slug</th><th>Rede</th><th>Payout</th><th>Status</th></tr>' +
+    products.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.slug)}</td><td>${esc(p.network||'—')}</td><td>${p.payout?(p.payout_currency==='USD'?'US$ ':'R$ ')+p.payout:'—'}</td><td><span class="tag ${p.status==='ativo'?'g':''}">${esc(p.status)}</span></td></tr>`).join('') + '</table>'
+    : 'Nenhum produto.';
+}
+
+$('costDate') && ($('costDate').value = new Date().toISOString().slice(0,10));
+init();
+db.auth.onAuthStateChange((ev)=>{ if(ev==='SIGNED_IN') init(); });
+</script>
+</body>
+</html>
