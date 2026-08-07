@@ -93,6 +93,46 @@ h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
 .aptitle{font-weight:700;font-size:12px}
 .apbadge{font-size:9px;border:1px solid;border-radius:999px;padding:0 6px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
 .apdesc{color:var(--tx2);margin:2px 0 0}
+.ccard .thumbwrap{position:relative;border-radius:var(--rs);overflow:hidden;background:#000}
+.ccard .thumbwrap img{width:100%;display:block;max-height:300px;object-fit:cover}
+.ccard video{width:100%;border-radius:var(--rs);background:#000;max-height:300px}
+/* contexto de produto (sobre + esteira) */
+.context{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:18px}
+.context h2{font-size:15px;margin-bottom:10px;color:var(--ac2)}
+.context p{font-size:13.5px;color:var(--tx2);margin-bottom:8px}
+.context .toggle{cursor:pointer;color:var(--ac2);font-size:12px;font-weight:600;user-select:none}
+.context .full{display:none;margin-top:10px}
+.context .full.on{display:block}
+.hooks-mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:8px}
+.hooks-mini div{background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;font-size:12px;color:var(--tx2)}
+.hooks-mini b{color:var(--ac2);display:block;margin-bottom:3px;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.esteira{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:18px}
+.esteira h2{font-size:15px;margin-bottom:6px;color:var(--ac2)}
+.esteira .sub{font-size:12.5px;color:var(--tx2);margin-bottom:14px;line-height:1.6}
+.esteira-map{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:16px}
+.esteira-map .step{background:var(--card);border:1px solid var(--border2);border-radius:var(--rs);padding:10px 12px}
+.esteira-map .step .tag{font-size:10px;font-weight:700;color:var(--ac2)}
+.esteira-map .step .q{font-size:12.5px;font-weight:700;margin:3px 0}
+.esteira-map .step .n{font-size:11px;color:var(--tx3);font-family:monospace}
+.esteira-calc{background:var(--card);border:1px solid var(--border2);border-radius:var(--rs);padding:14px 16px;margin:14px 0}
+.esteira-calc .inputs{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.esteira-calc label{font-size:11px;color:var(--tx3);display:block;margin-bottom:4px}
+.esteira-calc input{background:var(--card2);border:1px solid var(--border2);border-radius:6px;color:var(--tx);padding:6px 10px;font-size:13px;width:110px}
+.esteira-calc .results{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.esteira-calc .res{background:var(--card2);border-radius:6px;padding:8px 10px}
+.esteira-calc .res .k{font-size:10px;color:var(--tx3)}
+.esteira-calc .res .v{font-size:15px;font-weight:700;color:var(--ac2)}
+.esteira-zonas{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:10px 0 16px}
+.esteira-zonas .z{border-radius:8px;padding:8px 10px;font-size:11.5px}
+.esteira-zonas .z .zt{font-weight:700}
+.z-escala{background:rgba(52,211,153,.15);border:1px solid var(--green)}
+.z-lucrativa{background:rgba(163,230,53,.12);border:1px solid #a3e635}
+.z-magra{background:rgba(251,191,36,.12);border:1px solid var(--orange)}
+.z-prejuizo{background:rgba(248,113,113,.12);border:1px solid var(--red)}
+.esteira-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
+.esteira-table th,.esteira-table td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--border2)}
+.esteira-table th{color:var(--tx3);font-weight:700;font-size:10.5px;text-transform:uppercase}
+.esteira-note{font-size:12px;color:var(--tx2);background:var(--card2);border-radius:8px;padding:10px 12px;margin-bottom:10px;line-height:1.6}
 @media(max-width:640px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -144,6 +184,63 @@ h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
   <!-- BIBLIOTECA -->
   <div id="v-lib" class="hidden">
     <h2 class="page">Biblioteca de criativos</h2>
+
+    <div id="prodContext-linfaflow" class="hidden">
+      <div class="context">
+        <h2>💊 Sobre o produto (resumo)</h2>
+        <p><strong>Linfaflow</strong> é uma fórmula botânica líquida em gotas (4 ervas: Cleavers, Stillingia Root, Prickly Ash Bark, Red Clover Blossom) posicionada como suporte diário ao <strong>fluxo linfático</strong>, circulação e equilíbrio de fluidos — não é diurético. Big idea: inchaço, fadiga e brain fog não são sinais isolados de idade, são manifestações de um sistema de drenagem interno lento que exame nenhum mede e nenhuma solução externa (compressão, massagem, dry brushing) resolve de dentro.</p>
+        <span class="toggle" onclick="this.nextElementSibling.classList.toggle('on'); this.textContent = this.textContent.includes('mais')?'▲ ver menos':'▼ ver mais (avatares-chave e ângulos de hook)'">▼ ver mais (avatares-chave e ângulos de hook)</span>
+        <div class="full">
+          <p style="margin-top:10px"><strong>Avatares-âncora:</strong> A Invisível dos Exames Normais (inchaço sem diagnóstico) · A Prisioneira do Externo (já faz tudo por fora) · A Confusa do Peso Fantasma (acha que é gorda, é retenção) · O Homem do Espelho (lodo de álcool, tom masculino direto) · A Medicada com Diurético (refém do banheiro) · A que Esconde as Pernas (vergonha estética).</p>
+          <div class="hooks-mini">
+            <div><b>1. Causa raiz</b>You're not X. You have Y. (THC preso na linfa / sludge de álcool)</div>
+            <div><b>2. Qualificação</b>If you [sintoma], then [revelação]</div>
+            <div><b>3. História emocional</b>Traição/casamento + irmã do Brasil/Oslo</div>
+            <div><b>4. Depoimento</b>Proof-first / anti-venda ("não compre por isso")</div>
+            <div><b>5. Contradição</b>"Seu médico diz saudável. Seu espelho diz outra coisa."</div>
+            <div><b>6. Curiosidade</b>"Aqui está o que essas gotinhas realmente fazem"</div>
+            <div><b>7. Revelação</b>"A erva que faz X é Y" (Stillingia, Cleavers, Prickly Ash)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="esteira">
+        <h2>📐 Esteira de Escala — adaptada da metodologia DTC Affiliate (@gbifi)</h2>
+        <div class="sub">Sistema de teste e escala pra vídeo no Meta: 4 partes, notação de 3 números. Preencha payout e CPA alvo reais do H&W Hub abaixo — o resto recalcula sozinho.</div>
+        <div class="esteira-map">
+          <div class="step"><div class="tag">P1 · TESTE</div><div class="q">Alguém quer isso?</div><div class="n">ABO 1-5-3 · 2 dias</div></div>
+          <div class="step"><div class="tag">P2 · VALIDAÇÃO</div><div class="q">Aguenta dinheiro?</div><div class="n">ABO 1-5-1 · 3 dias</div></div>
+          <div class="step"><div class="tag">P3 · ESCALA</div><div class="q">Quanto dá pra tirar?</div><div class="n">CBO bidcap · permanente</div></div>
+          <div class="step"><div class="tag">P4 · CEMITÉRIO</div><div class="q">Ressuscita o que já vendeu</div><div class="n">CBO cost cap · $500/dia</div></div>
+        </div>
+        <div class="esteira-calc">
+          <div class="inputs">
+            <div><label>💵 Payout por venda ($)</label><input type="number" id="estPayout" value="70" oninput="updateEsteiraCalc()"></div>
+            <div><label>🎯 CPA alvo ($)</label><input type="number" id="estCpa" value="40" oninput="updateEsteiraCalc()"></div>
+          </div>
+          <div class="results" id="estResults"></div>
+        </div>
+        <div class="esteira-zonas" id="estZonas"></div>
+        <table class="esteira-table">
+          <tr><th>Nosso ativo</th><th>Vira, na esteira</th></tr>
+          <tr><td>Cada AD real filmado (thyroid waste, alcohol sludge...)</td><td>1 <b>ângulo</b> — 1 conjunto no P1</td></tr>
+          <tr><td>H1 / H2 / H3 já filmados de cada AD</td><td>Os 3 <b>hooks</b> do ângulo no P1 (mesmo corpo, abre diferente)</td></tr>
+          <tr><td>"Variação completa" (V1-V4, roteiro 100% reescrito)</td><td>Ângulo <b>novo</b> pra testar — precisa gerar as 3 aberturas (Hook A/B/C) antes de rodar P1</td></tr>
+          <tr><td>"Variação leve" (L1, L2, hook+ponte+CTA)</td><td>Ângulo novo mais rápido de produzir — mesma lógica, também com Hook A/B/C</td></tr>
+          <tr><td>Hook A/B/C (🪝 nos cards acima)</td><td>Os 3 anúncios de 1 conjunto no P1 — o resto do vídeo (cenas 2-12) é idêntico entre eles</td></tr>
+        </table>
+        <div class="esteira-note">🪝 <b>Métricas de vídeo</b> (não existem em estático): Hook Rate = reproduções 3s ÷ impressões (fraco &lt;40%, forte &gt;60%) · Hold Rate = ThruPlay ÷ reproduções 3s (fraco &lt;35%, forte &gt;60%) · Retenção 25% = reproduções a 25% do vídeo ÷ reproduções 3s (fraco &lt;20%, forte &gt;40% — em vídeo de 70-180s como os nossos, é o sinal de que a tese/mecanismo prendeu, não só o hook).</div>
+        <div class="esteira-note">⚖️ <b>Veredito P1 (dia 2):</b> vendeu ou custo/IC ≤ CPA alvo÷8 → qualificado, vai pro P2. Custo/IC entre a faixa qualificada e ~2,25× isso → produz mais hooks do mesmo ângulo. Acima disso → mata o ângulo. <b>Veredito P2 (dia 3):</b> vendas ≥ gasto÷CPA alvo → validado, vai pro P3. Entre isso e gasto÷teto econômico → refina 3 dias a mais. Abaixo → volta pro P1 com hook novo.</div>
+        <span class="toggle" onclick="this.nextElementSibling.classList.toggle('on'); this.textContent = this.textContent.includes('completo')?'▲ ver menos':'▼ ver fluxo completo (montagem + rotina diária P3)'">▼ ver fluxo completo (montagem + rotina diária P3)</span>
+        <div class="full" style="margin-top:10px">
+          <div class="esteira-note"><b>P1 — montagem:</b> 1 campanha, orçamento no conjunto. 5 conjuntos = 5 ângulos (usar ADs reais + variações completas/leves já geradas). Em cada conjunto, 3 anúncios = Hook A/B/C do mesmo ângulo, resto do roteiro idêntico. $[CPA alvo]/dia por conjunto, 2 dias, não mexe em nada. No fim do dia 2: aplica o veredito acima por conjunto.</div>
+          <div class="esteira-note"><b>P2 — montagem:</b> 1 campanha, orçamento no conjunto. 5 conjuntos idênticos = só o hook campeão do P1, via publicação existente. 1 anúncio por conjunto. $[CPA alvo]/dia, 3 dias. No fim do dia 3: soma as vendas dos 5 e aplica o veredito.</div>
+          <div class="esteira-note"><b>P3 — rotina diária:</b> compare gasto de ontem com orçamento. Gastou tudo → sobe a verba (~20%/dia). Gastou menos → sobe o lance (~17% por degrau, espera 2 dias entre subidas). Nunca mexe nos dois no mesmo dia. Lance nunca sobe além do teto econômico sem virar decisão de negócio.</div>
+          <div class="esteira-note"><b>P4 — cemitério:</b> 1 campanha CBO permanente, $500/dia, custo por resultado = 70% do CPA alvo. Só entra quem já escalou no P3 e ficou 7+ dias sem gastar. Maioria dos dias gasta $0 — é o comportamento esperado. Gastou 3 dias seguidos dentro do CPA → volta pro P3 em conjunto novo.</div>
+        </div>
+      </div>
+    </div>
+
     <div class="filters">
       <select id="libProduct" onchange="loadCreatives()"></select>
       <select id="libBatch" onchange="renderCreatives()"><option value="">Todos os squads</option></select>
@@ -342,7 +439,43 @@ async function loadCreatives(){
   const ads = [...new Set(creatives.map(c=>c.ad_group).filter(Boolean))].sort((a,b)=>parseInt(a.replace(/\D/g,''))-parseInt(b.replace(/\D/g,'')));
   $('libBatch').innerHTML = '<option value="">Todos os squads</option>' + batches.map(b=>`<option>${esc(b)}</option>`).join('');
   $('libAd').innerHTML = '<option value="">Todos os ADs</option>' + ads.map(a=>`<option>${esc(a)}</option>`).join('');
+  const prod = products.find(p=>p.id===pid);
+  const ctx = $('prodContext-linfaflow');
+  if(ctx){ ctx.classList.toggle('hidden', !(prod && prod.slug==='linfaflow')); if(prod && prod.slug==='linfaflow') updateEsteiraCalc(); }
   renderCreatives();
+}
+
+function updateEsteiraCalc(){
+  const payoutEl = $('estPayout'), cpaEl = $('estCpa');
+  if(!payoutEl || !cpaEl) return;
+  const payout = parseFloat(payoutEl.value) || 0;
+  const cpa = parseFloat(cpaEl.value) || 0;
+  const margem = payout - cpa;
+  const margemPct = payout ? (margem/payout*100) : 0;
+  const roas = cpa ? (payout/cpa) : 0;
+  const tetoEcon = payout * 0.8;
+  const lanceInicial = cpa * 0.6;
+  const costCapCemiterio = cpa * 0.7;
+  const p1Spend = cpa * 10;
+  const p2Spend = cpa * 15;
+  const p2Validado = cpa ? Math.round(p2Spend/cpa) : 0;
+  const p2Refina = tetoEcon ? Math.round(p2Spend/tetoEcon) : 0;
+  const f = n => '$' + n.toFixed(2);
+  $('estResults').innerHTML = `
+    <div class="res"><div class="k">Margem por venda</div><div class="v">${f(margem)} (${margemPct.toFixed(0)}%)</div></div>
+    <div class="res"><div class="k">Breakeven</div><div class="v">${f(payout)}</div></div>
+    <div class="res"><div class="k">ROAS no alvo</div><div class="v">${roas.toFixed(2)}</div></div>
+    <div class="res"><div class="k">Teto econômico (P3)</div><div class="v">${f(tetoEcon)}</div></div>
+    <div class="res"><div class="k">Lance inicial P3 (60%)</div><div class="v">${f(lanceInicial)}</div></div>
+    <div class="res"><div class="k">Cost cap Cemitério (70%)</div><div class="v">${f(costCapCemiterio)}</div></div>
+    <div class="res"><div class="k">Orçamento total P1 (5 ang. · 2d)</div><div class="v">${f(p1Spend)}</div></div>
+    <div class="res"><div class="k">Orçamento total P2 (5 conj. · 3d)</div><div class="v">${f(p2Spend)}</div></div>
+    <div class="res"><div class="k">Vendas P2 pra validar</div><div class="v">${p2Validado}+ = P3 · ${p2Refina}–${p2Validado} = refina</div></div>`;
+  $('estZonas').innerHTML = `
+    <div class="z z-escala"><div class="zt">🟢 Escala</div>CPA ≤ ${f(cpa)}</div>
+    <div class="z z-lucrativa"><div class="zt">🟩 Lucrativa</div>${f(cpa)} – ${f(tetoEcon)}</div>
+    <div class="z z-magra"><div class="zt">🟡 Magra</div>${f(tetoEcon)} – ${f(payout)}</div>
+    <div class="z z-prejuizo"><div class="zt">🔴 Prejuízo</div>&gt; ${f(payout)}</div>`;
 }
 
 function setLang(l){ lang=l; document.querySelectorAll('.lang-toggle button').forEach(b=>b.classList.toggle('on',b.dataset.l===l)); renderCreatives(); }
@@ -362,13 +495,14 @@ function renderCreatives(){
   $('libGrid').innerHTML = list.map(c=>{
     const txt = (lang==='pt' && c.transcript_pt) ? c.transcript_pt : (c.transcript_en||'');
     const videoUrl = c.video_path ? `${SB_URL}/storage/v1/object/public/aff-creatives/${c.video_path}` : null;
+    const thumbUrl = c.thumb_path ? `${SB_URL}/storage/v1/object/public/aff-creatives/${c.thumb_path}` : null;
     return `<div class="ccard">
       <div class="head"><span class="code">${esc(c.code)}</span>
         <select class="fase" onchange="setFase('${c.id}', this.value)">
           ${Object.entries(FASES).map(([k,v])=>`<option value="${k}" ${c.fase===k?'selected':''}>${v}</option>`).join('')}
         </select></div>
       <div class="muted">${esc(c.batch||'')} · ${esc(c.ad_group||'')} ${esc(c.hook_label||'')} · ${c.duration_sec?Math.round(c.duration_sec)+'s':''} ${c.word_count?'· '+c.word_count+'w':''}</div>
-      ${videoUrl?`<video controls preload="none" src="${videoUrl}"></video>`:''}
+      ${videoUrl?`<video controls preload="none" src="${videoUrl}" ${thumbUrl?`poster="${thumbUrl}"`:''}></video>`:(thumbUrl?`<div class="thumbwrap"><img src="${thumbUrl}" loading="lazy" alt="${esc(c.code)}"></div>`:'')}
       <div class="prev">${esc(txt.slice(0,140))}${txt.length>140?'…':''}</div>
       <div class="full" id="full-${c.id}">${esc(txt)}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
