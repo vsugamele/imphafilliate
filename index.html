@@ -92,6 +92,19 @@ h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
 .adot{flex:0 0 8px;width:8px;height:8px;border-radius:50%;margin-top:5px}
 .aptitle{font-weight:700;font-size:12px}
 .apbadge{font-size:9px;border:1px solid;border-radius:999px;padding:0 6px;text-transform:uppercase;margin-left:6px;vertical-align:middle}
+.diss .mosaic{width:100%;border-radius:var(--rs);border:1px solid var(--border);cursor:zoom-in;display:block;margin-bottom:6px}
+.diss .metaline{margin-bottom:6px}
+.qaflags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px}
+.qachip{font-size:10px;padding:2px 8px;border-radius:999px;border:1px solid var(--border);color:var(--tx2);background:var(--card)}
+.qachip.warn{color:var(--orange);border-color:transparent;background:rgba(253,203,110,.12)}
+.qachip.ok{color:var(--green);border-color:transparent;background:var(--greendim)}
+table.ficha{width:100%;font-size:12px;margin-top:2px}
+table.ficha td{padding:4px 6px;border-bottom:1px solid var(--border);vertical-align:top}
+table.ficha td:first-child{width:34%;color:var(--tx3);white-space:nowrap}
+table.ficha td:last-child{color:var(--tx2)}
+.fluxo-step{padding:6px 0;border-top:1px solid var(--border)}
+.fluxo-step:first-child{border-top:0}
+.fluxo-label{font-weight:700;font-size:10.5px;color:var(--ac2);text-transform:uppercase;letter-spacing:.04em}
 .apdesc{color:var(--tx2);margin:2px 0 0}
 .ccard .thumbwrap{position:relative;border-radius:var(--rs);overflow:hidden;background:#000}
 .ccard .thumbwrap img{width:100%;display:block;max-height:300px;object-fit:cover}
@@ -602,6 +615,45 @@ async function loadDissections(ids){
   (data||[]).forEach(d=>{ if(!dissections[d.creative_id]) dissections[d.creative_id] = d; });
 }
 
+function fmtDur(s){
+  s = Math.round(Number(s)||0);
+  const m = Math.floor(s/60), r = s%60;
+  return m ? `${m}:${String(r).padStart(2,'0')}` : `${r}s`;
+}
+
+function mosaicUrl(path){ return `${SB_URL}/storage/v1/object/public/aff-creatives/${path}`; }
+
+function renderDissExtras(d){
+  let out = '';
+  if(d.mosaic_path){
+    const url = mosaicUrl(d.mosaic_path);
+    out += `<img class="mosaic" src="${url}" alt="mosaico" loading="lazy" onclick="window.open('${url}','_blank')">`;
+  }
+  const meta = [];
+  if(d.duration_sec) meta.push(fmtDur(d.duration_sec));
+  if(d.resolution) meta.push(esc(d.resolution));
+  if(d.fps) meta.push(`${d.fps}fps`);
+  if(meta.length) out += `<div class="muted metaline">${meta.join(' · ')}</div>`;
+  if(d.qa_flags && d.qa_flags.length){
+    out += `<div class="qaflags">${d.qa_flags.map(f=>{
+      const ok = /sem apontes/i.test(f);
+      return `<span class="qachip ${ok?'ok':'warn'}">${esc(f)}</span>`;
+    }).join('')}</div>`;
+  }
+  return out;
+}
+
+function renderFicha(ficha){
+  if(!ficha) return '';
+  const rows = Object.entries(ficha).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
+  return `<table class="ficha">${rows}</table>`;
+}
+
+function renderFluxo(fluxo){
+  if(!fluxo) return '';
+  return Object.entries(fluxo).map(([k,v])=>`<div class="fluxo-step"><span class="fluxo-label">${esc(k)}</span><p class="apdesc">${esc(v)}</p></div>`).join('');
+}
+
 function renderDissBlock(id){
   const d = dissections[id];
   if(!d) return '';
@@ -613,7 +665,10 @@ function renderDissBlock(id){
     </div></div>`;
   }).join('');
   return `<div class="diss" id="diss-${id}">
+    ${renderDissExtras(d)}
     <h4>Resumo da edição</h4><div class="sumtxt">${esc(d.summary||'—')}</div>
+    ${d.fluxo_persuasivo ? `<h4>Fluxo persuasivo</h4>${renderFluxo(d.fluxo_persuasivo)}` : ''}
+    ${d.ficha_tecnica ? `<h4>Ficha técnica</h4>${renderFicha(d.ficha_tecnica)}` : ''}
     <h4>Pontos de atenção</h4>${pts||'<div class="muted">—</div>'}
     <h4>Insight estratégico</h4><div class="sumtxt">${esc(d.strategic_insight||'—')}</div>
     <div style="margin-top:10px"><button class="btn-sm" onclick="dissectCreative('${id}')">🔁 redissecar</button></div>
@@ -844,7 +899,10 @@ function renderCompDissBlock(c){
     </div></div>`;
   }).join('');
   return `<div class="diss" id="compdiss-${c.id}">
+    ${renderDissExtras(c)}
     <h4>Resumo do anúncio</h4><div class="sumtxt">${esc(c.summary||'—')}</div>
+    ${c.fluxo_persuasivo ? `<h4>Fluxo persuasivo</h4>${renderFluxo(c.fluxo_persuasivo)}` : ''}
+    ${c.ficha_tecnica ? `<h4>Ficha técnica</h4>${renderFicha(c.ficha_tecnica)}` : ''}
     <h4>Pontos de atenção</h4>${pts||'<div class="muted">—</div>'}
     <h4>Insight estratégico</h4><div class="sumtxt">${esc(c.strategic_insight||'—')}</div>
     <div style="margin-top:10px"><button class="btn-sm" onclick="dissectCompetitorAd('${c.id}')">🔁 redissecar</button></div>
