@@ -45,12 +45,20 @@ function buildScheduledQueue(project) {
   const count = Math.max(1, Number(project.batchImageCount) || 3);
   const brief = project.brief || "campanha visual";
   const videoBrief = project.batchVideoBrief || "criar video 9:16 usando a imagem como first frame";
+  const context = [
+    `Oferta: ${project.offer || ""}.`,
+    `Avatar: ${project.avatar || ""}.`,
+    `Mecanismo/tese: ${project.mechanism || ""}.`,
+    `Distribuição: ${project.contentMode || "both"}.`,
+    `Objetivo: ${project.campaignObjective || "stop-scroll"}.`,
+    `Continuidade visual: ${project.visualContinuity || "manter sujeito, produto e identidade visual consistentes"}.`
+  ].join(" ");
 
   const queue = [];
   for (let index = 0; index < count; index += 1) {
     const style = styles[index % styles.length];
-    queue.push(`[IMAGEM] ${brief}. Estilo: ${style}. Gerar criativo visual 9:16 com composicao clara, luz profissional, sujeito principal evidente e sem texto ilegivel.`);
+    queue.push(`[IMAGEM] ${brief}. ${context} Estilo: ${style}. Gerar criativo visual 9:16 com composicao clara, luz profissional, sujeito principal evidente e sem texto ilegivel.`);
   }
-  queue.push(`[VIDEO] ${videoBrief}. Use as imagens geradas hoje como referencia/first frame quando disponivel. Duracao 6s, movimento de camera suave, primeiro frame forte, acao principal clara e ultimo frame com sensacao de conclusao.`);
+  queue.push(`[VIDEO] ${videoBrief}. ${context} Use as imagens geradas hoje como referencia/first frame quando disponivel. Duracao 8s, movimento de camera suave, primeiro frame forte, acao principal clara e ultimo frame com sensacao de conclusao. Gere um unico take, sem variacoes duplicadas.`);
   return queue;
 }

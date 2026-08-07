@@ -305,7 +305,10 @@ const BUILTIN_PROJECT_PRESETS = {
     offer: "LinfaFlow drops, ritual diario de bem-estar em gotas. Posicionar como suporte a rotina de autocuidado, clareza e sensacao de leveza.",
     avatar: "Mulheres 35-60 que se sentem cansadas, pesadas, invisiveis e desconectadas do corpo. Querem voltar a se sentir leves, confiantes, vistas e com momentum no dia a dia, mas desconfiam de promessas exageradas.",
     mechanism: "Ritual simples de duas gotas dentro de uma rotina de bem-estar. Mecanismo narrativo seguro: small daily reset, natural rhythm, clarity, lightness and momentum. Sempre usar linguagem de suporte, nao promessa clinica.",
-    batchVideoBrief: "Criar clipes 9:16 de 8s, x1, estilo wellness ad cinematico realista. Sem claims medicos, sem perda de peso garantida, sem comparacao corporal antes/depois.",
+    batchVideoBrief: "Criar clipes 9:16 de 8s, x1, estilo wellness ad cinematografico realista. Sem claims medicos, sem perda de peso garantida, sem comparacao corporal antes/depois.",
+    contentMode: "both",
+    campaignObjective: "retention",
+    visualContinuity: "Manter a mesma Sarah, mulher no fim dos 40, cabelo castanho na altura dos ombros, roupa casual clara, mesmo frasco sem marca, paleta verde suave e luz matinal natural em todas as cenas.",
     batchStyles: [
       "UGC realista em banheiro/quarto, luz natural, mulher 45+",
       "Foto premium editorial com frasco unbranded, agua e rotina matinal",
@@ -335,6 +338,9 @@ const BUILTIN_PROJECT_PRESETS = {
     avatar: "Avatar XYZ: dor dominante, desejo, objecoes e cena cotidiana.",
     mechanism: "Mecanismo XYZ: por que funciona, prova disponivel e o que nao pode ser prometido.",
     batchVideoBrief: "Criar clipes 9:16 de 8s, x1, alinhados ao projeto XYZ. Manter claims seguros e CTA claro.",
+    contentMode: "both",
+    campaignObjective: "stop-scroll",
+    visualContinuity: "Definir e manter sujeito, produto, roupa, paleta, cenário e luz entre todas as peças.",
     batchStyles: ["UGC realista", "Editorial premium", "Demo de produto", "Prova social"],
     format: "video",
     angleSlug: "auto",
@@ -390,6 +396,9 @@ const els = {
   projectOffer: document.getElementById("projectOffer"),
   projectAvatar: document.getElementById("projectAvatar"),
   projectMechanism: document.getElementById("projectMechanism"),
+  contentMode: document.getElementById("contentMode"),
+  campaignObjective: document.getElementById("campaignObjective"),
+  visualContinuity: document.getElementById("visualContinuity"),
   loadLinfaFlowPreset: document.getElementById("loadLinfaFlowPreset"),
   loadXyzPreset: document.getElementById("loadXyzPreset"),
   loadJpPreset: document.getElementById("loadJpPreset"),
@@ -406,6 +415,7 @@ const els = {
   referenceList: document.getElementById("referenceList"),
   planBatch: document.getElementById("planBatch"),
   planFlowScenes: document.getElementById("planFlowScenes"),
+  planProductionPack: document.getElementById("planProductionPack"),
   scheduleBatch: document.getElementById("scheduleBatch"),
   queueVideosFromImages: document.getElementById("queueVideosFromImages"),
   fillPrompt: document.getElementById("fillPrompt"),
@@ -415,6 +425,8 @@ const els = {
   runQueue: document.getElementById("runQueue"),
   pauseQueue: document.getElementById("pauseQueue"),
   stopQueue: document.getElementById("stopQueue"),
+  copyQueue: document.getElementById("copyQueue"),
+  downloadQueue: document.getElementById("downloadQueue"),
   queueState: document.getElementById("queueState"),
   queueProgress: document.getElementById("queueProgress"),
   queueProgressBar: document.getElementById("queueProgressBar"),
@@ -792,6 +804,31 @@ els.stopQueue.addEventListener("click", () => {
   updateQueueUi("Parando");
 });
 
+els.copyQueue.addEventListener("click", async () => {
+  const queue = els.queue.value.trim();
+  if (!queue) return setStatus("A fila está vazia.", true);
+  try {
+    await navigator.clipboard.writeText(queue);
+    setStatus("Fila copiada para a área de transferência.");
+  } catch (_error) {
+    setStatus("O Chrome bloqueou a cópia. Use Baixar .txt ou selecione a fila manualmente.", true);
+  }
+});
+
+els.downloadQueue.addEventListener("click", () => {
+  const queue = els.queue.value.trim();
+  if (!queue) return setStatus("A fila está vazia.", true);
+  const project = (els.projectName.value.trim() || "affhub-campanha").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  const blob = new Blob([queue], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${project}-fila-criativos.txt`;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setStatus("Fila baixada em .txt.");
+});
+
 els.projectSelect.addEventListener("change", async () => {
   const id = els.projectSelect.value;
   await chrome.storage.local.set({ activeProjectId: id });
@@ -846,6 +883,16 @@ els.planFlowScenes.addEventListener("click", () => {
   updateQueueUi("Parada");
   setActiveTab("queue");
   setStatus(`Fila Flow x1 criada com ${queue.length} cena(s).`);
+});
+
+els.planProductionPack.addEventListener("click", () => {
+  const project = collectProject();
+  const queue = buildProductionPackQueue(project);
+  els.queue.value = queue.join("\n");
+  queueJobs = queue.map((prompt) => ({ prompt }));
+  updateQueueUi("Parada");
+  setActiveTab("queue");
+  setStatus(`Esteira completa criada com ${queue.length} ativo(s): cenas, hooks e orgânico.`);
 });
 
 els.scheduleBatch.addEventListener("click", async () => {
@@ -1323,6 +1370,9 @@ function loadProjectIntoForm(id) {
   els.projectOffer.value = project.offer || "";
   els.projectAvatar.value = project.avatar || "";
   els.projectMechanism.value = project.mechanism || "";
+  els.contentMode.value = project.contentMode || "both";
+  els.campaignObjective.value = project.campaignObjective || "stop-scroll";
+  els.visualContinuity.value = project.visualContinuity || "";
   els.batchTime.value = project.batchTime || "09:00";
   els.batchImageCount.value = project.batchImageCount || 3;
   els.batchStyles.value = Array.isArray(project.batchStyles) ? project.batchStyles.join("\n") : "";
@@ -1347,6 +1397,9 @@ function applyProjectPreset(preset) {
   els.projectOffer.value = preset.offer || "";
   els.projectAvatar.value = preset.avatar || "";
   els.projectMechanism.value = preset.mechanism || "";
+  els.contentMode.value = preset.contentMode || "both";
+  els.campaignObjective.value = preset.campaignObjective || "stop-scroll";
+  els.visualContinuity.value = preset.visualContinuity || "";
   els.batchVideoBrief.value = preset.batchVideoBrief || "";
   els.batchStyles.value = Array.isArray(preset.batchStyles) ? preset.batchStyles.join("\n") : "";
   els.outputSize.value = "9:16";
@@ -1372,6 +1425,9 @@ function collectProject() {
     offer: els.projectOffer.value.trim(),
     avatar: els.projectAvatar.value.trim(),
     mechanism: els.projectMechanism.value.trim(),
+    contentMode: els.contentMode.value,
+    campaignObjective: els.campaignObjective.value,
+    visualContinuity: els.visualContinuity.value.trim(),
     format: getPromptFormat(),
     outputSize: els.outputSize.value,
     scriptLength: els.scriptLength.value,
@@ -1420,8 +1476,57 @@ function buildFlowSceneQueue(project) {
     `Offer: ${project.offer || ""}.`,
     `Avatar: ${project.avatar || ""}.`,
     `Mechanism: ${project.mechanism || ""}.`,
+    `Visual continuity: ${project.visualContinuity || "Keep the same subject, product, wardrobe and visual identity across this project."}`,
     scene
   ].join(" ").replace(/\s+/g, " ").trim());
+}
+
+function buildProductionPackQueue(project) {
+  const queue = [];
+  const mode = project.contentMode || "both";
+  const allowAds = mode === "ads" || mode === "both";
+  const allowOrganic = mode === "organic" || mode === "both";
+  const identity = project.visualContinuity || "Keep the same subject, product, wardrobe, setting and visual identity across this project.";
+  const base = [
+    `Project: ${project.name || "Untitled"}.`,
+    `Offer: ${project.offer || ""}.`,
+    `Avatar: ${project.avatar || ""}.`,
+    `Mechanism: ${project.mechanism || ""}.`,
+    `Objective: ${project.campaignObjective || "stop-scroll"}.`,
+    `Visual continuity: ${identity}`,
+    "Create one usable take only. Do not create duplicate variations in the same take.",
+    "Keep claims accurate, avoid guaranteed outcomes and avoid unreadable generated text."
+  ].join(" ");
+
+  if (allowAds) {
+    const scenes = buildFlowSceneQueue(project);
+    scenes.forEach((prompt) => queue.push(prompt.replace("[FLOW_SCENE_", "[AD_FLOW_SCENE_")));
+    ["A", "B", "C"].forEach((hook) => queue.push([
+      `[AD_HOOK_${hook}] [VIDEO]`,
+      "Create an 8-second vertical 9:16 x1 paid-ad opening using the same campaign identity.",
+      `Hook variant ${hook}: change only the opening hook and first visual beat; keep the core promise, subject, product and visual language consistent.`,
+      base,
+      "Start with a concrete scroll-stopping moment, natural movement, clean ending and no fake testimonial."
+    ].join(" ")));
+  }
+
+  if (allowOrganic) {
+    ["POV", "story", "reply"].forEach((format) => queue.push([
+      `[ORGANIC_${format.toUpperCase()}] [VIDEO]`,
+      "Create an 8-second vertical 9:16 x1 native short-form video for Reels, TikTok and Shorts.",
+      `Format: ${format}. Keep it conversational, observational and less polished than a paid ad while preserving the same product and visual identity.`,
+      base,
+      "One clear action, one spoken or visual idea, natural handheld camera, no hard-sell countdown and no unsupported claim."
+    ].join(" ")));
+    queue.push([
+      "[ORGANIC_STATIC] [IMAGEM]",
+      "Create a vertical 4:5 or 9:16 social image that can work as a post cover or story frame.",
+      base,
+      "Strong subject, generous negative space for later captioning, recognizable daily-life moment, natural light and no generated text inside the image."
+    ].join(" "));
+  }
+
+  return queue;
 }
 
 function resolveBuiltinPreset(project) {

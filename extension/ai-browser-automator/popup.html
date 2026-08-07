@@ -196,6 +196,30 @@
 
         <div class="row two">
           <div>
+            <label for="contentMode">Distribuição</label>
+            <select id="contentMode">
+              <option value="both">Ads + orgânico</option>
+              <option value="ads">Só ads</option>
+              <option value="organic">Só orgânico</option>
+            </select>
+          </div>
+          <div>
+            <label for="campaignObjective">Objetivo</label>
+            <select id="campaignObjective">
+              <option value="stop-scroll">Parar o scroll</option>
+              <option value="retention">Reter atenção</option>
+              <option value="click">Gerar clique</option>
+              <option value="proof">Construir prova</option>
+              <option value="conversion">Conversão</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="visualContinuity">Identidade visual / continuidade</label>
+        <textarea id="visualContinuity" rows="2" placeholder="Ex: mesma mulher, mesma roupa, mesmo frasco, luz matinal natural, sem trocar rosto entre cenas"></textarea>
+
+        <div class="row two">
+          <div>
             <label for="batchTime">Horario</label>
             <input id="batchTime" type="time" value="09:00">
           </div>
@@ -252,6 +276,7 @@
           <button id="planFlowScenes" type="button">Cenas Flow x1</button>
           <button id="scheduleBatch" type="button" class="primary">Agendar</button>
         </div>
+        <button id="planProductionPack" type="button" class="wide primary">Montar esteira completa</button>
         <button id="queueVideosFromImages" type="button" class="wide">Criar fila com referencias</button>
       </section>
 
@@ -278,6 +303,10 @@
           <button id="runQueue" type="button" class="primary">Iniciar</button>
           <button id="pauseQueue" type="button">Pausar</button>
           <button id="stopQueue" type="button">Parar</button>
+        </div>
+        <div class="actions">
+          <button id="copyQueue" type="button">Copiar fila</button>
+          <button id="downloadQueue" type="button">Baixar .txt</button>
         </div>
       </section>
 

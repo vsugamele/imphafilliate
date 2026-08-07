@@ -32,7 +32,10 @@ Fluxo recomendado para Flow:
 2. Abrir a extensao AffHub Creative Automator.
 3. Aba `Projeto` -> `LinfaFlow` ou `XYZ`.
 4. Clicar `Cenas Flow x1` para criar uma fila de cenas 9:16, 8s, uma geracao por take.
-5. Usar `Colar no site`/fila. Se o Flow bloquear o editor Slate, a extensao abre um painel `AffHub Flow Assist` com o prompt pronto para copiar e colar manualmente.
+5. Para criar o pacote de produção completo, escolha `Ads + organico` ou um canal, preencha a continuidade visual e clique `Montar esteira completa`. Isso cria cenas Flow, hooks A/B/C para teste pago, videos organicos e uma imagem social.
+6. Use `Copiar fila` ou `Baixar .txt` para revisar, arquivar ou operar em outra ferramenta. Depois use `Colar no site`/fila. Se o Flow bloquear o editor Slate, a extensao abre um painel `AffHub Flow Assist` com o prompt pronto para copiar e colar manualmente.
+
+O objetivo da extensao e funcionar como uma esteira por projeto: um briefing, varias pecas coerentes, variacoes controladas e separacao entre criativos de ads e conteudo organico. A extensao nao publica automaticamente nem promete que a geracao terminou; mantenha revisao humana e ajuste o intervalo conforme a ferramenta.
 
 ## Time com acesso
 
