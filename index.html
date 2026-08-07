@@ -159,6 +159,7 @@ h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
     <button class="tab" data-v="ads" onclick="go('ads')">📈 Ads</button>
     <button class="tab" data-v="costs" onclick="go('costs')">💸 Custos</button>
     <button class="tab" data-v="prods" onclick="go('prods')">📦 Produtos</button>
+    <button class="tab" data-v="comp" onclick="go('comp')">🕵️ Concorrentes</button>
     <div class="spacer"></div>
     <span class="user" id="userEmail"></span>
     <button class="btn-sm" onclick="doLogout()">sair</button>
@@ -326,6 +327,39 @@ h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
     <div class="panel"><h3>Lista</h3><div id="prodsTable">—</div></div>
   </div>
 
+  <!-- CONCORRENTES -->
+  <div id="v-comp" class="hidden">
+    <h2 class="page">Concorrentes / Swipe File</h2>
+    <div class="filters">
+      <input type="text" id="compNiche" placeholder="Filtrar por nicho..." oninput="renderCompetitors()">
+      <span class="muted" id="compCount"></span>
+    </div>
+    <div class="panel">
+      <h3>➕ Novo anúncio concorrente</h3>
+      <div class="row">
+        <div><label>Marca/concorrente</label><input id="compBrand" placeholder="ex: Yu Sleep"></div>
+        <div><label>Nicho</label><input id="compNicheIn" placeholder="ex: sono / melatonina"></div>
+        <div style="max-width:160px"><label>Plataforma</label>
+          <select id="compPlatform">
+            <option value="meta">Meta</option>
+            <option value="tiktok">TikTok</option>
+            <option value="youtube">YouTube</option>
+            <option value="organico">Orgânico</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+        <div><label>Produto nosso relacionado (opcional)</label><select id="compProduct"><option value="">—</option></select></div>
+      </div>
+      <div style="margin-top:10px"><label>Link do anúncio (Biblioteca de Anúncios, TikTok, etc.)</label><input id="compUrl" placeholder="https://..."></div>
+      <div style="margin-top:10px"><label>Notas</label><input id="compNotes" placeholder="observações rápidas"></div>
+      <div style="margin-top:10px"><label>Transcrição/descrição do anúncio (cole aqui pra poder dissecar)</label>
+        <textarea id="compTranscript" rows="4" style="resize:vertical"></textarea>
+      </div>
+      <div style="margin-top:10px"><button class="btn" onclick="addCompetitorAd()">Salvar</button> <span class="muted" id="compMsg"></span></div>
+    </div>
+    <div class="grid" id="compGrid"></div>
+  </div>
+
 </div>
 </div>
 <div id="toast">ok</div>
@@ -335,7 +369,7 @@ const SB_URL = 'https://sxiqbhcnkzrrenzgncss.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4aXFiaGNua3pycmVuemduY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3NDQ3MDQsImV4cCI6MjA2MjMyMDcwNH0.Ssw2dio8yPEFDZk3Zhh4PTBiXYndJR0nPm1jrXAHgBE';
 const db = supabase.createClient(SB_URL, SB_KEY);
 
-let products = [], creatives = [], dissections = {}, lang = 'en', currentView = 'dash';
+let products = [], creatives = [], dissections = {}, competitors = [], lang = 'en', currentView = 'dash';
 
 const $ = id => document.getElementById(id);
 const esc = s => (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -364,19 +398,20 @@ async function init(){
   products = data || [];
   if(!products.length){ toast('Seu e-mail não está na whitelist do time (aff_team).'); }
   fillProductSelects();
-  loadDash(); loadCreatives(); loadCosts(); loadAdsSummary(); renderProducts();
+  loadDash(); loadCreatives(); loadCosts(); loadAdsSummary(); renderProducts(); loadCompetitors();
 }
 
 function fillProductSelects(){
   const opts = products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
   ['dashProduct','libProduct','adsProduct'].forEach(id=>{ $(id).innerHTML = opts; });
   $('costProduct').innerHTML = '<option value="">Geral</option>' + opts;
+  $('compProduct').innerHTML = '<option value="">—</option>' + opts;
 }
 
 function go(v){
   currentView = v;
   document.querySelectorAll('nav .tab').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
-  ['dash','lib','ads','costs','prods'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
+  ['dash','lib','ads','costs','prods','comp'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
 }
 
 // ---------- DASHBOARD ----------
@@ -730,6 +765,88 @@ function renderProducts(){
   $('prodsTable').innerHTML = products.length ? '<table><tr><th>Nome</th><th>Slug</th><th>Rede</th><th>Payout</th><th>Status</th></tr>' +
     products.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.slug)}</td><td>${esc(p.network||'—')}</td><td>${p.payout?(p.payout_currency==='USD'?'US$ ':'R$ ')+p.payout:'—'}</td><td><span class="tag ${p.status==='ativo'?'g':''}">${esc(p.status)}</span></td></tr>`).join('') + '</table>'
     : 'Nenhum produto.';
+}
+
+// ---------- CONCORRENTES / SWIPE ----------
+async function loadCompetitors(){
+  const {data, error} = await db.from('aff_competitor_ads').select('*').order('created_at', {ascending:false});
+  if(error){ console.error(error); return; }
+  competitors = data || [];
+  renderCompetitors();
+}
+
+async function addCompetitorAd(){
+  const brand_name = $('compBrand').value.trim();
+  const niche = $('compNicheIn').value.trim();
+  if(!brand_name || !niche){ $('compMsg').textContent = 'Preencha ao menos marca e nicho.'; return; }
+  const {error} = await db.from('aff_competitor_ads').insert({
+    brand_name, niche, platform: $('compPlatform').value,
+    product_id: $('compProduct').value || null,
+    source_url: $('compUrl').value.trim() || null,
+    notes: $('compNotes').value.trim() || null,
+    transcript: $('compTranscript').value.trim() || null,
+  });
+  if(error){ $('compMsg').textContent = 'Erro: '+error.message; return; }
+  $('compMsg').textContent = '✅ Salvo!';
+  ['compBrand','compNicheIn','compUrl','compNotes','compTranscript'].forEach(i=>$(i).value='');
+  loadCompetitors();
+}
+
+function renderCompetitors(){
+  const q = ($('compNiche').value||'').toLowerCase();
+  const list = competitors.filter(c => !q || (c.niche||'').toLowerCase().includes(q) || (c.brand_name||'').toLowerCase().includes(q));
+  $('compCount').textContent = list.length + ' anúncios';
+  $('compGrid').innerHTML = list.map(c => `<div class="ccard">
+    <div class="head"><span class="code">${esc(c.brand_name||'—')}</span><span class="tag a">${esc(c.platform||'')}</span></div>
+    <div class="muted">${esc(c.niche||'')} ${c.source_url?`· <a href="${esc(c.source_url)}" target="_blank" style="color:var(--ac2)">link</a>`:''}</div>
+    ${c.notes?`<div class="prev">${esc(c.notes)}</div>`:''}
+    <div class="full" id="compfull-${c.id}">${esc(c.transcript||'')}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${c.transcript?`<button class="btn-sm" onclick="document.getElementById('compfull-${c.id}').classList.toggle('on')">📄 transcrição</button>`:''}
+      ${c.summary ? `<button class="btn-sm" onclick="document.getElementById('compdiss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="compdissbtn-${c.id}" onclick="dissectCompetitorAd('${c.id}')">🔬 dissecar</button>`}
+      <button class="btn-sm" onclick="delCompetitorAd('${c.id}')">🗑</button>
+    </div>
+    ${renderCompDissBlock(c)}
+  </div>`).join('');
+}
+
+function renderCompDissBlock(c){
+  if(!c.summary) return '';
+  const pts = (c.attention_points||[]).map(p=>{
+    const sev = SEV[p.severity] || SEV.revisar;
+    return `<div class="apoint"><span class="adot" style="background:${sev.c}"></span><div>
+      <span class="aptitle">${esc(p.title||'')}</span><span class="apbadge" style="color:${sev.c};border-color:${sev.c}">${sev.label}</span>
+      <p class="apdesc">${esc(p.description||'')}</p>
+    </div></div>`;
+  }).join('');
+  return `<div class="diss" id="compdiss-${c.id}">
+    <h4>Resumo do anúncio</h4><div class="sumtxt">${esc(c.summary||'—')}</div>
+    <h4>Pontos de atenção</h4>${pts||'<div class="muted">—</div>'}
+    <h4>Insight estratégico</h4><div class="sumtxt">${esc(c.strategic_insight||'—')}</div>
+    <div style="margin-top:10px"><button class="btn-sm" onclick="dissectCompetitorAd('${c.id}')">🔁 redissecar</button></div>
+  </div>`;
+}
+
+async function dissectCompetitorAd(id){
+  const btn = document.getElementById('compdissbtn-'+id);
+  if(btn){ btn.disabled = true; btn.textContent = '🔬 dissecando...'; }
+  toast('Dissecando anúncio concorrente...');
+  const {data, error} = await db.functions.invoke('dissect-competitor', {body:{ad_id:id}});
+  if(error){ toast('Erro: ' + error.message); if(btn){ btn.disabled=false; btn.textContent='🔬 dissecar'; } return; }
+  if(data?.error){ toast('Erro: ' + data.error); if(btn){ btn.disabled=false; btn.textContent='🔬 dissecar'; } return; }
+  const idx = competitors.findIndex(x=>x.id===id);
+  if(idx>=0) competitors[idx] = data.data;
+  toast('Dissecação pronta!');
+  renderCompetitors();
+  const el = document.getElementById('compdiss-'+id);
+  if(el) el.classList.add('on');
+}
+
+async function delCompetitorAd(id){
+  const {error} = await db.from('aff_competitor_ads').delete().eq('id', id);
+  if(error){ toast('Erro: '+error.message); return; }
+  competitors = competitors.filter(c=>c.id!==id);
+  renderCompetitors();
 }
 
 $('costDate') && ($('costDate').value = new Date().toISOString().slice(0,10));
