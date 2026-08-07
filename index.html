@@ -352,6 +352,11 @@ table.rficha tr:hover td{background:rgba(129,140,248,.06)}
         <option value="p4_cemiterio">⚰️ P4 Cemitério</option>
         <option value="descartado">🗑 Descartado</option>
       </select>
+      <select id="libFormat" onchange="renderCreatives()">
+        <option value="">Vídeo + Imagem</option>
+        <option value="video">🎬 Vídeo</option>
+        <option value="image">🖼 Imagem</option>
+      </select>
       <input type="text" id="libSearch" placeholder="Buscar na transcrição..." oninput="renderCreatives()">
       <div class="lang-toggle">
         <button class="on" data-l="en" onclick="setLang('en')">🇺🇸 EN</button>
@@ -367,7 +372,8 @@ table.rficha tr:hover td{background:rgba(129,140,248,.06)}
         <div><label>Hook</label><input id="upHook" placeholder="H1"></div>
         <div><label>Origem</label><select id="upOrigem"><option value="producao_propria">Produção própria</option><option value="espionagem">Espionagem</option><option value="variacao_ia">Variação IA</option></select></div>
       </div>
-      <div style="margin-top:10px"><label>Vídeo (mp4/mov, até 200MB)</label><input type="file" id="upFile" accept="video/*"></div>
+      <div style="margin-top:10px"><label>Arquivo — vídeo (mp4/mov) ou imagem (jpg/png/webp), até 200MB</label><input type="file" id="upFile" accept="video/*,image/*"></div>
+      <div style="margin-top:10px"><label>Copy da imagem (headline/texto do estático — opcional, só pra imagem)</label><textarea id="upCopy" rows="2" placeholder="Ex.: Your doctor says you're healthy. Your mirror says something else."></textarea></div>
       <div style="margin-top:10px"><button class="btn" onclick="uploadCreative()">Enviar</button> <span class="muted" id="upMsg"></span></div>
     </div>
     <div class="grid" id="libGrid"></div>
@@ -675,32 +681,34 @@ function setLang(l){ lang=l; document.querySelectorAll('.lang-toggle button').fo
 const FASES = {biblioteca:'📚 Biblioteca',p1_teste:'🧪 P1 Teste',p2_validacao:'✅ P2 Validação',p3_escala:'🚀 P3 Escala',p4_cemiterio:'⚰️ P4 Cemitério',descartado:'🗑 Descartado'};
 
 function renderCreatives(){
-  const b=$('libBatch').value, a=$('libAd').value, f=$('libFase').value, q=$('libSearch').value.toLowerCase();
+  const b=$('libBatch').value, a=$('libAd').value, f=$('libFase').value, fm=$('libFormat').value, q=$('libSearch').value.toLowerCase();
   const list = creatives.filter(c=>{
     if(b && c.batch!==b) return false;
     if(a && c.ad_group!==a) return false;
     if(f && c.fase!==f) return false;
-    if(q && !((c.transcript_en||'').toLowerCase().includes(q) || (c.transcript_pt||'').toLowerCase().includes(q) || (c.code||'').toLowerCase().includes(q))) return false;
+    if(fm && (c.format||'video')!==fm) return false;
+    if(q && !((c.transcript_en||'').toLowerCase().includes(q) || (c.transcript_pt||'').toLowerCase().includes(q) || (c.hook_text||'').toLowerCase().includes(q) || (c.code||'').toLowerCase().includes(q))) return false;
     return true;
   });
   $('libCount').textContent = list.length + ' criativos';
   $('libGrid').innerHTML = list.map(c=>{
-    const txt = (lang==='pt' && c.transcript_pt) ? c.transcript_pt : (c.transcript_en||'');
-    const videoUrl = c.video_path ? `${SB_URL}/storage/v1/object/public/aff-creatives/${c.video_path}` : null;
+    const isImg = c.format==='image';
+    const txt = isImg ? (c.hook_text||'') : ((lang==='pt' && c.transcript_pt) ? c.transcript_pt : (c.transcript_en||''));
+    const videoUrl = !isImg && c.video_path ? `${SB_URL}/storage/v1/object/public/aff-creatives/${c.video_path}` : null;
     const thumbUrl = c.thumb_path ? `${SB_URL}/storage/v1/object/public/aff-creatives/${c.thumb_path}` : null;
     return `<div class="ccard">
       <div class="head"><span class="code">${esc(c.code)}</span>
         <select class="fase" onchange="setFase('${c.id}', this.value)">
           ${Object.entries(FASES).map(([k,v])=>`<option value="${k}" ${c.fase===k?'selected':''}>${v}</option>`).join('')}
         </select></div>
-      <div class="muted">${esc(c.batch||'')} · ${esc(c.ad_group||'')} ${esc(c.hook_label||'')} · ${c.duration_sec?Math.round(c.duration_sec)+'s':''} ${c.word_count?'· '+c.word_count+'w':''}</div>
-      ${videoUrl?`<video controls preload="none" src="${videoUrl}" ${thumbUrl?`poster="${thumbUrl}"`:''}></video>`:(thumbUrl?`<div class="thumbwrap"><img src="${thumbUrl}" loading="lazy" alt="${esc(c.code)}"></div>`:'')}
+      <div class="muted">${isImg?'🖼 imagem · ':''}${esc(c.batch||'')} · ${esc(c.ad_group||'')} ${esc(c.hook_label||'')} · ${c.duration_sec?Math.round(c.duration_sec)+'s':''} ${c.word_count?'· '+c.word_count+'w':''}</div>
+      ${videoUrl?`<video controls preload="none" src="${videoUrl}" ${thumbUrl?`poster="${thumbUrl}"`:''}></video>`:(thumbUrl?`<div class="thumbwrap"><img src="${thumbUrl}" loading="lazy" alt="${esc(c.code)}" ${isImg?`style="cursor:zoom-in" onclick="window.open('${thumbUrl}','_blank')"`:''}></div>`:'')}
       <div class="prev">${esc(txt.slice(0,140))}${txt.length>140?'…':''}</div>
       <div class="full" id="full-${c.id}">${esc(txt)}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-sm" onclick="document.getElementById('full-${c.id}').classList.toggle('on')">📄 transcrição</button>
-        <button class="btn-sm" onclick="copyTx('${c.id}')">📋 copiar</button>
-        ${dissections[c.id] ? `<button class="btn-sm" onclick="document.getElementById('diss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="dissbtn-${c.id}" onclick="dissectCreative('${c.id}')">🔬 dissecar</button>`}
+        ${txt?`<button class="btn-sm" onclick="document.getElementById('full-${c.id}').classList.toggle('on')">📄 ${isImg?'copy':'transcrição'}</button>
+        <button class="btn-sm" onclick="copyTx('${c.id}')">📋 copiar</button>`:''}
+        ${isImg ? '' : (dissections[c.id] ? `<button class="btn-sm" onclick="document.getElementById('diss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="dissbtn-${c.id}" onclick="dissectCreative('${c.id}')">🔬 dissecar</button>`)}
         ${dissections[c.id] ? (recreations['creative:'+c.id] ? `<button class="btn-sm" onclick="document.getElementById('rec-creative-${c.id}').classList.toggle('on')">🎬 recriação</button>` : `<button class="btn-sm" id="recbtn-creative-${c.id}" onclick="generateRecreation('${c.id}','creative')">🎬 recriar cena-a-cena</button>`) : ''}
         ${dissections[c.id] ? `<button class="btn-sm" onclick="openProfile('${c.id}','creative')">🗂️ perfil</button>` : ''}
       </div>
@@ -719,8 +727,8 @@ async function setFase(id, fase){
 
 function copyTx(id){
   const c = creatives.find(x=>x.id===id);
-  const txt = (lang==='pt' && c.transcript_pt) ? c.transcript_pt : c.transcript_en;
-  navigator.clipboard.writeText(txt||'').then(()=>toast('Transcrição copiada!'));
+  const txt = c.format==='image' ? c.hook_text : ((lang==='pt' && c.transcript_pt) ? c.transcript_pt : c.transcript_en);
+  navigator.clipboard.writeText(txt||'').then(()=>toast(c.format==='image'?'Copy copiada!':'Transcrição copiada!'));
 }
 
 const SEV = {
@@ -1007,22 +1015,26 @@ async function uploadCreative(){
   const pid = $('libProduct').value, file = $('upFile').files[0];
   const code = $('upCode').value.trim();
   if(!pid || !code){ $('upMsg').textContent='Preencha ao menos o código.'; return; }
-  let video_path = null;
+  let video_path = null, thumb_path = null;
+  const isImg = file && file.type.startsWith('image/');
   const prod = products.find(p=>p.id===pid);
   if(file){
-    $('upMsg').textContent = 'Enviando vídeo...';
+    $('upMsg').textContent = isImg ? 'Enviando imagem...' : 'Enviando vídeo...';
     const path = `${prod.slug}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;
     const {error} = await db.storage.from('aff-creatives').upload(path, file);
     if(error){ $('upMsg').textContent = 'Erro no upload: '+error.message; return; }
-    video_path = path;
+    if(isImg) thumb_path = path; else video_path = path;
   }
+  const copyTxt = $('upCopy').value.trim();
   const {error} = await db.from('aff_creatives').insert({
     product_id: pid, code, ad_group: $('upGroup').value||null, hook_label: $('upHook').value||null,
-    origem: $('upOrigem').value, fase: 'biblioteca', video_path,
+    origem: $('upOrigem').value, fase: 'biblioteca', video_path, thumb_path,
+    format: isImg ? 'image' : 'video',
+    hook_text: isImg && copyTxt ? copyTxt : null,
   });
   if(error){ $('upMsg').textContent = 'Erro: '+error.message; return; }
   $('upMsg').textContent = '✅ Criativo salvo!';
-  ['upCode','upGroup','upHook'].forEach(i=>$(i).value='');
+  ['upCode','upGroup','upHook','upCopy'].forEach(i=>$(i).value='');
   $('upFile').value='';
   loadCreatives();
 }
