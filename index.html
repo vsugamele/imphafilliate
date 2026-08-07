@@ -357,6 +357,30 @@ h2.page{font-size:19px;font-weight:800;margin-bottom:16px}
       </div>
       <div style="margin-top:10px"><button class="btn" onclick="addCompetitorAd()">Salvar</button> <span class="muted" id="compMsg"></span></div>
     </div>
+    <div class="panel">
+      <h3>🔍 Buscar anúncios na Meta Ad Library</h3>
+      <div class="row">
+        <div><label>Palavra-chave (produto, dor, nicho)</label><input id="searchQuery" placeholder="ex: melatonin sleep support"></div>
+        <div style="max-width:120px"><label>País</label>
+          <select id="searchCountry">
+            <option value="US">🇺🇸 US</option>
+            <option value="BR">🇧🇷 BR</option>
+            <option value="CA">🇨🇦 CA</option>
+            <option value="GB">🇬🇧 GB</option>
+            <option value="AU">🇦🇺 AU</option>
+          </select>
+        </div>
+        <div style="max-width:150px"><label>Status</label>
+          <select id="searchStatus">
+            <option value="ACTIVE">Ativos agora</option>
+            <option value="ALL">Todos (ativos + inativos)</option>
+          </select>
+        </div>
+        <div style="max-width:120px"><button class="btn" onclick="searchViralAds()">Buscar</button></div>
+      </div>
+      <div class="muted" id="searchMsg" style="margin-top:8px">Busca na Biblioteca de Anúncios oficial da Meta (Facebook/Instagram) por palavra-chave — cobre anúncios pagos, não conteúdo orgânico viral.</div>
+      <div class="grid" id="searchResults" style="margin-top:14px"></div>
+    </div>
     <div class="grid" id="compGrid"></div>
   </div>
 
@@ -847,6 +871,49 @@ async function delCompetitorAd(id){
   if(error){ toast('Erro: '+error.message); return; }
   competitors = competitors.filter(c=>c.id!==id);
   renderCompetitors();
+}
+
+// ---------- BUSCA META AD LIBRARY ----------
+let lastSearchResults = [];
+
+async function searchViralAds(){
+  const query = $('searchQuery').value.trim();
+  if(!query){ $('searchMsg').textContent = 'Digite uma palavra-chave.'; return; }
+  $('searchMsg').textContent = 'Buscando...';
+  $('searchResults').innerHTML = '';
+  const {data, error} = await db.functions.invoke('find-viral-ads', {body:{
+    query, country: $('searchCountry').value, status: $('searchStatus').value, limit: 15,
+  }});
+  if(error){ $('searchMsg').textContent = 'Erro: ' + error.message; return; }
+  if(data?.error){ $('searchMsg').textContent = 'Erro: ' + data.error; return; }
+  lastSearchResults = data.data || [];
+  $('searchMsg').textContent = lastSearchResults.length + ' anúncios encontrados.';
+  renderSearchResults();
+}
+
+function renderSearchResults(){
+  $('searchResults').innerHTML = lastSearchResults.map((r, i) => `<div class="ccard">
+    <div class="head"><span class="code">${esc(r.page_name)}</span><span class="tag a">${esc((r.platforms||[]).join(', '))}</span></div>
+    <div class="muted">${r.start_date?('desde '+esc(r.start_date)):''}</div>
+    <div class="prev">${esc((r.body_preview||'').slice(0,160))}${(r.body_preview||'').length>160?'…':''}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      ${r.snapshot_url?`<a class="btn-sm" href="${esc(r.snapshot_url)}" target="_blank" style="text-decoration:none;display:inline-block">🔗 ver anúncio</a>`:''}
+      <button class="btn-sm" onclick="importSearchResult(${i})">➕ importar pro swipe</button>
+    </div>
+  </div>`).join('');
+}
+
+async function importSearchResult(i){
+  const r = lastSearchResults[i];
+  if(!r) return;
+  const {error} = await db.from('aff_competitor_ads').insert({
+    brand_name: r.page_name, niche: $('searchQuery').value.trim(), platform: 'meta',
+    source_url: r.snapshot_url, transcript: r.body_preview || null,
+    notes: r.link_title || null,
+  });
+  if(error){ toast('Erro: '+error.message); return; }
+  toast('Importado pro swipe file!');
+  loadCompetitors();
 }
 
 $('costDate') && ($('costDate').value = new Date().toISOString().slice(0,10));
