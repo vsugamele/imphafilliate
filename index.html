@@ -106,6 +106,15 @@ table.ficha td:last-child{color:var(--tx2)}
 .fluxo-step:first-child{border-top:0}
 .fluxo-label{font-weight:700;font-size:10.5px;color:var(--ac2);text-transform:uppercase;letter-spacing:.04em}
 .apdesc{color:var(--tx2);margin:2px 0 0}
+table.scenes{width:100%;font-size:11.5px;margin-top:2px;border-collapse:collapse}
+table.scenes th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--tx3);padding:4px 6px;border-bottom:1px solid var(--border)}
+table.scenes td{padding:6px;border-bottom:1px solid var(--border);vertical-align:top}
+table.scenes .blk{font-weight:700;color:var(--ac2);white-space:nowrap;font-size:10px;text-transform:uppercase}
+table.scenes .time{color:var(--tx3);white-space:nowrap;font-size:10.5px}
+.fullprompt{white-space:pre-wrap;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:10px;font-size:11.5px;color:var(--tx2);max-height:280px;overflow:auto;margin-top:6px}
+.recmeta{font-size:11.5px;color:var(--tx2);margin-bottom:6px}
+.recmeta b{color:var(--tx1)}
+
 .ccard .thumbwrap{position:relative;border-radius:var(--rs);overflow:hidden;background:#000}
 .ccard .thumbwrap img{width:100%;display:block;max-height:300px;object-fit:cover}
 .ccard video{width:100%;border-radius:var(--rs);background:#000;max-height:300px}
@@ -406,7 +415,7 @@ const SB_URL = 'https://sxiqbhcnkzrrenzgncss.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4aXFiaGNua3pycmVuemduY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3NDQ3MDQsImV4cCI6MjA2MjMyMDcwNH0.Ssw2dio8yPEFDZk3Zhh4PTBiXYndJR0nPm1jrXAHgBE';
 const db = supabase.createClient(SB_URL, SB_KEY);
 
-let products = [], creatives = [], dissections = {}, competitors = [], lang = 'en', currentView = 'dash';
+let products = [], creatives = [], dissections = {}, competitors = [], recreations = {}, lang = 'en', currentView = 'dash';
 
 const $ = id => document.getElementById(id);
 const esc = s => (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -507,6 +516,7 @@ async function loadCreatives(){
   if(error){ toast('Erro: '+error.message); return; }
   creatives = data || [];
   await loadDissections(creatives.map(c=>c.id));
+  await loadRecreations('creative', creatives.map(c=>c.id));
   const batches = [...new Set(creatives.map(c=>c.batch).filter(Boolean))].sort();
   const ads = [...new Set(creatives.map(c=>c.ad_group).filter(Boolean))].sort((a,b)=>parseInt(a.replace(/\D/g,''))-parseInt(b.replace(/\D/g,'')));
   $('libBatch').innerHTML = '<option value="">Todos os squads</option>' + batches.map(b=>`<option>${esc(b)}</option>`).join('');
@@ -581,8 +591,10 @@ function renderCreatives(){
         <button class="btn-sm" onclick="document.getElementById('full-${c.id}').classList.toggle('on')">📄 transcrição</button>
         <button class="btn-sm" onclick="copyTx('${c.id}')">📋 copiar</button>
         ${dissections[c.id] ? `<button class="btn-sm" onclick="document.getElementById('diss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="dissbtn-${c.id}" onclick="dissectCreative('${c.id}')">🔬 dissecar</button>`}
+        ${dissections[c.id] ? (recreations['creative:'+c.id] ? `<button class="btn-sm" onclick="document.getElementById('rec-creative-${c.id}').classList.toggle('on')">🎬 recriação</button>` : `<button class="btn-sm" id="recbtn-creative-${c.id}" onclick="generateRecreation('${c.id}','creative')">🎬 recriar cena-a-cena</button>`) : ''}
       </div>
       ${renderDissBlock(c.id)}
+      ${renderRecreationBlock(c.id,'creative')}
     </div>`;
   }).join('');
 }
@@ -613,6 +625,75 @@ async function loadDissections(ids){
   if(error){ console.error(error); return; }
   dissections = {};
   (data||[]).forEach(d=>{ if(!dissections[d.creative_id]) dissections[d.creative_id] = d; });
+}
+
+async function loadRecreations(type, ids){
+  ids = (ids||[]).filter(Boolean);
+  if(!ids.length) return;
+  const col = type==='creative' ? 'creative_id' : 'competitor_ad_id';
+  const {data, error} = await db.from('aff_recreation_prompts').select('*').in(col, ids).order('created_at', {ascending:false});
+  if(error){ console.error(error); return; }
+  (data||[]).forEach(r=>{
+    const key = type + ':' + (type==='creative' ? r.creative_id : r.competitor_ad_id);
+    if(!recreations[key]) recreations[key] = r;
+  });
+}
+
+function renderScenes(scenes){
+  if(!scenes || !scenes.length) return '<div class="muted">—</div>';
+  return `<table class="scenes"><tr><th>Bloco</th><th>Tempo</th><th>Fala (EN)</th><th>Fala (PT)</th><th>Direção visual</th><th>Função</th></tr>${
+    scenes.map(s=>`<tr>
+      <td class="blk">${esc(s.block||'')}</td>
+      <td class="time">${esc(s.time||'')}</td>
+      <td>${esc(s.fala_en||'')}</td>
+      <td>${esc(s.fala_pt||'')}</td>
+      <td>${esc(s.direcao_visual||'')}</td>
+      <td class="muted">${esc(s.funcao_persuasiva||'')}</td>
+    </tr>`).join('')
+  }</table>`;
+}
+
+function renderRecreationBlock(id, type){
+  const key = type + ':' + id;
+  const r = recreations[key];
+  if(!r) return '';
+  return `<div class="diss" id="rec-${type}-${id}">
+    <h4>🎬 Recriação cena a cena</h4>
+    <div class="recmeta">${r.title?`<b>${esc(r.title)}</b> · `:''}${r.avatar?`avatar: ${esc(r.avatar)} · `:''}${r.angle?`ângulo: ${esc(r.angle)}`:''}</div>
+    ${renderScenes(r.scenes)}
+    ${r.full_prompt ? `<h4>Prompt completo (colar na ferramenta de vídeo IA)</h4><div class="fullprompt">${esc(r.full_prompt)}</div><div style="margin-top:8px"><button class="btn-sm" onclick="copyRecreation('${type}','${id}')">📋 copiar prompt</button></div>` : ''}
+    <div style="margin-top:10px"><button class="btn-sm" onclick="generateRecreation('${id}','${type}')">🔁 gerar nova versão</button></div>
+  </div>`;
+}
+
+function copyRecreation(type, id){
+  const key = type + ':' + id;
+  const r = recreations[key];
+  if(!r || !r.full_prompt){ toast('Sem prompt pra copiar.'); return; }
+  navigator.clipboard.writeText(r.full_prompt).then(()=>toast('Prompt copiado!'));
+}
+
+async function generateRecreation(id, type){
+  const btn = document.getElementById('recbtn-'+type+'-'+id);
+  if(btn){ btn.disabled = true; btn.textContent = '🎬 gerando...'; }
+  toast('Gerando recriação cena a cena... isso pode levar um pouco mais.');
+  const body = type==='creative' ? {source_type:'creative', creative_id:id} : {source_type:'competitor', competitor_ad_id:id};
+  const {data, error} = await db.functions.invoke('generate-recreation-prompt', {body});
+  if(error){
+    toast('Erro: ' + error.message);
+    if(btn){ btn.disabled = false; btn.textContent = '🎬 recriar cena-a-cena'; }
+    return;
+  }
+  if(data?.error){
+    toast('Erro: ' + data.error);
+    if(btn){ btn.disabled = false; btn.textContent = '🎬 recriar cena-a-cena'; }
+    return;
+  }
+  recreations[type+':'+id] = data.data;
+  toast('Recriação pronta!');
+  if(type==='creative') renderCreatives(); else renderCompetitors();
+  const el = document.getElementById('rec-'+type+'-'+id);
+  if(el) el.classList.add('on');
 }
 
 function fmtDur(s){
@@ -851,6 +932,7 @@ async function loadCompetitors(){
   const {data, error} = await db.from('aff_competitor_ads').select('*').order('created_at', {ascending:false});
   if(error){ console.error(error); return; }
   competitors = data || [];
+  await loadRecreations('competitor', competitors.map(c=>c.id));
   renderCompetitors();
 }
 
@@ -883,9 +965,11 @@ function renderCompetitors(){
     <div style="display:flex;gap:8px;flex-wrap:wrap">
       ${c.transcript?`<button class="btn-sm" onclick="document.getElementById('compfull-${c.id}').classList.toggle('on')">📄 transcrição</button>`:''}
       ${c.summary ? `<button class="btn-sm" onclick="document.getElementById('compdiss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="compdissbtn-${c.id}" onclick="dissectCompetitorAd('${c.id}')">🔬 dissecar</button>`}
+      ${c.summary ? (recreations['competitor:'+c.id] ? `<button class="btn-sm" onclick="document.getElementById('rec-competitor-${c.id}').classList.toggle('on')">🎬 recriação</button>` : `<button class="btn-sm" id="recbtn-competitor-${c.id}" onclick="generateRecreation('${c.id}','competitor')">🎬 recriar cena-a-cena</button>`) : ''}
       <button class="btn-sm" onclick="delCompetitorAd('${c.id}')">🗑</button>
     </div>
     ${renderCompDissBlock(c)}
+    ${renderRecreationBlock(c.id,'competitor')}
   </div>`).join('');
 }
 
