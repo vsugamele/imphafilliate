@@ -245,6 +245,32 @@ table.rficha tr:hover td{background:rgba(129,140,248,.06)}
 .pp-actions{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
 .pp-done{opacity:.5}
 .pp-done .pp-num{background:var(--green)}
+/* esteira P1-P4 */
+.est-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
+.est-tabs button{background:var(--card2);border:1px solid var(--border);color:var(--tx2);padding:7px 14px;border-radius:var(--rs);font-size:12.5px;font-weight:700}
+.est-tabs button.on{background:var(--acdim);color:var(--ac2);border-color:var(--ac)}
+.est-params{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+.est-params>div{max-width:130px}
+.est-zonas{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0 14px}
+.est-zonas .z{border-radius:var(--rs);padding:8px 10px;font-size:11.5px;border:1px solid var(--border)}
+.est-zonas .zt{font-weight:800;font-size:11px;margin-bottom:2px}
+table.est{width:100%;font-size:12px;border-collapse:collapse;margin:6px 0 10px}
+table.est th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--tx3);padding:5px 6px;border-bottom:1px solid var(--border);white-space:nowrap}
+table.est td{padding:4px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+table.est input{padding:5px 8px;font-size:12px;min-width:60px}
+table.est input.wide{min-width:150px}
+.vchip{display:inline-block;font-size:10.5px;font-weight:800;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.v-ok{background:rgba(52,211,153,.15);color:#4ade80}
+.v-mid{background:rgba(251,191,36,.15);color:#fbbf24}
+.v-bad{background:rgba(251,113,133,.15);color:#fb7185}
+.v-info{background:var(--acdim);color:var(--ac2)}
+.v-mut{background:var(--card2);color:var(--tx3)}
+.est-acao{font-size:11.5px;color:var(--tx2);max-width:280px}
+.est-resumo{display:flex;gap:14px;flex-wrap:wrap;background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;font-size:12.5px;margin:8px 0}
+.est-resumo b{color:var(--tx)}
+.est-note{font-size:11.5px;color:var(--tx3);margin:6px 0}
+.est-save{margin-top:10px;display:flex;gap:10px;align-items:center}
+h4.est-h{margin:16px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ac2)}
 </style>
 </head>
 <body>
@@ -399,10 +425,28 @@ table.rficha tr:hover td{background:rgba(129,140,248,.06)}
   <!-- ADS -->
   <div id="v-ads" class="hidden">
     <h2 class="page">Resultados de Ads</h2>
+
+    <div class="panel">
+      <h3>🧭 Esteira de Escala — estático (P1 texto → P2 imagem → P3 escala → P4 cemitério)</h3>
+      <div class="est-params">
+        <div><label>💵 Payout ($)</label><input type="number" id="estpPayout" oninput="estParamChange()"></div>
+        <div><label>🎯 CPA alvo ($)</label><input type="number" id="estpCpa" oninput="estParamChange()"></div>
+        <div><label>🛒 ICs por venda</label><input type="number" id="estpIcs" oninput="estParamChange()"></div>
+        <div style="max-width:none;flex:1" class="muted" id="estpDerivados"></div>
+      </div>
+      <div class="est-zonas" id="estpZonas"></div>
+      <div class="est-tabs">
+        <button class="on" data-p="p1" onclick="estGo('p1')">P1 · Texto</button>
+        <button data-p="p2" onclick="estGo('p2')">P2 · Imagem</button>
+        <button data-p="p3" onclick="estGo('p3')">P3 · Escala</button>
+        <button data-p="p4" onclick="estGo('p4')">P4 · Cemitério</button>
+      </div>
+      <div id="estPane"></div>
+    </div>
     <div class="panel">
       <h3>📥 Importar planilha (CSV exportado do Gerenciador Meta)</h3>
       <div class="row">
-        <div style="max-width:220px"><label>Produto</label><select id="adsProduct"></select></div>
+        <div style="max-width:220px"><label>Produto</label><select id="adsProduct" onchange="estLoad(true)"></select></div>
         <div><label>Arquivo CSV</label><input type="file" id="adsFile" accept=".csv,text/csv"></div>
         <div style="max-width:140px"><button class="btn" onclick="importAdsCsv()">Importar</button></div>
       </div>
@@ -586,6 +630,7 @@ function go(v){
   document.querySelectorAll('nav .tab').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
   ['dash','lib','ads','costs','prods','comp','rel'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
   if(v==='rel' && !relLoaded) loadReport();
+  if(v==='ads') estLoad();
 }
 
 // ---------- DASHBOARD ----------
@@ -1522,6 +1567,308 @@ async function delCompetitorAd(id){
 }
 
 // ---------- BUSCA META AD LIBRARY ----------
+// ---------- ESTEIRA P1-P4 (estático) ----------
+// Persistência: aff_insights (type='padrao', metadata.kind='esteira'), 1 doc por fase.
+let estState = null;
+
+function estBlank(){
+  return {
+    pane:'p1',
+    params:{payout:70, cpa:45, ics:8},
+    docs:{},
+    data:{
+      p1:{semana:'', rows:Array.from({length:10},()=>({concept:'',gasto:'',ic:'',vendas:''}))},
+      p2:{concept:'', pt:'', rodada:'1', dias:Array.from({length:6},()=>({gasto:'',vendas:''})), cp:{ic:'',pv:''}, conj:Array.from({length:5},(_,i)=>({nome:'v'+(i+1),gasto:'',vendas:''}))},
+      p3:{verba:'', ontem:'', lances:Array.from({length:8},()=>({lance:'',gasto:'',cresceu:''})), angulos:Array.from({length:8},()=>({nome:'',entrou:'',gasto7:'',vendas7:'',diasSem:''}))},
+      p4:{rows:Array.from({length:10},()=>({nome:'',entrou:'',gasto7:'',vendas7:'',diasCpa:''}))}
+    }
+  };
+}
+
+async function estLoad(force){
+  if(estState && !force) return;
+  estState = estBlank();
+  const pid = $('adsProduct').value || (products[0]&&products[0].id);
+  if(!pid) return;
+  estState.pid = pid;
+  const prod = products.find(p=>p.id===pid);
+  if(prod && prod.brief && prod.brief.oferta){
+    estState.params.payout = Number(prod.brief.oferta.payout_usd)||70;
+    estState.params.cpa = Number(prod.brief.oferta.cpa_alvo_usd)||45;
+  }
+  const {data, error} = await db.from('aff_insights').select('*')
+    .eq('product_id', pid).eq('type','padrao');
+  if(!error) (data||[]).forEach(r=>{
+    const m = r.metadata||{};
+    if(m.kind!=='esteira') return;
+    if(m.key==='params' && m.data) estState.params = {...estState.params, ...m.data};
+    else if(estState.data[m.key] && m.data) estState.data[m.key] = m.data;
+    estState.docs[m.key] = r.id;
+  });
+  renderEsteira();
+}
+
+async function estSave(key){
+  const pid = estState.pid;
+  const payload = key==='params' ? estState.params : estState.data[key];
+  const row = {product_id: pid, type:'padrao', content:'[esteira] '+key,
+    metadata:{kind:'esteira', key, data: payload}};
+  let error;
+  if(estState.docs[key]) ({error} = await db.from('aff_insights').update(row).eq('id', estState.docs[key]));
+  else {
+    const r = await db.from('aff_insights').insert(row).select();
+    error = r.error; if(!error) estState.docs[key] = r.data[0].id;
+  }
+  toast(error ? 'Erro ao salvar: '+error.message : 'Esteira salva ('+key.toUpperCase()+')');
+}
+
+function estParamChange(){
+  estState.params.payout = Number($('estpPayout').value)||0;
+  estState.params.cpa = Number($('estpCpa').value)||0;
+  estState.params.ics = Number($('estpIcs').value)||8;
+  estSave('params');
+  renderEsteira();
+}
+
+function estGo(p){ estState.pane = p; document.querySelectorAll('.est-tabs button').forEach(b=>b.classList.toggle('on', b.dataset.p===p)); renderEstPane(); }
+
+function estIn(pane, path, idx, field, val){
+  const d = estState.data[pane];
+  if(idx===null) (path ? d[path] : d)[field] = val;
+  else d[path][idx][field] = val;
+  renderEstPane();
+}
+
+function estZona(cpa){
+  const {payout, cpa:alvo} = estState.params;
+  if(cpa===null || !isFinite(cpa)) return {label:'SEM VENDA', cls:'v-mut'};
+  if(cpa<=alvo) return {label:'ESCALA', cls:'v-ok'};
+  if(cpa<=payout*0.8) return {label:'LUCRATIVA', cls:'v-ok'};
+  if(cpa<=payout) return {label:'MAGRA', cls:'v-mid'};
+  return {label:'PREJUÍZO', cls:'v-bad'};
+}
+const estN = v => { const n = parseFloat(String(v).replace(',','.')); return isFinite(n)?n:0; };
+const estF = n => '$'+(Math.round(n*100)/100).toLocaleString('en-US');
+
+function renderEsteira(){
+  const {payout, cpa, ics} = estState.params;
+  $('estpPayout').value = payout; $('estpCpa').value = cpa; $('estpIcs').value = ics;
+  const tetoQ = ics? cpa/ics : 0, tetoM = tetoQ*1.75;
+  $('estpDerivados').innerHTML = `Breakeven <b>${estF(payout)}</b> · Margem no alvo <b>${estF(payout-cpa)}</b> · ROAS alvo <b>${cpa?(payout/cpa).toFixed(2):'—'}</b> · Teto IC qualificado <b>${estF(tetoQ)}</b> · Teto "mais textos" <b>${estF(tetoM)}</b> · Cost cap P4 <b>${estF(cpa*0.7)}</b>`;
+  $('estpZonas').innerHTML = `
+    <div class="z"><div class="zt" style="color:#4ade80">🟢 ESCALA</div>CPA ≤ ${estF(cpa)} — duplica, sobe lance</div>
+    <div class="z"><div class="zt" style="color:#4ade80">🟩 LUCRATIVA</div>${estF(cpa)} – ${estF(payout*0.8)} — margem boa</div>
+    <div class="z"><div class="zt" style="color:#fbbf24">🟡 MAGRA</div>${estF(payout*0.8)} – ${estF(payout)} — só com volume</div>
+    <div class="z"><div class="zt" style="color:#fb7185">🔴 PREJUÍZO</div>&gt; ${estF(payout)} — mata</div>`;
+  renderEstPane();
+}
+
+function renderEstPane(){
+  const p = estState.pane;
+  if(p==='p1') return renderEstP1();
+  if(p==='p2') return renderEstP2();
+  if(p==='p3') return renderEstP3();
+  renderEstP4();
+}
+
+function renderEstP1(){
+  const d = estState.data.p1;
+  const {cpa, ics} = estState.params;
+  const tetoQ = ics? cpa/ics : 0, tetoM = tetoQ*1.75;
+  let inv=0, q=0, mt=0, mortos=0;
+  const rows = d.rows.map((r,i)=>{
+    const g=estN(r.gasto), ic=estN(r.ic), v=estN(r.vendas);
+    inv+=g;
+    let ver='', acao='';
+    if(!g && !r.concept){ ver=''; }
+    else if(!g){ ver='<span class="vchip v-mut">AGUARDA</span>'; acao='Preenche o gasto no fim do dia 2.'; }
+    else {
+      const cIC = ic>0 ? g/ic : null;
+      if(v>0 || (cIC!==null && cIC<=tetoQ)){ ver='<span class="vchip v-ok">QUALIFICADO</span>'; acao='Vai pra P2 em ABO 1-5-10 com esse concept.'; q++; }
+      else if(cIC!==null && cIC<=tetoM){ ver='<span class="vchip v-mid">MAIS TEXTOS</span>'; acao='Concept respira — produz mais primary texts e roda de novo.'; mt++; }
+      else if(cIC===null && g>=tetoM*2){ ver='<span class="vchip v-bad">MATA</span>'; acao='Gastou sem nenhum IC. Mata o concept.'; mortos++; }
+      else if(cIC===null){ ver='<span class="vchip v-mut">CEDO</span>'; acao='Sem IC ainda, gasto baixo — espera completar os 2 dias.'; }
+      else { ver='<span class="vchip v-bad">MATA</span>'; acao='Custo por IC acima do teto. Mata o concept.'; mortos++; }
+    }
+    const cIC = ic>0&&g ? estF(g/ic) : '—';
+    return `<tr>
+      <td><input class="wide" placeholder="Ângulo · avatar (ex.: Sono profundo · M55+)" value="${esc(r.concept)}" onchange="estIn('p1','rows',${i},'concept',this.value)"></td>
+      <td><input type="number" value="${esc(r.gasto)}" onchange="estIn('p1','rows',${i},'gasto',this.value)"></td>
+      <td><input type="number" value="${esc(r.ic)}" onchange="estIn('p1','rows',${i},'ic',this.value)"></td>
+      <td><input type="number" value="${esc(r.vendas)}" onchange="estIn('p1','rows',${i},'vendas',this.value)"></td>
+      <td>${cIC}</td><td>${ver}</td><td class="est-acao">${acao}</td>
+    </tr>`;
+  }).join('');
+  $('estPane').innerHTML = `
+    <div class="est-note">ABO 1-5-3 · $40/conjunto/dia · <b>2 dias sem mexer</b>. Cada conjunto = 1 concept (ângulo + avatar), 3 anúncios com o mesmo concept. Veredito no fim do dia 2 pelo custo por IC (checkout iniciado).</div>
+    <div style="max-width:180px;margin-bottom:6px"><label>Semana</label><input placeholder="S32" value="${esc(d.semana)}" onchange="estIn('p1',null,null,'semana',this.value)"></div>
+    <table class="est"><tr><th>Concept (ângulo + avatar)</th><th>Gasto $</th><th>IC</th><th>Vendas</th><th>Custo/IC</th><th>Veredito</th><th>Ação</th></tr>${rows}</table>
+    <div class="est-resumo"><span>Investimento: <b>${estF(inv)}</b></span><span>Qualificados: <b>${q}</b></span><span>Mais textos: <b>${mt}</b></span><span>Mortos: <b>${mortos}</b></span><span>Custo por qualificado: <b>${q?estF(inv/q):'—'}</b></span></div>
+    <div class="est-save"><button class="btn" onclick="estSave('p1')">💾 salvar P1</button><span class="muted">salva no banco — histórico da rodada</span></div>`;
+}
+
+function renderEstP2(){
+  const d = estState.data.p2;
+  const {payout, cpa, ics} = estState.params;
+  let gAc=0, vAc=0;
+  const diasRows = d.dias.map((r,i)=>{
+    const g=estN(r.gasto), v=estN(r.vendas);
+    gAc+=g; vAc+=v;
+    const preencheu = r.gasto!=='';
+    const cpaAc = vAc>0? gAc/vAc : null;
+    const z = preencheu? estZona(cpaAc) : null;
+    let leitura='';
+    if(preencheu){
+      if(i<2) leitura='<span class="vchip v-mut">NÃO JULGA</span> só no dia 3';
+      else if(cpaAc!==null && cpaAc<=cpa) leitura='<span class="vchip v-ok">APROVADO</span> vai pra P3';
+      else if(cpaAc!==null && cpaAc<=cpa*1.5) leitura='<span class="vchip v-mid">ESTENDE +3 DIAS</span>';
+      else leitura='<span class="vchip v-bad">REPROVADO</span> volta pra P1 com texto novo';
+    }
+    return `<tr><td>Dia ${i+1}</td>
+      <td><input type="number" value="${esc(r.gasto)}" onchange="estIn('p2','dias',${i},'gasto',this.value)"></td>
+      <td><input type="number" value="${esc(r.vendas)}" onchange="estIn('p2','dias',${i},'vendas',this.value)"></td>
+      <td>${preencheu?estF(gAc):''}</td><td>${preencheu?vAc:''}</td>
+      <td>${preencheu&&cpaAc!==null?estF(cpaAc):(preencheu?'—':'')}</td>
+      <td>${z?`<span class="vchip ${z.cls}">${z.label}</span>`:''}</td>
+      <td class="est-acao">${leitura}</td></tr>`;
+  }).join('');
+  const g2 = estN(d.dias[0].gasto)+estN(d.dias[1].gasto);
+  const icT=estN(d.cp.ic), pvT=estN(d.cp.pv);
+  const alvoIC = ics? cpa/ics:0, beIC = ics? payout/ics:0;
+  const cpRow = (nome,total,alvo,be)=>{
+    const custo = total>0? g2/total : null;
+    let l='';
+    if(custo!==null){
+      if(custo<=alvo) l='<span class="vchip v-ok">no ritmo do CPA alvo</span>';
+      else if(custo<=be) l='<span class="vchip v-mid">entre alvo e breakeven</span>';
+      else l='<span class="vchip v-bad">acima do breakeven</span>';
+    }
+    return `<tr><td>${nome}</td><td>${total||''}</td><td>${custo!==null?estF(custo):''}</td><td>${estF(alvo)}</td><td>${estF(be)}</td><td>${l}</td></tr>`;
+  };
+  const conjRows = d.conj.map((r,i)=>{
+    const g=estN(r.gasto), v=estN(r.vendas);
+    const cpaC = v>0? g/v : null;
+    const z = r.gasto!==''? estZona(cpaC) : null;
+    let ver='', acao='';
+    if(z){
+      if(v===0 && g>0){ ver='<span class="vchip v-bad">MATA</span>'; acao='Pausa o conjunto. Não mata o concept.'; }
+      else if(z.label==='ESCALA'||z.label==='LUCRATIVA'){ ver='<span class="vchip v-ok">DUPLICA</span>'; acao='Duplica na mesma campanha, mesma verba.'; }
+      else if(z.label==='MAGRA'){ ver='<span class="vchip v-mid">MANTÉM</span>'; acao='Deixa rodando. Não duplica.'; }
+      else { ver='<span class="vchip v-bad">MATA</span>'; acao='Pausa o conjunto.'; }
+    }
+    return `<tr><td><input style="min-width:50px" value="${esc(r.nome)}" onchange="estIn('p2','conj',${i},'nome',this.value)"></td>
+      <td><input type="number" value="${esc(r.gasto)}" onchange="estIn('p2','conj',${i},'gasto',this.value)"></td>
+      <td><input type="number" value="${esc(r.vendas)}" onchange="estIn('p2','conj',${i},'vendas',this.value)"></td>
+      <td>${cpaC!==null?estF(cpaC):''}</td><td>${z?`<span class="vchip ${z.cls}">${z.label}</span>`:''}</td><td>${ver}</td><td class="est-acao">${acao}</td></tr>`;
+  }).join('');
+  $('estPane').innerHTML = `
+    <div class="est-note">ABO 1-5-10 · $40/conjunto/dia · <b>3 dias</b>. Uma cópia por primary text vencedor do P1: 5 conjuntos idênticos, mesmo texto, até 10 adformats (imagens). Julga só no dia 3 pelo CPA acumulado.</div>
+    <div class="row" style="margin-bottom:8px">
+      <div><label>Concept</label><input value="${esc(d.concept)}" onchange="estIn('p2',null,null,'concept',this.value)"></div>
+      <div><label>Primary text</label><input value="${esc(d.pt)}" placeholder="PT2" onchange="estIn('p2',null,null,'pt',this.value)"></div>
+      <div style="max-width:110px"><label>Rodada</label><input type="number" value="${esc(d.rodada)}" onchange="estIn('p2',null,null,'rodada',this.value)"></div>
+    </div>
+    <h4 class="est-h">Diário — agregado dos 5 conjuntos</h4>
+    <table class="est"><tr><th></th><th>Gasto $</th><th>Vendas</th><th>Gasto ac.</th><th>Vendas ac.</th><th>CPA ac.</th><th>Zona</th><th>Leitura</th></tr>${diasRows}</table>
+    <h4 class="est-h">Checkpoint do dia 2 — sinal antecipado (não decide nada)</h4>
+    <div class="row" style="margin-bottom:6px">
+      <div style="max-width:140px"><label>IC acumulado (2d)</label><input type="number" value="${esc(d.cp.ic)}" onchange="estIn('p2','cp',null,'ic',this.value)"></div>
+      <div style="max-width:140px"><label>Pageviews (2d)</label><input type="number" value="${esc(d.cp.pv)}" onchange="estIn('p2','cp',null,'pv',this.value)"></div>
+    </div>
+    <table class="est"><tr><th>Métrica</th><th>Total</th><th>Custo</th><th>Alvo</th><th>Breakeven</th><th>Leitura</th></tr>
+      ${cpRow('IC', icT, alvoIC, beIC)}${cpRow('Pageview', pvT, alvoIC/3, beIC/3)}</table>
+    <h4 class="est-h">Avaliação por conjunto — no dia 3</h4>
+    <table class="est"><tr><th>Conjunto</th><th>Gasto $</th><th>Vendas</th><th>CPA</th><th>Zona</th><th>Veredito</th><th>Ação</th></tr>${conjRows}</table>
+    <div class="est-save"><button class="btn" onclick="estSave('p2')">💾 salvar P2</button></div>`;
+}
+
+function renderEstP3(){
+  const d = estState.data.p3;
+  const verba=estN(d.verba), ontem=estN(d.ontem);
+  const pct = verba>0? ontem/verba : null;
+  let freio='', acaoHoje='';
+  if(pct!==null){
+    if(pct>=0.95){ freio='A VERBA'; acaoHoje='Sobe a verba ~20% (1 mexida hoje). <b>Não mexe no lance.</b>'; }
+    else { freio='O LANCE'; acaoHoje='Sobe o lance ~17% e espera 48h. <b>Não mexe na verba.</b>'; }
+  }
+  const lanceRows = d.lances.map((r,i)=>{
+    const l=estN(r.lance);
+    let acao='';
+    if(r.lance!==''){
+      if(r.cresceu==='SIM') acao=`Sobe pra <b>${estF(l*1.175)}</b> e espera 48h.`;
+      else if(r.cresceu==='NAO') acao='<b>PARA.</b> Volta pro lance anterior — achou o teto.';
+      else acao='Aguardando 48h de leitura.';
+    }
+    return `<tr><td>${i+1}</td>
+      <td><input type="number" value="${esc(r.lance)}" onchange="estIn('p3','lances',${i},'lance',this.value)"></td>
+      <td><input type="number" value="${esc(r.gasto)}" onchange="estIn('p3','lances',${i},'gasto',this.value)"></td>
+      <td><select onchange="estIn('p3','lances',${i},'cresceu',this.value)"><option value=""${r.cresceu===''?' selected':''}>—</option><option${r.cresceu==='SIM'?' selected':''}>SIM</option><option value="NAO"${r.cresceu==='NAO'?' selected':''}>NÃO</option></select></td>
+      <td class="est-acao">${acao}</td></tr>`;
+  }).join('');
+  const angRows = d.angulos.map((r,i)=>{
+    const g=estN(r.gasto7), v=estN(r.vendas7), ds=estN(r.diasSem);
+    const cpa7 = v>0? g/v : null;
+    const z = r.nome? estZona(cpa7) : null;
+    let status='';
+    if(r.nome){
+      if(ds>=7) status='<span class="vchip v-info">→ CEMITÉRIO</span> escalou e secou — move pro P4';
+      else if(z && z.label==='PREJUÍZO') status='<span class="vchip v-bad">REVISA</span> CPA acima do payout';
+      else if(g===0) status='<span class="vchip v-mut">SEM GASTO</span>';
+      else status='<span class="vchip v-ok">RODANDO</span>';
+    }
+    return `<tr><td><input class="wide" value="${esc(r.nome)}" onchange="estIn('p3','angulos',${i},'nome',this.value)"></td>
+      <td><input style="min-width:90px" value="${esc(r.entrou)}" placeholder="2026-08-01" onchange="estIn('p3','angulos',${i},'entrou',this.value)"></td>
+      <td><input type="number" value="${esc(r.gasto7)}" onchange="estIn('p3','angulos',${i},'gasto7',this.value)"></td>
+      <td><input type="number" value="${esc(r.vendas7)}" onchange="estIn('p3','angulos',${i},'vendas7',this.value)"></td>
+      <td>${cpa7!==null?estF(cpa7):''}</td>
+      <td><input type="number" style="min-width:50px" value="${esc(r.diasSem)}" onchange="estIn('p3','angulos',${i},'diasSem',this.value)"></td>
+      <td class="est-acao">${status}</td></tr>`;
+  }).join('');
+  $('estPane').innerHTML = `
+    <div class="est-note">CBO perpétuo com bid cap · 1 conjunto por ângulo · dura meses. Lance inicial = 60% do CPA alvo (${estF(estState.params.cpa*0.6)}). Teto econômico = 80% do payout (${estF(estState.params.payout*0.8)}).</div>
+    <h4 class="est-h">Rotina de 10 segundos — antes de qualquer clique</h4>
+    <div class="row" style="margin-bottom:6px">
+      <div style="max-width:150px"><label>Verba da campanha hoje</label><input type="number" value="${esc(d.verba)}" onchange="estIn('p3',null,null,'verba',this.value)"></div>
+      <div style="max-width:150px"><label>Gasto de ontem</label><input type="number" value="${esc(d.ontem)}" onchange="estIn('p3',null,null,'ontem',this.value)"></div>
+    </div>
+    ${pct!==null?`<div class="est-resumo"><span>% da verba gasta: <b>${(pct*100).toFixed(0)}%</b></span><span>Freio apertado: <b>${freio}</b></span><span class="est-acao">${acaoHoje}</span></div><div class="est-note">Nunca mexe na verba e no lance no mesmo dia.</div>`:''}
+    <h4 class="est-h">Escada do lance — sobe ~17%, espera 48h, para quando o gasto não cresce</h4>
+    <table class="est"><tr><th>Degrau</th><th>Lance $</th><th>Gasto médio/dia</th><th>Cresceu?</th><th>Ação</th></tr>${lanceRows}</table>
+    <h4 class="est-h">Ângulos ativos — 1 conjunto por ângulo</h4>
+    <table class="est"><tr><th>Ângulo</th><th>Entrou em</th><th>Gasto 7d</th><th>Vendas 7d</th><th>CPA 7d</th><th>Dias sem gastar</th><th>Status</th></tr>${angRows}</table>
+    <div class="est-save"><button class="btn" onclick="estSave('p3')">💾 salvar P3</button></div>`;
+}
+
+function renderEstP4(){
+  const d = estState.data.p4;
+  const {cpa} = estState.params;
+  let ativos=0, gasto7t=0;
+  const rows = d.rows.map((r,i)=>{
+    const g=estN(r.gasto7), v=estN(r.vendas7), dc=estN(r.diasCpa);
+    const cpa7 = v>0? g/v : null;
+    let status='';
+    if(r.nome){
+      ativos++; gasto7t+=g;
+      if(g===0) status='<span class="vchip v-mut">DORMINDO</span> normal — não faz nada';
+      else if(dc>=3) status='<span class="vchip v-ok">VOLTA PRA P3</span> sai do cemitério, cria conjunto novo no P3';
+      else if(v>0) status='<span class="vchip v-info">CATANDO</span> achando inventário barato — deixa';
+      else status='<span class="vchip v-mid">GASTOU SEM VENDA</span> o cost cap segura — observa';
+    }
+    return `<tr><td><input class="wide" placeholder="Ângulo · AdFormat" value="${esc(r.nome)}" onchange="estIn('p4','rows',${i},'nome',this.value)"></td>
+      <td><input style="min-width:90px" value="${esc(r.entrou)}" placeholder="2026-07-03" onchange="estIn('p4','rows',${i},'entrou',this.value)"></td>
+      <td><input type="number" value="${esc(r.gasto7)}" onchange="estIn('p4','rows',${i},'gasto7',this.value)"></td>
+      <td><input type="number" value="${esc(r.vendas7)}" onchange="estIn('p4','rows',${i},'vendas7',this.value)"></td>
+      <td>${cpa7!==null?estF(cpa7):''}</td>
+      <td><input type="number" style="min-width:50px" value="${esc(r.diasCpa)}" onchange="estIn('p4','rows',${i},'diasCpa',this.value)"></td>
+      <td class="est-acao">${status}</td></tr>`;
+  }).join('');
+  $('estPane').innerHTML = `
+    <div class="est-note">CBO 1-1-10 com cost cap · permanente. Setup (monta 1 vez, não mexe): cost cap = <b>${estF(cpa*0.7)}</b> (70% do CPA alvo) · verba $500/dia · só entra quem escalou no P3 e ficou 7+ dias com gasto zero · sai quem gastou 3 dias seguidos dentro do CPA.</div>
+    <table class="est"><tr><th>Ângulo · AdFormat</th><th>Entrou em</th><th>Gasto 7d</th><th>Vendas 7d</th><th>CPA</th><th>Dias seguidos no CPA</th><th>Status</th></tr>${rows}</table>
+    <div class="est-resumo"><span>No cemitério: <b>${ativos}</b></span><span>Vagas até o teto (10): <b>${10-ativos}</b></span><span>Gasto 7d: <b>${estF(gasto7t)}</b> <span class="muted">(zero na maioria das semanas é o esperado)</span></span></div>
+    <div class="est-save"><button class="btn" onclick="estSave('p4')">💾 salvar P4</button></div>`;
+}
+
 // ---------- RELATÓRIO AD POR AD ----------
 function setRelSource(s){
   relSource = s;
