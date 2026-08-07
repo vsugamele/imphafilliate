@@ -298,6 +298,7 @@ h4.est-h{margin:16px 0 6px;font-size:11px;text-transform:uppercase;letter-spacin
     <button class="tab" data-v="prods" onclick="go('prods')">📦 Produtos</button>
     <button class="tab" data-v="comp" onclick="go('comp')">🕵️ Concorrentes</button>
     <button class="tab" data-v="rel" onclick="go('rel')">🧾 Relatório</button>
+    <button class="tab" data-v="ang" onclick="go('ang')">🎯 Ângulos</button>
     <div class="spacer"></div>
     <span class="user" id="userEmail"></span>
     <button class="btn-sm" onclick="doLogout()">sair</button>
@@ -548,6 +549,27 @@ h4.est-h{margin:16px 0 6px;font-size:11px;text-transform:uppercase;letter-spacin
     <div class="grid" id="compGrid"></div>
   </div>
 
+  <!-- BANCO DE ÂNGULOS -->
+  <div id="v-ang" class="hidden">
+    <div class="rel-top">
+      <div class="rel-kicker">Banco de ângulos</div>
+      <div class="rel-title">Catálogo de ângulos — testados e sugeridos</div>
+      <div class="rel-meta2" id="angMeta">agregado das recriações, do perfil do produto e das análises de concorrente</div>
+    </div>
+    <div class="rel-filters">
+      <select id="angFiltro" onchange="renderAngles()">
+        <option value="">Todos</option>
+        <option value="sugerido">💡 Sugeridos (não testados)</option>
+        <option value="usado">🎬 Usados em recriação</option>
+        <option value="perfil">📋 Do perfil do produto</option>
+        <option value="nao_explorado">🕳 Não explorados</option>
+      </select>
+      <input type="text" id="angSearch" placeholder="Buscar ângulo..." oninput="renderAngles()">
+      <span class="muted" id="angCount"></span>
+    </div>
+    <div class="grid" id="angGrid"></div>
+  </div>
+
   <!-- RELATÓRIO AD POR AD -->
   <div id="v-rel" class="hidden">
     <div class="rel-top">
@@ -628,9 +650,10 @@ function fillProductSelects(){
 function go(v){
   currentView = v;
   document.querySelectorAll('nav .tab').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
-  ['dash','lib','ads','costs','prods','comp','rel'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
+  ['dash','lib','ads','costs','prods','comp','rel','ang'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
   if(v==='rel' && !relLoaded) loadReport();
   if(v==='ads') estLoad();
+  if(v==='ang' && !angState) loadAngles();
 }
 
 // ---------- DASHBOARD ----------
@@ -1867,6 +1890,102 @@ function renderEstP4(){
     <table class="est"><tr><th>Ângulo · AdFormat</th><th>Entrou em</th><th>Gasto 7d</th><th>Vendas 7d</th><th>CPA</th><th>Dias seguidos no CPA</th><th>Status</th></tr>${rows}</table>
     <div class="est-resumo"><span>No cemitério: <b>${ativos}</b></span><span>Vagas até o teto (10): <b>${10-ativos}</b></span><span>Gasto 7d: <b>${estF(gasto7t)}</b> <span class="muted">(zero na maioria das semanas é o esperado)</span></span></div>
     <div class="est-save"><button class="btn" onclick="estSave('p4')">💾 salvar P4</button></div>`;
+}
+
+// ---------- BANCO DE ÂNGULOS ----------
+let angState = null;
+
+function angNorm(t){ return String(t||'').toLowerCase().replace(/[^a-zà-ú0-9 ]/g,'').replace(/\s+/g,' ').trim(); }
+
+async function loadAngles(){
+  angState = {items:[]};
+  $('angGrid').innerHTML = '<div class="muted">Carregando…</div>';
+  const [{data:rp, error:e1},{data:cr},{data:ca}] = await Promise.all([
+    db.from('aff_recreation_prompts').select('id,source_type,creative_id,competitor_ad_id,angle,title,suggested_variations,created_at').order('created_at',{ascending:false}),
+    db.from('aff_creatives').select('id,code'),
+    db.from('aff_competitor_ads').select('id,brand_name')
+  ]);
+  if(e1){ toast('Erro: '+e1.message); return; }
+  const codeOf = Object.fromEntries((cr||[]).map(c=>[c.id,c.code]));
+  const brandOf = Object.fromEntries((ca||[]).map(c=>[c.id,c.brand_name]));
+  const seen = new Map(); // norm -> item
+  const origem = r => r.creative_id ? ('🎬 '+(codeOf[r.creative_id]||'criativo')) : ('🕵️ '+(brandOf[r.competitor_ad_id]||'concorrente'));
+  // 1) usados nas recriações
+  (rp||[]).forEach(r=>{
+    if(!r.angle) return;
+    const k = angNorm(r.angle);
+    if(!k) return;
+    if(seen.has(k)){ const it=seen.get(k); it.usos++; return; }
+    seen.set(k, {tipo:'usado', angle:r.angle, desc:r.title||'', origem:origem(r), usos:1});
+  });
+  // 2) sugeridos (ainda não usados)
+  (rp||[]).forEach(r=>{
+    (r.suggested_variations||[]).forEach(v=>{
+      const k = angNorm(v.angle);
+      if(!k || seen.has(k)) return;
+      seen.set(k, {tipo:'sugerido', angle:v.angle, desc:v.description||'', why:v.why||'', origem:origem(r),
+        gen:{source_type:r.source_type||(r.creative_id?'creative':'competitor'), creative_id:r.creative_id, competitor_ad_id:r.competitor_ad_id}});
+    });
+  });
+  // 3) perfil do produto
+  const brief = (products[0]&&products[0].brief)||{};
+  (brief.hooks_angulos||[]).forEach(h=>{
+    const k = angNorm(h.nome+' '+(h.formula||''));
+    if(seen.has(k)) return;
+    seen.set(k, {tipo:'perfil', angle:h.nome, desc:h.formula||'', why:h.exemplo||'', origem:'📋 perfil do produto'});
+  });
+  (brief.angulos_nao_explorados||[]).forEach(a=>{
+    const k = angNorm(a);
+    if(seen.has(k)) return;
+    seen.set(k, {tipo:'nao_explorado', angle:a, desc:'', origem:'📋 perfil — nunca testado'});
+  });
+  angState.items = [...seen.values()];
+  renderAngles();
+}
+
+function renderAngles(){
+  if(!angState) return;
+  const f = $('angFiltro').value, q = ($('angSearch').value||'').toLowerCase();
+  const list = angState.items.filter(it=>{
+    if(f && it.tipo!==f) return false;
+    if(q && !((it.angle||'')+' '+(it.desc||'')+' '+(it.why||'')).toLowerCase().includes(q)) return false;
+    return true;
+  });
+  const badge = {usado:'<span class="vchip v-ok">TESTADO</span>', sugerido:'<span class="vchip v-info">SUGERIDO</span>', perfil:'<span class="vchip v-mid">PERFIL</span>', nao_explorado:'<span class="vchip v-bad">NÃO EXPLORADO</span>'};
+  const counts = angState.items.reduce((a,it)=>{a[it.tipo]=(a[it.tipo]||0)+1;return a;},{});
+  $('angCount').textContent = `${list.length} de ${angState.items.length}`;
+  $('angMeta').textContent = `${counts.sugerido||0} sugeridos · ${counts.usado||0} usados · ${(counts.perfil||0)+(counts.nao_explorado||0)} do perfil`;
+  window.__angList = list;
+  $('angGrid').innerHTML = list.length ? list.map((it,i)=>`<div class="ccard">
+    <div class="head"><span class="code" style="font-size:13px">${esc(it.angle)}</span>${badge[it.tipo]||''}</div>
+    <div class="muted">${esc(it.origem||'')}${it.usos>1?` · usado ${it.usos}x`:''}</div>
+    ${it.desc?`<div class="prev" style="max-height:none">${esc(it.desc)}</div>`:''}
+    ${it.why?`<div class="muted" style="font-size:11.5px">${esc(it.why)}</div>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+      <button class="btn-sm" onclick="angCopy(${i})">📋 copiar</button>
+      ${it.gen?`<button class="btn-sm" id="angGen-${i}" onclick="angGen(${i})">🎲 gerar recriação com esse ângulo</button>`:''}
+    </div>
+  </div>`).join('') : '<div class="muted">Nenhum ângulo encontrado.</div>';
+}
+
+function angCopy(i){
+  const it = window.__angList[i];
+  navigator.clipboard.writeText(it.angle + (it.desc?'\n'+it.desc:'') + (it.why?'\n'+it.why:'')).then(()=>toast('Ângulo copiado!'));
+}
+
+async function angGen(i){
+  const it = window.__angList[i];
+  if(!it || !it.gen) return;
+  const btn = $('angGen-'+i);
+  if(btn){ btn.disabled=true; btn.textContent='🎲 gerando...'; }
+  toast('Gerando recriação com esse ângulo...');
+  const body = {source_type: it.gen.source_type, angle: it.angle};
+  if(it.gen.creative_id) body.creative_id = it.gen.creative_id; else body.competitor_ad_id = it.gen.competitor_ad_id;
+  const {data, error} = await db.functions.invoke('generate-recreation-prompt', {body});
+  if(error || (data&&data.error)){ toast('Erro: '+((error&&error.message)||data.error)); if(btn){btn.disabled=false;btn.textContent='🎲 gerar recriação com esse ângulo';} return; }
+  toast('Recriação gerada! Veja no Perfil do anúncio de origem.');
+  it.tipo='usado'; it.usos=1; delete it.gen;
+  renderAngles();
 }
 
 // ---------- RELATÓRIO AD POR AD ----------
