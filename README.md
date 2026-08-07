@@ -16,6 +16,24 @@ App estatico, nao precisa de build command. Na Vercel: import do repo, framework
 
 index.html: app completo (dashboard, biblioteca de criativos, ads, custos, produtos).
 
+extension/ai-browser-automator: extensao Chrome unpacked para criar filas de prompts por projeto e operar ChatGPT/Gemini/Flow no navegador. Inclui presets de projeto como LinfaFlow e XYZ.
+
+## Extensao de criativos
+
+Carregar em `chrome://extensions`:
+
+1. Ativar modo desenvolvedor.
+2. Clicar em "Carregar sem compactacao".
+3. Selecionar `extension/ai-browser-automator`.
+
+Fluxo recomendado para Flow:
+
+1. Abrir o projeto no Flow.
+2. Abrir a extensao AffHub Creative Automator.
+3. Aba `Projeto` -> `LinfaFlow` ou `XYZ`.
+4. Clicar `Cenas Flow x1` para criar uma fila de cenas 9:16, 8s, uma geracao por take.
+5. Usar `Colar no site`/fila. Se o Flow bloquear o editor Slate, a extensao abre um painel `AffHub Flow Assist` com o prompt pronto para copiar e colar manualmente.
+
 ## Time com acesso
 
 vsugamele@gmail.com

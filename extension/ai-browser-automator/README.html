@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Browser Automator MVP</title>
+    <style>
+      body {
+        margin: 0;
+        background: #f7f8fa;
+        color: #17202a;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.5;
+      }
+
+      main {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 32px 20px;
+      }
+
+      h1 {
+        font-size: 28px;
+        margin: 0 0 12px;
+      }
+
+      h2 {
+        font-size: 18px;
+        margin-top: 28px;
+      }
+
+      code,
+      pre {
+        background: #eef1f5;
+        border-radius: 6px;
+      }
+
+      code {
+        padding: 2px 5px;
+      }
+
+      pre {
+        overflow: auto;
+        padding: 12px;
+      }
+
+      li {
+        margin: 6px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>AI Browser Automator MVP</h1>
+      <p>Extensao Chrome sem API para colar e enviar prompts em ChatGPT, Gemini e Flow.</p>
+      <p>Para o fluxo detalhado do projeto JP, carrosseis, HookLab e batch diario, abra <code>GUIDE-AUTOMACAO-JP.md</code>.</p>
+      <p><a href="MANUAL-OPERACAO.html">Abrir manual visual completo</a> com estrategias, formatos, skills, angulos, hooks e operacao da fila.</p>
+
+      <h2>Como instalar</h2>
+      <ol>
+        <li>Abra <code>chrome://extensions</code>.</li>
+        <li>Ative <strong>Modo do desenvolvedor</strong>.</li>
+        <li>Clique em <strong>Carregar sem compactacao</strong>.</li>
+        <li>Selecione a pasta <code>ai-browser-automator-mvp</code>.</li>
+      </ol>
+
+      <h2>Como usar</h2>
+      <ol>
+        <li>Abra ChatGPT, Gemini ou Flow e faca login.</li>
+        <li>Clique no icone da extensao.</li>
+        <li>Use as abas <strong>Prompt</strong>, <strong>Assistente</strong>, <strong>Projeto</strong> e <strong>Fila</strong>.</li>
+        <li>Se a conexao aparecer pendente, clique em <strong>Conectar</strong>.</li>
+        <li>Escreva ou selecione um template.</li>
+        <li>Use <strong>Colar no site</strong> para revisar antes, ou <strong>Colar e enviar</strong> para automatizar.</li>
+        <li>Para fila, coloque um prompt por linha, escolha se deve enviar automaticamente e use iniciar/pausar/parar.</li>
+      </ol>
+
+      <h2>Assistente com OpenRouter</h2>
+      <ol>
+        <li>Crie uma chave em <code>https://openrouter.ai/keys</code>.</li>
+        <li>No popup, abra <strong>Config</strong> em <strong>Assistente OpenRouter</strong>.</li>
+        <li>Cole a chave e escolha um modelo. O padrao e <code>~openai/gpt-latest</code>.</li>
+        <li>Escolha se o prompt sera de <strong>Imagem</strong>, <strong>Video</strong> ou <strong>Misto</strong>.</li>
+        <li>Escolha um <strong>Angulo</strong>: dor, desejo, prova, autoridade, curiosidade, antes/depois, objecao, controversia, historia emocional ou promessa.</li>
+        <li>Escolha o <strong>Destino</strong>: ChatGPT, Gemini, Flow, Sora ou Veo.</li>
+        <li>Escolha a <strong>Etapa</strong> da campanha e um <strong>Framework</strong> como UGC, Demo, POV, Depoimento, Reel Viral ou Gancho VSL.</li>
+        <li>Escolha o <strong>Motor de skill</strong>: Angulos Criativos, Avatar Architect, Escavador de Desejos, Video Viral, Headline Forge, VSL Filemon, Mecanismo Unico ou Credibilidade.</li>
+        <li>Escolha o <strong>Template de copy</strong>, como Reels UGC, POV, Objecao Destruida, Mecanismo Unico, Credibilidade ou templates especificos do JP.</li>
+        <li>Descreva o objetivo, por exemplo: <code>videos 9:16 para produto fitness, publico masculino 35+, estilo UGC</code>.</li>
+        <li>Escolha <strong>Fila por formato</strong>, <strong>Nichos e angulos</strong>, <strong>Melhorar prompt atual</strong> ou <strong>Mini campanha</strong>.</li>
+      </ol>
+
+      <h2>Projetos e batch diario</h2>
+      <ol>
+        <li>Configure objetivo, formato, angulo, destino, etapa e framework.</li>
+        <li>Preencha oferta, avatar e mecanismo para gerar roteiros mais consistentes.</li>
+        <li>Use o botao <strong>JP</strong> para carregar o preset do projeto JP Freitas.</li>
+        <li>Em <strong>Projeto e batch</strong>, defina nome, horario, quantidade de imagens e estilos.</li>
+        <li>Use <strong>Criar fila</strong> para gerar uma fila manual imediatamente.</li>
+        <li>Use <strong>Agendar</strong> para criar uma fila automaticamente todos os dias no horario definido.</li>
+      </ol>
+      <p>Observacao: o agendamento cria a fila no armazenamento da extensao. Para executar no ChatGPT/Gemini/Flow, o Chrome precisa estar aberto, voce precisa estar logado e a aba de destino precisa aceitar a automacao.</p>
+
+      <h2>Usar imagens baixadas</h2>
+      <ol>
+        <li>No popup, use <strong>Imagens baixadas</strong> para selecionar arquivos da pasta Downloads ou de outra pasta.</li>
+        <li>Clique em <strong>Criar videos das imagens selecionadas</strong>.</li>
+        <li>A extensao monta uma fila de videos citando cada arquivo como first frame/referencia.</li>
+        <li>No Flow, o adaptador tenta anexar a imagem no primeiro <code>input[type=file]</code> encontrado antes de colar o prompt.</li>
+      </ol>
+      <p>Por seguranca do Chrome, a extensao nao le pastas automaticamente sem selecao do usuario. Se o Flow mudar o campo de upload ou esconder o input de arquivo, o upload pode precisar ser manual.</p>
+
+      <h2>Limites do MVP</h2>
+      <ul>
+        <li>Os seletores dos sites podem quebrar quando ChatGPT, Gemini ou Flow mudarem a interface.</li>
+        <li>A captura/download de imagens e videos ainda nao esta implementada.</li>
+        <li>A chave do OpenRouter fica salva no armazenamento local da extensao. Para uso profissional, mova essa chamada para um backend proprio.</li>
+        <li>Use com intervalos razoaveis. A extensao nao tenta contornar limites dos servicos.</li>
+      </ul>
+
+      <h2>Arquivos importantes</h2>
+      <pre>manifest.json
+popup.html
+popup.js
+content/chatgpt.js
+content/gemini.js
+content/flow.js
+content/shared.js</pre>
+    </main>
+  </body>
+</html>

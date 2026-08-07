@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Automator</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div>
+          <h1>AI Automator</h1>
+          <p id="siteLabel" class="site-label">Detectando aba...</p>
+        </div>
+        <button id="openOptions" class="icon-button" title="Ajuda" type="button">?</button>
+      </header>
+
+      <section id="connectionCard" class="connection-card">
+        <div>
+          <strong id="connectionTitle">Verificando conexão</strong>
+          <p id="connectionHint">Abra ChatGPT, Gemini ou Flow para enviar prompts.</p>
+        </div>
+        <button id="reconnectPage" type="button">Conectar</button>
+      </section>
+
+      <nav class="tabs" aria-label="Navegação do app">
+        <button class="tab active" data-tab="prompt" type="button">Prompt</button>
+        <button class="tab" data-tab="assistant" type="button">Assistente</button>
+        <button class="tab" data-tab="project" type="button">Projeto</button>
+        <button class="tab" data-tab="queue" type="button">Fila</button>
+      </nav>
+
+      <section class="section" data-panel="prompt">
+        <label for="templateSelect">Template</label>
+        <div class="row">
+          <select id="templateSelect"></select>
+          <button id="saveTemplate" type="button" title="Salvar prompt como template">+</button>
+        </div>
+      </section>
+
+      <section class="section" data-panel="prompt">
+        <label for="prompt">Prompt</label>
+        <div class="format-row" aria-label="Formato do prompt">
+          <label class="radio">
+            <input name="promptFormat" type="radio" value="image" checked>
+            <span>Imagem</span>
+          </label>
+          <label class="radio">
+            <input name="promptFormat" type="radio" value="video">
+            <span>Video</span>
+          </label>
+          <label class="radio">
+            <input name="promptFormat" type="radio" value="mixed">
+            <span>Misto</span>
+          </label>
+        </div>
+        <div class="row three">
+          <select id="outputSize" title="Tamanho/proporção">
+            <option value="9:16">9:16 Reels/Stories</option>
+            <option value="1:1">1:1 Feed</option>
+            <option value="4:5">4:5 Feed vertical</option>
+            <option value="16:9">16:9 YouTube</option>
+          </select>
+          <select id="scriptLength" title="Duração do roteiro">
+            <option value="6s">6s</option>
+            <option value="15s">15s</option>
+            <option value="30s">30s</option>
+            <option value="45s">45s</option>
+            <option value="60s">60s</option>
+          </select>
+          <select id="scriptStyle" title="Estilo de roteiro">
+            <option value="ugc">UGC</option>
+            <option value="pov">POV</option>
+            <option value="demo">Demo</option>
+            <option value="story">Story</option>
+            <option value="vsl">VSL Hook</option>
+          </select>
+        </div>
+        <textarea id="prompt" rows="8" placeholder="Escreva o pedido para imagem ou video..."></textarea>
+      </section>
+
+      <section class="section assistant" data-panel="assistant" hidden>
+        <div class="label-row">
+          <label for="assistantBrief">Assistente OpenRouter</label>
+          <button id="toggleOpenRouter" type="button">Config</button>
+        </div>
+
+        <div id="openRouterConfig" class="config" hidden>
+          <label for="openRouterKey">API key</label>
+          <input id="openRouterKey" type="password" placeholder="sk-or-...">
+
+          <label for="openRouterModel">Modelo</label>
+          <div class="row">
+            <input id="openRouterModel" type="text" value="~openai/gpt-latest" list="openRouterModelOptions">
+            <button id="refreshModels" type="button">Modelos</button>
+          </div>
+          <datalist id="openRouterModelOptions"></datalist>
+        </div>
+
+        <label for="assistantBrief">Objetivo</label>
+        <textarea id="assistantBrief" rows="4" placeholder="Ex: nicho de suplementos para homens 35+, videos UGC para Flow, estilo direto, gerar 8 ideias..."></textarea>
+
+        <div class="row two">
+          <div>
+            <label for="creativeAngle">Angulo</label>
+            <select id="creativeAngle"></select>
+          </div>
+          <div>
+            <label for="targetEngine">Destino</label>
+            <select id="targetEngine">
+              <option value="generic">Generico</option>
+              <option value="chatgpt">ChatGPT</option>
+              <option value="gemini">Gemini</option>
+              <option value="flow">Flow</option>
+              <option value="sora">Sora</option>
+              <option value="veo">Veo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row two">
+          <div>
+            <label for="campaignStage">Etapa</label>
+            <select id="campaignStage"></select>
+          </div>
+          <div>
+            <label for="creativeFramework">Framework</label>
+            <select id="creativeFramework"></select>
+          </div>
+        </div>
+
+        <label for="skillEngine">Motor de skill</label>
+        <select id="skillEngine"></select>
+
+        <label for="copyTemplate">Template de copy</label>
+        <select id="copyTemplate"></select>
+
+        <label for="hookTemplate">HookLab</label>
+        <select id="hookTemplate"></select>
+
+        <div class="row three">
+          <select id="assistantMode">
+            <option value="queue">Fila por formato</option>
+            <option value="hookLab">Hooks HookLab</option>
+            <option value="niches">Nichos e angulos</option>
+            <option value="improve">Melhorar prompt atual</option>
+            <option value="campaign">Mini campanha</option>
+            <option value="campaignPack">Pacote de campanha</option>
+            <option value="carousel">Carrossel</option>
+            <option value="carouselBatch">Lote de carrosseis</option>
+            <option value="scripts">Roteiros</option>
+            <option value="score">Score de qualidade</option>
+          </select>
+          <input id="assistantCount" type="number" min="1" max="30" value="8" title="Quantidade">
+          <button id="generateAssistant" type="button">Gerar</button>
+        </div>
+      </section>
+
+      <section class="section compact" data-panel="queue" hidden>
+        <label class="checkbox">
+          <input id="autoSend" type="checkbox">
+          <span>Enviar automaticamente</span>
+        </label>
+        <label class="inline">
+          Intervalo da fila
+          <input id="delaySeconds" type="number" min="3" max="300" value="15">
+          s
+        </label>
+      </section>
+
+      <section class="section assistant" data-panel="project" hidden>
+        <div class="label-row">
+          <label for="projectSelect">Projeto e batch</label>
+          <div class="row tight">
+            <button id="loadLinfaFlowPreset" type="button">LinfaFlow</button>
+            <button id="loadXyzPreset" type="button">XYZ</button>
+            <button id="loadJpPreset" type="button">JP</button>
+            <button id="saveProject" type="button">Salvar</button>
+          </div>
+        </div>
+
+        <select id="projectSelect"></select>
+
+        <label for="projectName">Nome do projeto</label>
+        <input id="projectName" type="text" placeholder="Ex: Energia masculina - Flow diario">
+
+        <label for="projectOffer">Oferta/produto</label>
+        <input id="projectOffer" type="text" placeholder="Ex: Programa de posicionamento para cabeleireiras de cachos">
+
+        <label for="projectAvatar">Avatar</label>
+        <textarea id="projectAvatar" rows="3" placeholder="Quem compra, dor central, objeções e desejo principal"></textarea>
+
+        <label for="projectMechanism">Mecanismo / tese</label>
+        <textarea id="projectMechanism" rows="3" placeholder="Por que funciona, contranarrativa, mecanismo único"></textarea>
+
+        <div class="row two">
+          <div>
+            <label for="batchTime">Horario</label>
+            <input id="batchTime" type="time" value="09:00">
+          </div>
+          <div>
+            <label for="batchImageCount">Imagens/dia</label>
+            <input id="batchImageCount" type="number" min="1" max="12" value="3">
+          </div>
+        </div>
+
+        <label for="batchStyles">Estilos de imagem</label>
+        <textarea id="batchStyles" rows="3" placeholder="Um estilo por linha. Ex: UGC realista&#10;Foto premium editorial&#10;Antes/depois dramático"></textarea>
+
+        <label for="batchVideoBrief">Video usando imagens</label>
+        <textarea id="batchVideoBrief" rows="3" placeholder="Ex: criar um video 9:16 de 6s usando a imagem como first frame, movimento suave, CTA visual no final"></textarea>
+
+        <div class="reference-panel">
+          <div class="label-row">
+            <label>Referencias visuais</label>
+            <button id="clearReferences" type="button">Limpar</button>
+          </div>
+
+          <div class="row two">
+            <div>
+              <label for="localImages">Imagens soltas</label>
+              <input id="localImages" type="file" accept="image/*" multiple>
+            </div>
+            <div>
+              <label for="referenceFolder">Pasta inteira</label>
+              <input id="referenceFolder" type="file" accept="image/*" webkitdirectory multiple>
+            </div>
+          </div>
+
+          <div class="row two">
+            <div>
+              <label for="referenceAction">Acao</label>
+              <select id="referenceAction">
+                <option value="video">Videos usando first frame</option>
+                <option value="imageVariation">Variacoes de imagem</option>
+                <option value="carouselStyle">Carrossel no mesmo estilo</option>
+              </select>
+            </div>
+            <div>
+              <label for="referenceLimit">Limite</label>
+              <input id="referenceLimit" type="number" min="1" max="80" value="20">
+            </div>
+          </div>
+
+          <p id="localImagesStatus" class="mini-status">Nenhuma imagem selecionada.</p>
+          <div id="referenceList" class="reference-list" hidden></div>
+        </div>
+
+        <div class="actions">
+          <button id="planBatch" type="button">Criar fila</button>
+          <button id="planFlowScenes" type="button">Cenas Flow x1</button>
+          <button id="scheduleBatch" type="button" class="primary">Agendar</button>
+        </div>
+        <button id="queueVideosFromImages" type="button" class="wide">Criar fila com referencias</button>
+      </section>
+
+      <section class="actions" data-panel="prompt">
+        <button id="fillPrompt" type="button">Colar no site</button>
+        <button id="sendPrompt" type="button" class="primary">Colar e enviar</button>
+      </section>
+
+      <section class="section" data-panel="queue" hidden>
+        <div class="label-row">
+          <label for="queue">Fila de prompts</label>
+          <button id="loadCurrent" type="button">Usar prompt atual</button>
+        </div>
+        <textarea id="queue" rows="5" placeholder="Um prompt por linha"></textarea>
+        <div class="queue-panel">
+          <div class="queue-meter">
+            <span id="queueState">Parada</span>
+            <span id="queueProgress">0/0</span>
+          </div>
+          <progress id="queueProgressBar" max="100" value="0"></progress>
+          <p id="queueCurrent" class="mini-status">Nenhum item em execução.</p>
+        </div>
+        <div class="actions">
+          <button id="runQueue" type="button" class="primary">Iniciar</button>
+          <button id="pauseQueue" type="button">Pausar</button>
+          <button id="stopQueue" type="button">Parar</button>
+        </div>
+      </section>
+
+      <p id="status" class="status">Pronto.</p>
+    </main>
+
+    <script src="hooks.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>

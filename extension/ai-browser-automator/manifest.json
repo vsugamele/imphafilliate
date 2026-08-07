@@ -1,0 +1,64 @@
+{
+  "manifest_version": 3,
+  "name": "AffHub Creative Automator",
+  "description": "Automatiza prompts e filas de criativos por projeto para ChatGPT, Gemini e Flow.",
+  "version": "0.2.0",
+  "permissions": [
+    "activeTab",
+    "alarms",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://gemini.google.com/*",
+    "https://labs.google/fx/tools/flow/*",
+    "https://labs.google/fx/*/tools/flow/*",
+    "https://flow.google/*",
+    "https://openrouter.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "AI Automator",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
+      ],
+      "js": [
+        "content/shared.js",
+        "content/chatgpt.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://gemini.google.com/*"
+      ],
+      "js": [
+        "content/shared.js",
+        "content/gemini.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://labs.google/fx/tools/flow/*",
+        "https://labs.google/fx/*/tools/flow/*",
+        "https://flow.google/*"
+      ],
+      "js": [
+        "content/shared.js",
+        "content/flow.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
