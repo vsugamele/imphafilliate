@@ -114,6 +114,21 @@ table.scenes .time{color:var(--tx3);white-space:nowrap;font-size:10.5px}
 .fullprompt{white-space:pre-wrap;background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:10px;font-size:11.5px;color:var(--tx2);max-height:280px;overflow:auto;margin-top:6px}
 .recmeta{font-size:11.5px;color:var(--tx2);margin-bottom:6px}
 .recmeta b{color:var(--tx1)}
+.profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:flex-start;justify-content:center;padding:30px 16px;overflow:auto}
+.profile-overlay.hidden{display:none}
+.profile-panel{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);max-width:920px;width:100%;padding:26px;position:relative;margin-bottom:40px}
+.profile-close{position:absolute;top:14px;right:16px;cursor:pointer;font-size:16px;color:var(--tx3);width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.profile-close:hover{background:var(--card2);color:var(--tx1)}
+.profile-hero{display:flex;gap:16px;margin-bottom:14px;align-items:flex-start}
+.profile-hero img{width:150px;border-radius:var(--rs);object-fit:cover;border:1px solid var(--border)}
+.angle-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px;margin:12px 0}
+.angle-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:9px 11px;font-size:12.5px;color:var(--tx2)}
+.angle-card b{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ac2);margin-bottom:3px}
+.variant-chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.variant-chip{font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid var(--border);cursor:pointer;background:var(--card2);color:var(--tx2)}
+.variant-chip.active{background:var(--ac);color:#fff;border-color:transparent}
+.suggestion-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-bottom:8px}
+.suggestion-card b{color:var(--ac2);font-size:12.5px}
 
 .ccard .thumbwrap{position:relative;border-radius:var(--rs);overflow:hidden;background:#000}
 .ccard .thumbwrap img{width:100%;display:block;max-height:300px;object-fit:cover}
@@ -408,6 +423,9 @@ table.scenes .time{color:var(--tx3);white-space:nowrap;font-size:10.5px}
 
 </div>
 </div>
+<div id="profileOverlay" class="profile-overlay hidden" onclick="if(event.target===this) closeProfile()">
+  <div class="profile-panel" id="profilePanel"></div>
+</div>
 <div id="toast">ok</div>
 
 <script>
@@ -415,7 +433,7 @@ const SB_URL = 'https://sxiqbhcnkzrrenzgncss.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN4aXFiaGNua3pycmVuemduY3NzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDY3NDQ3MDQsImV4cCI6MjA2MjMyMDcwNH0.Ssw2dio8yPEFDZk3Zhh4PTBiXYndJR0nPm1jrXAHgBE';
 const db = supabase.createClient(SB_URL, SB_KEY);
 
-let products = [], creatives = [], dissections = {}, competitors = [], recreations = {}, lang = 'en', currentView = 'dash';
+let products = [], creatives = [], dissections = {}, competitors = [], recreations = {}, recreationsAll = {}, profileState = null, lang = 'en', currentView = 'dash';
 
 const $ = id => document.getElementById(id);
 const esc = s => (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -592,6 +610,7 @@ function renderCreatives(){
         <button class="btn-sm" onclick="copyTx('${c.id}')">📋 copiar</button>
         ${dissections[c.id] ? `<button class="btn-sm" onclick="document.getElementById('diss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="dissbtn-${c.id}" onclick="dissectCreative('${c.id}')">🔬 dissecar</button>`}
         ${dissections[c.id] ? (recreations['creative:'+c.id] ? `<button class="btn-sm" onclick="document.getElementById('rec-creative-${c.id}').classList.toggle('on')">🎬 recriação</button>` : `<button class="btn-sm" id="recbtn-creative-${c.id}" onclick="generateRecreation('${c.id}','creative')">🎬 recriar cena-a-cena</button>`) : ''}
+        ${dissections[c.id] ? `<button class="btn-sm" onclick="openProfile('${c.id}','creative')">🗂️ perfil</button>` : ''}
       </div>
       ${renderDissBlock(c.id)}
       ${renderRecreationBlock(c.id,'creative')}
@@ -636,6 +655,8 @@ async function loadRecreations(type, ids){
   (data||[]).forEach(r=>{
     const key = type + ':' + (type==='creative' ? r.creative_id : r.competitor_ad_id);
     if(!recreations[key]) recreations[key] = r;
+    if(!recreationsAll[key]) recreationsAll[key] = [];
+    recreationsAll[key].push(r);
   });
 }
 
@@ -690,10 +711,122 @@ async function generateRecreation(id, type){
     return;
   }
   recreations[type+':'+id] = data.data;
+  const _key = type+':'+id;
+  recreationsAll[_key] = [data.data, ...(recreationsAll[_key]||[])];
   toast('Recriação pronta!');
   if(type==='creative') renderCreatives(); else renderCompetitors();
   const el = document.getElementById('rec-'+type+'-'+id);
   if(el) el.classList.add('on');
+  if(profileState && profileState.id===id && profileState.type===type){ profileState.variantIdx = 0; renderProfileModal(); }
+}
+
+
+// ---------- PERFIL DO ANUNCIO ----------
+function productContextFor(prodId){
+  const p = products.find(x=>x.id===prodId);
+  if(!p) return '';
+  const payout = p.payout ? (p.payout_currency==='USD'?'US$ ':'R$ ')+p.payout : '';
+  return `<div class="context" style="margin-bottom:14px"><h2>💊 Produto</h2><p><b>${esc(p.name)}</b>${p.network?` · ${esc(p.network)}`:''}${payout?` · payout ${payout}`:''}${p.niche?` · ${esc(p.niche)}`:''}</p>${p.notes?`<p class="muted">${esc(p.notes)}</p>`:''}</div>`;
+}
+
+function openProfile(id, type){
+  profileState = {id, type, variantIdx:0};
+  $('profileOverlay').classList.remove('hidden');
+  renderProfileModal();
+}
+
+function closeProfile(){
+  $('profileOverlay').classList.add('hidden');
+  profileState = null;
+}
+
+function selectVariant(idx){
+  if(!profileState) return;
+  profileState.variantIdx = idx;
+  renderProfileModal();
+}
+
+function copyRecreationVariant(type, id, idx){
+  const key = type + ':' + id;
+  const r = (recreationsAll[key]||[])[idx];
+  if(!r || !r.full_prompt){ toast('Sem prompt pra copiar.'); return; }
+  navigator.clipboard.writeText(r.full_prompt).then(()=>toast('Prompt copiado!'));
+}
+
+async function generateVariationFromSuggestion(id, type, suggIdx){
+  const key = type + ':' + id;
+  const list = recreationsAll[key] || [];
+  const idx = profileState ? profileState.variantIdx : 0;
+  const rec = list[idx];
+  const sugg = rec && rec.suggested_variations && rec.suggested_variations[suggIdx];
+  if(!sugg){ toast('Sugestão não encontrada.'); return; }
+  toast('Gerando variação: ' + (sugg.angle||'') + '...');
+  const body = type==='creative' ? {source_type:'creative', creative_id:id, angle: sugg.angle} : {source_type:'competitor', competitor_ad_id:id, angle: sugg.angle};
+  const {data, error} = await db.functions.invoke('generate-recreation-prompt', {body});
+  if(error || (data && data.error)){ toast('Erro: ' + (error?.message || data.error)); return; }
+  recreations[key] = data.data;
+  recreationsAll[key] = [data.data, ...list];
+  toast('Variação gerada!');
+  if(profileState && profileState.id===id && profileState.type===type){ profileState.variantIdx = 0; renderProfileModal(); }
+  if(type==='creative') renderCreatives(); else renderCompetitors();
+}
+
+function renderProfileModal(){
+  if(!profileState) return;
+  const {id, type} = profileState;
+  const key = type + ':' + id;
+  const list = recreationsAll[key] || [];
+  const idx = Math.min(profileState.variantIdx, Math.max(0, list.length-1));
+  const rec = list[idx];
+  let item, title, thumbUrl;
+  if(type==='creative'){
+    item = creatives.find(c=>c.id===id);
+    if(!item){ $('profilePanel').innerHTML = '<span class="profile-close" onclick="closeProfile()">✕</span><div class="muted">Criativo não encontrado.</div>'; return; }
+    title = item.code;
+    thumbUrl = item.thumb_path ? `${SB_URL}/storage/v1/object/public/aff-creatives/${item.thumb_path}` : null;
+  } else {
+    item = competitors.find(c=>c.id===id);
+    if(!item){ $('profilePanel').innerHTML = '<span class="profile-close" onclick="closeProfile()">✕</span><div class="muted">Anúncio não encontrado.</div>'; return; }
+    title = item.brand_name;
+    thumbUrl = item.mosaic_path ? mosaicUrl(item.mosaic_path) : null;
+  }
+  const variantChips = list.length ? `<div class="variant-chips">${list.map((r,i)=>`<span class="variant-chip ${i===idx?'active':''}" onclick="selectVariant(${i})">${esc(r.angle||r.title||('v'+(i+1)))}</span>`).join('')}</div>` : '';
+  const angleBlock = rec ? `
+    <div class="angle-grid">
+      <div class="angle-card"><b>Ângulo</b>${esc(rec.angle||'—')}</div>
+      <div class="angle-card"><b>Avatar</b>${esc(rec.avatar||'—')}</div>
+      <div class="angle-card" style="grid-column:1/-1"><b>Hook</b>${esc(rec.hook_summary||'—')}</div>
+      <div class="angle-card" style="grid-column:1/-1"><b>Body / mecanismo</b>${esc(rec.body_summary||'—')}</div>
+      <div class="angle-card" style="grid-column:1/-1"><b>CTA</b>${esc(rec.cta_summary||'—')}</div>
+    </div>` : `<div class="muted">Ainda sem recriação gerada pra esse anúncio.</div>`;
+  const suggestions = (rec && rec.suggested_variations && rec.suggested_variations.length) ? `
+    <h4>💡 Novos ângulos sugeridos (ainda não testados)</h4>
+    ${rec.suggested_variations.map((v,i)=>`
+      <div class="suggestion-card">
+        <b>${esc(v.angle||'')}</b>
+        <p class="apdesc">${esc(v.description||'')}</p>
+        <p class="apdesc muted">${esc(v.why||'')}</p>
+        <button class="btn-sm" style="margin-top:6px" onclick="generateVariationFromSuggestion('${id}','${type}', ${i})">🎲 gerar essa variação</button>
+      </div>`).join('')}` : '';
+  const scenesBlock = rec ? `<h4>Cena a cena</h4>${renderScenes(rec.scenes)}${rec.full_prompt?`<h4>Prompt completo</h4><div class="fullprompt">${esc(rec.full_prompt)}</div><div style="margin-top:8px"><button class="btn-sm" onclick="copyRecreationVariant('${type}','${id}', ${idx})">📋 copiar prompt</button></div>`:''}` : '';
+  $('profilePanel').innerHTML = `
+    <span class="profile-close" onclick="closeProfile()">✕</span>
+    <div class="profile-hero">
+      ${thumbUrl?`<img src="${thumbUrl}" alt="${esc(title||'')}">`:''}
+      <div>
+        <h2 class="page" style="margin-bottom:4px">${esc(title||'')}</h2>
+        <div class="muted">${type==='creative'?'Criativo próprio':'Anúncio de concorrente'}</div>
+      </div>
+    </div>
+    ${type==='creative' && item.product_id ? productContextFor(item.product_id) : ''}
+    ${variantChips}
+    ${angleBlock}
+    ${suggestions}
+    ${scenesBlock}
+    <div style="margin-top:14px">
+      <button class="btn-sm" onclick="generateRecreation('${id}','${type}')">🔁 gerar nova recriação (mesmo ângulo)</button>
+    </div>
+  `;
 }
 
 function fmtDur(s){
@@ -966,6 +1099,7 @@ function renderCompetitors(){
       ${c.transcript?`<button class="btn-sm" onclick="document.getElementById('compfull-${c.id}').classList.toggle('on')">📄 transcrição</button>`:''}
       ${c.summary ? `<button class="btn-sm" onclick="document.getElementById('compdiss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="compdissbtn-${c.id}" onclick="dissectCompetitorAd('${c.id}')">🔬 dissecar</button>`}
       ${c.summary ? (recreations['competitor:'+c.id] ? `<button class="btn-sm" onclick="document.getElementById('rec-competitor-${c.id}').classList.toggle('on')">🎬 recriação</button>` : `<button class="btn-sm" id="recbtn-competitor-${c.id}" onclick="generateRecreation('${c.id}','competitor')">🎬 recriar cena-a-cena</button>`) : ''}
+      ${c.summary ? `<button class="btn-sm" onclick="openProfile('${c.id}','competitor')">🗂️ perfil</button>` : ''}
       <button class="btn-sm" onclick="delCompetitorAd('${c.id}')">🗑</button>
     </div>
     ${renderCompDissBlock(c)}
