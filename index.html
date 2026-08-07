@@ -281,6 +281,8 @@ table.rficha tr:hover td{background:rgba(129,140,248,.06)}
   <div id="v-lib" class="hidden">
     <h2 class="page">Biblioteca de criativos</h2>
 
+    <div id="prodContextDyn" class="hidden"></div>
+
     <div id="prodContext-linfaflow" class="hidden">
       <div class="context">
         <h2>💊 Sobre o produto (resumo)</h2>
@@ -503,6 +505,9 @@ table.rficha tr:hover td{background:rgba(129,140,248,.06)}
 <div id="profileOverlay" class="profile-overlay hidden" onclick="if(event.target===this) closeProfile()">
   <div class="profile-panel" id="profilePanel"></div>
 </div>
+<div id="briefOverlay" class="profile-overlay hidden" onclick="if(event.target===this) closeBrief()">
+  <div class="profile-panel" id="briefPanel"></div>
+</div>
 <div id="toast">ok</div>
 
 <script>
@@ -621,6 +626,14 @@ async function loadCreatives(){
   const prod = products.find(p=>p.id===pid);
   const ctx = $('prodContext-linfaflow');
   if(ctx){ ctx.classList.toggle('hidden', !(prod && prod.slug==='linfaflow')); if(prod && prod.slug==='linfaflow') updateEsteiraCalc(); }
+  const dyn = $('prodContextDyn');
+  const hasBrief = prod && prod.brief && typeof prod.brief==='object' && Object.keys(prod.brief).length;
+  if(dyn){
+    dyn.classList.toggle('hidden', !hasBrief);
+    if(hasBrief) dyn.innerHTML = renderBriefCard(prod);
+    const staticCtx = ctx ? ctx.querySelector('.context') : null;
+    if(staticCtx) staticCtx.classList.toggle('hidden', !!(hasBrief && prod.slug==='linfaflow'));
+  }
   renderCreatives();
 }
 
@@ -1134,9 +1147,112 @@ async function addProduct(){
   products = data||[]; fillProductSelects(); renderProducts();
 }
 function renderProducts(){
-  $('prodsTable').innerHTML = products.length ? '<table><tr><th>Nome</th><th>Slug</th><th>Rede</th><th>Payout</th><th>Status</th></tr>' +
-    products.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.slug)}</td><td>${esc(p.network||'—')}</td><td>${p.payout?(p.payout_currency==='USD'?'US$ ':'R$ ')+p.payout:'—'}</td><td><span class="tag ${p.status==='ativo'?'g':''}">${esc(p.status)}</span></td></tr>`).join('') + '</table>'
+  $('prodsTable').innerHTML = products.length ? '<table><tr><th>Nome</th><th>Slug</th><th>Rede</th><th>Payout</th><th>Status</th><th>Perfil</th></tr>' +
+    products.map(p=>`<tr><td><b>${esc(p.name)}</b></td><td>${esc(p.slug)}</td><td>${esc(p.network||'—')}</td><td>${p.payout?(p.payout_currency==='USD'?'US$ ':'R$ ')+p.payout:'—'}</td><td><span class="tag ${p.status==='ativo'?'g':''}">${esc(p.status)}</span></td>
+    <td><button class="btn-sm" onclick="openProductBrief('${p.id}')">${p.brief&&Object.keys(p.brief).length?'📋 perfil':'📋 criar perfil'}</button></td></tr>`).join('') + '</table>'
     : 'Nenhum produto.';
+}
+
+// ---------- PERFIL DE PRODUTO (brief estruturado) ----------
+let briefState = null;
+
+function openProductBrief(id){
+  briefState = {id, edit:false};
+  renderBriefModal();
+  $('briefOverlay').classList.remove('hidden');
+}
+function closeBrief(){ $('briefOverlay').classList.add('hidden'); briefState = null; }
+function toggleBriefEdit(){ briefState.edit = !briefState.edit; renderBriefModal(); }
+
+function renderBriefModal(){
+  const p = products.find(x=>x.id===briefState.id); if(!p) return;
+  const b = p.brief && typeof p.brief==='object' ? p.brief : null;
+  $('briefPanel').innerHTML = `
+    <span class="profile-close" onclick="closeBrief()">✕</span>
+    <div class="rel-kicker">Perfil do produto</div>
+    <div class="rel-title" style="font-size:22px">${esc(p.name)}</div>
+    <div style="display:flex;gap:8px;margin:14px 0">
+      <button class="btn-sm" onclick="toggleBriefEdit()">${briefState.edit?'👁 visualizar':'✏️ editar (JSON)'}</button>
+      ${briefState.edit?`<button class="btn" style="padding:5px 14px;font-size:12.5px" onclick="saveBrief()">💾 salvar</button>`:''}
+    </div>
+    ${briefState.edit
+      ? `<div class="muted" style="margin-bottom:6px">Cole aqui o JSON estruturado do perfil (big idea, ingredientes, avatares, hooks, objeções, claims proibidos...) e salve. Campos desconhecidos são preservados.</div>
+         <textarea id="briefJson" style="min-height:400px;font-family:ui-monospace,monospace;font-size:12px">${esc(b?JSON.stringify(b,null,2):'')}</textarea>`
+      : (b ? renderBriefView(b) : '<div class="muted">Nenhum perfil salvo ainda — clique em <b>✏️ editar (JSON)</b> e cole o JSON do perfil do produto.</div>')}
+  `;
+}
+
+async function saveBrief(){
+  let obj;
+  try { obj = JSON.parse($('briefJson').value); }
+  catch(e){ toast('JSON inválido: '+e.message); return; }
+  if(!obj || typeof obj!=='object' || Array.isArray(obj)){ toast('O perfil precisa ser um objeto JSON.'); return; }
+  const {error} = await db.from('aff_products').update({brief:obj}).eq('id', briefState.id);
+  if(error){ toast('Erro: '+error.message); return; }
+  const p = products.find(x=>x.id===briefState.id); if(p) p.brief = obj;
+  toast('Perfil salvo!');
+  briefState.edit = false;
+  renderBriefModal(); renderProducts();
+  if(currentView==='lib') loadCreatives();
+}
+
+function renderBriefView(b){
+  const sec = (t, inner) => inner ? `<h4>${t}</h4>${inner}` : '';
+  const fichaOf = obj => (obj && typeof obj==='object')
+    ? `<table class="rficha">${Object.entries(obj).map(([k,v])=>`<tr><td class="k">${esc(k)}</td><td class="v">${esc(String(v))}</td></tr>`).join('')}</table>` : '';
+  const listOf = arr => (Array.isArray(arr)&&arr.length)
+    ? `<ul class="rpts">${arr.map(x=>`<li><span class="rdot" style="background:var(--ac)"></span>${esc(String(x))}</li>`).join('')}</ul>` : '';
+  const ingr = (Array.isArray(b.ingredientes)&&b.ingredientes.length)
+    ? `<table class="rficha">${b.ingredientes.map(i=>`<tr><td class="k">${i.heroi?'⭐ ':''}${esc(i.nome||'')}</td><td class="v"><b>${esc(i.apelido||'')}</b>${i.apelido?' — ':''}${esc(i.funcao||'')}</td></tr>`).join('')}</table>` : '';
+  const avs = (Array.isArray(b.avatares)&&b.avatares.length)
+    ? `<div style="overflow-x:auto"><table><tr><th>Avatar</th><th>Ethos</th><th>Pathos</th><th>Formato</th><th>Regras</th></tr>${b.avatares.map(a=>`<tr><td style="white-space:nowrap"><b>${esc(((a.emoji||'')+' '+(a.nome||'')).trim())}</b></td><td>${esc(a.ethos||'')}</td><td>${esc(a.pathos||'')}</td><td>${esc(a.formato||'')}</td><td>${esc(a.regras||'—')}</td></tr>`).join('')}</table></div>` : '';
+  const hooks = (Array.isArray(b.hooks_angulos)&&b.hooks_angulos.length)
+    ? b.hooks_angulos.map(h=>`<div class="fluxo-step"><span class="fluxo-label">${esc(h.nome||'')}</span><p class="apdesc">${esc(h.formula||'')}${h.exemplo?` — <i>"${esc(h.exemplo)}"</i>`:''}</p></div>`).join('') : '';
+  const objs = (Array.isArray(b.objecoes)&&b.objecoes.length)
+    ? `<ul class="rpts">${b.objecoes.map(o=>`<li><span class="rdot" style="background:var(--orange)"></span><b>${esc(o.objecao||'')}</b> — ${esc(o.resposta||'')}</li>`).join('')}</ul>` : '';
+  const claims = (Array.isArray(b.claims_proibidos)&&b.claims_proibidos.length)
+    ? `<div class="rqa">${b.claims_proibidos.map(c=>`<span class="rchip crit">${esc(c)}</span>`).join(' ')}</div>` : '';
+  const consc = (Array.isArray(b.consciencia)&&b.consciencia.length)
+    ? `<table class="rficha">${b.consciencia.map(c=>`<tr><td class="k">${esc(c.estagio||'')}</td><td class="v">${esc(c.mensagem||'')}</td></tr>`).join('')}</table>` : '';
+  const known = ['resumo','big_idea','hierarquia_revelacao','ingredientes','claims_proibidos','oferta','publico','avatares','hooks_angulos','angulos_nao_explorados','objecoes','wont_tell','cant_tell','consciencia','checklist_roteiro'];
+  const extras = Object.entries(b).filter(([k])=>!known.includes(k));
+  return `<div class="rcol">
+    ${b.big_idea?`<div class="rinsight" style="margin-top:0"><div class="rih">Big Idea</div>${esc(b.big_idea)}</div>`:''}
+    ${sec('Resumo', b.resumo?`<div class="rprose">${esc(b.resumo)}</div>`:'')}
+    ${sec('Hierarquia de revelação do mecanismo', listOf(b.hierarquia_revelacao))}
+    ${sec('Ingredientes — ordem obrigatória de roteiro', ingr)}
+    ${sec('🚫 Claims proibidos', claims)}
+    ${sec('Oferta', fichaOf(b.oferta))}
+    ${sec('Público', fichaOf(b.publico))}
+    ${sec('Avatares', avs)}
+    ${sec('Hooks / ângulos provados', hooks)}
+    ${sec('Ângulos ainda não explorados', listOf(b.angulos_nao_explorados))}
+    ${sec('Objeções + resposta', objs)}
+    ${sec("Won't Tell — ela só fala anônima", listOf(b.wont_tell))}
+    ${sec("Can't Tell — nem ela sabe (onde converte)", listOf(b.cant_tell))}
+    ${sec('Estágios de consciência', consc)}
+    ${sec('Checklist estrutural de roteiro', listOf(b.checklist_roteiro))}
+    ${extras.length?sec('Outros campos', `<pre class="fullprompt">${esc(JSON.stringify(Object.fromEntries(extras),null,2))}</pre>`):''}
+  </div>`;
+}
+
+function renderBriefCard(p){
+  const b = p.brief;
+  const avs = (b.avatares||[]).map(a=>((a.emoji||'')+' '+(a.nome||'')).trim()).join(' · ');
+  const hooks = (b.hooks_angulos||[]).map(h=>`<div><b>${esc(h.nome||'')}</b>${h.formula?' — '+esc(h.formula):''}</div>`).join('');
+  const claims = (b.claims_proibidos||[]).map(c=>`<span class="rchip crit" style="font-size:11px">${esc(c)}</span>`).join(' ');
+  return `<div class="context">
+    <h2>💊 Sobre o produto — perfil estruturado</h2>
+    ${b.big_idea?`<p><strong>Big idea:</strong> ${esc(b.big_idea)}</p>`:''}
+    ${b.resumo?`<p>${esc(b.resumo)}</p>`:''}
+    <span class="toggle" onclick="this.nextElementSibling.classList.toggle('on'); this.textContent = this.textContent.includes('mais')?'▲ ver menos':'▼ ver mais (avatares, hooks e claims proibidos)'">▼ ver mais (avatares, hooks e claims proibidos)</span>
+    <div class="full">
+      ${avs?`<p style="margin-top:10px"><strong>Avatares:</strong> ${esc(avs)}</p>`:''}
+      ${hooks?`<div class="hooks-mini">${hooks}</div>`:''}
+      ${claims?`<p style="margin-top:10px"><strong>🚫 Nunca:</strong> ${claims}</p>`:''}
+      <p style="margin-top:10px"><button class="btn-sm" onclick="openProductBrief('${p.id}')">📋 abrir perfil completo</button></p>
+    </div>
+  </div>`;
 }
 
 // ---------- CONCORRENTES / SWIPE ----------
