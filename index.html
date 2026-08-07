@@ -171,6 +171,63 @@ table.scenes .time{color:var(--tx3);white-space:nowrap;font-size:10.5px}
 .esteira-table th{color:var(--tx3);font-weight:700;font-size:10.5px;text-transform:uppercase}
 .esteira-note{font-size:12px;color:var(--tx2);background:var(--card2);border-radius:8px;padding:10px 12px;margin-bottom:10px;line-height:1.6}
 @media(max-width:640px){.grid{grid-template-columns:1fr}}
+/* relatório AD por AD (estilo página de análise) */
+#v-rel{--rel-grad:linear-gradient(135deg,#6366f1,#8b5cf6)}
+.rel-top{padding-bottom:18px;margin-bottom:22px;border-bottom:1px solid var(--border)}
+.rel-kicker{font-size:11px;letter-spacing:2.4px;color:var(--tx2);text-transform:uppercase;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:9px}
+.rel-kicker::before{content:"";width:24px;height:3px;border-radius:3px;background:var(--rel-grad)}
+.rel-title{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px;line-height:1.15;background:linear-gradient(120deg,#ffffff 28%,#c4b5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.rel-meta2{color:var(--tx2);font-size:12.5px}
+.rel-filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
+.rel-filters select,.rel-filters input{width:auto;min-width:170px}
+.rel-src{display:flex;border:1px solid var(--border);border-radius:var(--rs);overflow:hidden}
+.rel-src button{background:transparent;border:none;color:var(--tx2);padding:8px 14px;font-size:12.5px;font-weight:600}
+.rel-src button.on{background:var(--acdim);color:var(--ac2)}
+.rcard{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:24px;margin-bottom:24px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 24px 60px -34px rgba(0,0,0,.95)}
+.rcard .rhead{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px}
+.rbadge{background:var(--rel-grad);color:#fff;font-weight:800;font-size:14px;padding:8px 14px;border-radius:12px;white-space:nowrap;box-shadow:0 10px 26px -10px rgba(129,140,248,.75);letter-spacing:.2px}
+.rdesc{color:#cfcfe2;padding-top:4px;font-size:13px}
+.rdesc .rprod{color:var(--tx3)}
+.rgrid{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start}
+.rmosaic img{width:100%;border-radius:14px;display:block;border:1px solid rgba(255,255,255,.07);cursor:zoom-in}
+.rmosaic .rcap{text-align:center;color:var(--tx3);font-size:11px;margin-top:8px}
+.rmosaic .rnomosaic{color:var(--tx3);padding:44px 10px;text-align:center;border:1px dashed rgba(255,255,255,.14);border-radius:14px;font-size:12px}
+.rmeta{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px 14px;font-size:13px;margin-bottom:8px}
+.rmeta b{color:#fff}
+.rcol h4{color:var(--tx);font-size:11px;letter-spacing:1.3px;text-transform:uppercase;font-weight:800;margin:16px 0 8px;color:var(--ac2)}
+.rcol h4:first-child{margin-top:0}
+.rcol .rlbl{font-size:9px;background:var(--card2);color:var(--tx3);border-radius:999px;padding:1px 8px;margin-left:6px;letter-spacing:.5px;vertical-align:middle}
+.rprose{color:#d6d6ea;font-size:13px;line-height:1.65}
+.rtrans{color:var(--tx2);font-size:12.5px;line-height:1.65;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;max-height:260px;overflow:auto;white-space:pre-wrap}
+.rqa .rchip{display:inline-block;font-size:12px;font-weight:600;padding:4px 12px;border-radius:999px;margin:2px 5px 2px 0;border:1px solid transparent}
+.rchip.ok{background:rgba(52,211,153,.12);color:#4ade80;border-color:rgba(52,211,153,.26)}
+.rchip.aten{background:rgba(251,191,36,.12);color:#fbbf24;border-color:rgba(251,191,36,.26)}
+.rchip.crit{background:rgba(251,113,133,.12);color:#fb7185;border-color:rgba(251,113,133,.26)}
+.rpts{list-style:none;padding:0;margin:0}
+.rpts li{padding:8px 0 8px 26px;position:relative;color:#d6d6ea;border-bottom:1px solid rgba(255,255,255,.05);font-size:12.5px}
+.rpts li:last-child{border:0}
+.rpts li b{color:#fff}
+.rpts .rdot{position:absolute;left:2px;top:12px;width:9px;height:9px;border-radius:50%}
+table.rficha{width:100%;border-collapse:separate;border-spacing:0;margin:2px 0;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden}
+table.rficha td{border-bottom:1px solid rgba(255,255,255,.07);padding:8px 13px;font-size:12.5px;vertical-align:top}
+table.rficha tr:last-child td{border-bottom:0}
+table.rficha td.k{color:var(--ac2);width:30%;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;background:rgba(255,255,255,.02)}
+table.rficha td.v{color:#d6d6ea}
+table.rficha tr:hover td{background:rgba(129,140,248,.06)}
+.rfluxo{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:6px 0}
+.rfluxo.f4{grid-template-columns:repeat(4,1fr)}
+.rfx{border-radius:14px;padding:13px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden}
+.rfx::before{content:"";position:absolute;top:0;left:0;right:0;height:3px}
+.rfx .rfxh{font-weight:800;font-size:11px;letter-spacing:.7px;text-transform:uppercase;margin-bottom:6px}
+.rfx.hk::before{background:linear-gradient(90deg,#34d399,transparent)}.rfx.hk .rfxh{color:#34d399}
+.rfx.bd::before{background:linear-gradient(90deg,#fbbf24,transparent)}.rfx.bd .rfxh{color:#fbbf24}
+.rfx.gd::before{background:linear-gradient(90deg,#fcd34d,transparent)}.rfx.gd .rfxh{color:#fcd34d}
+.rfx.cl::before{background:linear-gradient(90deg,#fb7185,transparent)}.rfx.cl .rfxh{color:#fb7185}
+.rfx .rfxt{color:#c7c7de;font-size:12px;line-height:1.5}
+.rinsight{background:var(--rel-grad);border-radius:14px;padding:14px 18px;margin-top:16px;color:#fff;font-size:13px;line-height:1.6}
+.rinsight .rih{font-weight:800;font-size:11px;letter-spacing:1px;text-transform:uppercase;opacity:.85;margin-bottom:4px}
+@media(max-width:820px){.rgrid{grid-template-columns:1fr}}
+@media(max-width:640px){.rfluxo,.rfluxo.f4{grid-template-columns:1fr}.rcard .rhead{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -197,6 +254,7 @@ table.scenes .time{color:var(--tx3);white-space:nowrap;font-size:10.5px}
     <button class="tab" data-v="costs" onclick="go('costs')">💸 Custos</button>
     <button class="tab" data-v="prods" onclick="go('prods')">📦 Produtos</button>
     <button class="tab" data-v="comp" onclick="go('comp')">🕵️ Concorrentes</button>
+    <button class="tab" data-v="rel" onclick="go('rel')">🧾 Relatório</button>
     <div class="spacer"></div>
     <span class="user" id="userEmail"></span>
     <button class="btn-sm" onclick="doLogout()">sair</button>
@@ -421,6 +479,25 @@ table.scenes .time{color:var(--tx3);white-space:nowrap;font-size:10.5px}
     <div class="grid" id="compGrid"></div>
   </div>
 
+  <!-- RELATÓRIO AD POR AD -->
+  <div id="v-rel" class="hidden">
+    <div class="rel-top">
+      <div class="rel-kicker">Detalhamento AD por AD</div>
+      <div class="rel-title" id="relTitle">Análise de criativos</div>
+      <div class="rel-meta2" id="relMeta">QA técnico automático + detalhamento editorial</div>
+    </div>
+    <div class="rel-filters">
+      <div class="rel-src">
+        <button class="on" data-s="own" onclick="setRelSource('own')">🎬 Próprios</button>
+        <button data-s="comp" onclick="setRelSource('comp')">🕵️ Concorrentes</button>
+      </div>
+      <select id="relProduct" onchange="loadReport()"></select>
+      <input type="text" id="relSearch" placeholder="Buscar por código, marca ou transcrição..." oninput="renderReport()">
+      <span class="muted" id="relCount"></span>
+    </div>
+    <div id="relList"></div>
+  </div>
+
 </div>
 </div>
 <div id="profileOverlay" class="profile-overlay hidden" onclick="if(event.target===this) closeProfile()">
@@ -434,6 +511,7 @@ const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 const db = supabase.createClient(SB_URL, SB_KEY);
 
 let products = [], creatives = [], dissections = {}, competitors = [], recreations = {}, recreationsAll = {}, profileState = null, lang = 'en', currentView = 'dash';
+let relSource = 'own', relItems = [], relLoaded = false;
 
 const $ = id => document.getElementById(id);
 const esc = s => (s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -467,7 +545,7 @@ async function init(){
 
 function fillProductSelects(){
   const opts = products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');
-  ['dashProduct','libProduct','adsProduct'].forEach(id=>{ $(id).innerHTML = opts; });
+  ['dashProduct','libProduct','adsProduct','relProduct'].forEach(id=>{ $(id).innerHTML = opts; });
   $('costProduct').innerHTML = '<option value="">Geral</option>' + opts;
   $('compProduct').innerHTML = '<option value="">—</option>' + opts;
 }
@@ -475,7 +553,8 @@ function fillProductSelects(){
 function go(v){
   currentView = v;
   document.querySelectorAll('nav .tab').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
-  ['dash','lib','ads','costs','prods','comp'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
+  ['dash','lib','ads','costs','prods','comp','rel'].forEach(x=>$('v-'+x).classList.toggle('hidden', x!==v));
+  if(v==='rel' && !relLoaded) loadReport();
 }
 
 // ---------- DASHBOARD ----------
@@ -1150,6 +1229,119 @@ async function delCompetitorAd(id){
 }
 
 // ---------- BUSCA META AD LIBRARY ----------
+// ---------- RELATÓRIO AD POR AD ----------
+function setRelSource(s){
+  relSource = s;
+  document.querySelectorAll('.rel-src button').forEach(b=>b.classList.toggle('on', b.dataset.s===s));
+  $('relProduct').style.display = s==='own' ? '' : 'none';
+  loadReport();
+}
+
+async function loadReport(){
+  relLoaded = true;
+  $('relList').innerHTML = '<div class="muted">Carregando…</div>';
+  if(relSource==='own'){
+    const pid = $('relProduct').value;
+    if(!pid){ relItems=[]; renderReport(); return; }
+    const [{data:crs, error:e1}, {data:diss, error:e2}] = await Promise.all([
+      db.from('aff_creatives').select('*').eq('product_id', pid).order('code'),
+      db.from('aff_dissections').select('*').order('created_at', {ascending:false}),
+    ]);
+    if(e1||e2){ toast('Erro: '+(e1||e2).message); return; }
+    const dmap = {};
+    (diss||[]).forEach(d=>{ if(!dmap[d.creative_id]) dmap[d.creative_id] = d; });
+    relItems = (crs||[]).filter(c=>dmap[c.id]).map(c=>({type:'own', c, d:dmap[c.id]}));
+  } else {
+    const {data, error} = await db.from('aff_competitor_ads').select('*').order('created_at', {ascending:false});
+    if(error){ toast('Erro: '+error.message); return; }
+    relItems = (data||[]).filter(c=>c.summary).map(c=>({type:'comp', c, d:c}));
+  }
+  renderReport();
+}
+
+function relFluxoClass(key, i, total){
+  if(/hook|gancho|abertura/i.test(key)) return 'hk';
+  if(/close|cta|fech|oferta/i.test(key)) return 'cl';
+  if(/corpo|body|desenvolv|meio/i.test(key)) return 'bd';
+  if(i===0) return 'hk';
+  if(i===total-1) return 'cl';
+  return total>3 && i===total-2 ? 'gd' : 'bd';
+}
+
+function renderRelCard(item){
+  const {type, c, d} = item;
+  const badge = type==='own' ? (c.code||'—') : (c.brand_name||'—');
+  const descBits = type==='own'
+    ? [c.batch, c.ad_group, c.hook_label].filter(Boolean).join(' · ')
+    : [c.niche, c.platform].filter(Boolean).join(' · ');
+  const prod = type==='own'
+    ? (products.find(p=>p.id===c.product_id)||{}).name
+    : (products.find(p=>p.id===c.product_id)||{}).name || c.niche;
+  const mosaic = d.mosaic_path
+    ? `<img src="${mosaicUrl(d.mosaic_path)}" alt="mosaico" loading="lazy" onclick="window.open('${mosaicUrl(d.mosaic_path)}','_blank')">`
+    : `<div class="rnomosaic">sem mosaico de frames</div>`;
+  const meta = [];
+  if(d.duration_sec) meta.push(`<b>Duração:</b> ${fmtDur(d.duration_sec)}`);
+  if(d.resolution) meta.push(`<b>Resolução:</b> ${esc(d.resolution)}`);
+  if(d.fps) meta.push(`<b>FPS:</b> ${d.fps}`);
+  const qa = (d.qa_flags||[]).map(f=>{
+    const ok = /sem apontes/i.test(f);
+    const crit = /preto|corrompid|sem áudio|sem audio/i.test(f) && !ok;
+    return `<span class="rchip ${ok?'ok':(crit?'crit':'aten')}">${esc(f)}</span>`;
+  }).join('');
+  const transcript = type==='own' ? (d.transcript_full || c.transcript_en || '') : (c.transcript || '');
+  const pts = (d.attention_points||[]).map(p=>{
+    const sev = SEV[p.severity] || SEV.revisar;
+    return `<li><span class="rdot" style="background:${sev.c}"></span><b>${esc(p.title||'')}</b>${p.title?' — ':''}${esc(p.description||'')}</li>`;
+  }).join('');
+  const ficha = d.ficha_tecnica
+    ? `<table class="rficha">${Object.entries(d.ficha_tecnica).map(([k,v])=>`<tr><td class="k">${esc(k)}</td><td class="v">${esc(String(v))}</td></tr>`).join('')}</table>`
+    : '';
+  let fluxo = '';
+  if(d.fluxo_persuasivo){
+    const entries = Object.entries(d.fluxo_persuasivo);
+    fluxo = `<div class="rfluxo ${entries.length>=4?'f4':''}">${entries.map(([k,v],i)=>
+      `<div class="rfx ${relFluxoClass(k,i,entries.length)}"><div class="rfxh">${esc(k)}</div><div class="rfxt">${esc(String(v))}</div></div>`
+    ).join('')}</div>`;
+  }
+  return `<div class="rcard">
+    <div class="rhead">
+      <div class="rbadge">${esc(badge)}</div>
+      <div class="rdesc">${esc(descBits)}${prod?` <span class="rprod">— ${esc(prod)}</span>`:''}</div>
+    </div>
+    <div class="rgrid">
+      <div class="rmosaic">${mosaic}<div class="rcap">Referência visual — frames amostrados do AD</div></div>
+      <div class="rcol">
+        ${meta.length?`<div class="rmeta">${meta.join(' &nbsp;·&nbsp; ')}</div>`:''}
+        ${qa?`<h4>QA técnico <span class="rlbl">automático</span></h4><div class="rqa">${qa}</div>`:''}
+        <h4>Resumo da edição</h4><div class="rprose">${esc(d.summary||'—')}</div>
+        ${transcript?`<h4>Transcrição de áudio <span class="rlbl">palavra por palavra</span></h4><div class="rtrans">${esc(transcript)}</div>`:''}
+        <h4>Pontos de atenção</h4>${pts?`<ul class="rpts">${pts}</ul>`:'<div class="muted">—</div>'}
+        ${ficha?`<h4>Ficha Técnica do Anúncio</h4>${ficha}`:''}
+        ${fluxo?`<h4>Mapa de Fluxo Persuasivo</h4>${fluxo}`:''}
+        ${d.strategic_insight?`<div class="rinsight"><div class="rih">Insight estratégico</div>${esc(d.strategic_insight)}</div>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderReport(){
+  const q = ($('relSearch').value||'').toLowerCase();
+  const list = relItems.filter(({type,c,d})=>{
+    if(!q) return true;
+    const hay = [type==='own'?c.code:c.brand_name, c.niche, c.transcript_en, c.transcript_pt, c.transcript, d.transcript_full, d.summary]
+      .filter(Boolean).join(' ').toLowerCase();
+    return hay.includes(q);
+  });
+  const prodName = relSource==='own' ? ((products.find(p=>p.id===$('relProduct').value)||{}).name||'') : 'Concorrentes';
+  $('relTitle').textContent = 'Análise de criativos' + (prodName ? ` — ${prodName}` : '');
+  $('relMeta').textContent = `${list.length} criativo(s) · QA técnico automático + detalhamento editorial`;
+  $('relCount').textContent = list.length + ' ADs dissecados';
+  $('relList').innerHTML = list.length
+    ? list.map(renderRelCard).join('')
+    : '<div class="muted">Nenhum AD dissecado encontrado — dissecar primeiro na Biblioteca/Concorrentes.</div>';
+}
+
 let lastSearchResults = [];
 
 async function searchViralAds(){
