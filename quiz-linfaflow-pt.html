@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>60-Second Fluid Flow Quiz — Find Out Why You Still Feel Puffy</title>
+<title>Teste de 60 Segundos — Descubra Por Que Você Ainda Vive Inchada</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,14 +166,14 @@ h1{font-family:var(--serif);font-weight:400;font-size:33px;line-height:1.18;marg
 </head>
 <body>
 <div class="wrap">
-  <div class="masthead"><div class="brand">Leg Wellness Journal</div><div class="tag">Reader Self-Assessment</div></div>
+  <div class="masthead"><div class="brand">Leg Wellness Journal</div><div class="tag">Autoavaliação do leitor</div></div>
 
   <!-- INTRO -->
   <div id="intro">
-    <h1>Why Do You Still Wake Up Puffy — Even When Your Labs Come Back "Normal"?</h1>
-    <p class="lede">Answer 5 quick questions and see which fluid-flow pattern your answers match — and what tends to help each one. Takes about 60 seconds.</p>
+    <h1>Por Que Você Ainda Acorda Inchada — Mesmo Com Todos os Exames "Normais"?</h1>
+    <p class="lede">Responda 5 perguntas rápidas e veja com qual padrão de circulação de líquidos as suas respostas combinam — e o que costuma ajudar em cada um. Leva uns 60 segundos.</p>
     <div class="card">
-      <svg class="hero" viewBox="0 0 300 120" role="img" aria-label="Illustration of fluid moving slowly through a congested channel">
+      <svg class="hero" viewBox="0 0 300 120" role="img" aria-label="Ilustração de líquido passando devagar por um canal congestionado">
         <path class="pipe-wall" d="M20 40 H280"/>
         <path class="pipe-wall" d="M20 80 H280"/>
         <ellipse class="pipe-clog" cx="140" cy="60" rx="26" ry="15"/>
@@ -182,8 +182,8 @@ h1{font-family:var(--serif);font-weight:400;font-size:33px;line-height:1.18;marg
         <circle class="drop slow2" cx="34" cy="60" r="5.5"/>
         <circle class="drop slow3" cx="34" cy="60" r="6.2"/>
       </svg>
-      <button class="cta" onclick="startQuiz()">Start the 60-Second Quiz →</button>
-      <div class="subcta">No email required · Your answers stay on this page</div>
+      <button class="cta" onclick="startQuiz()">Começar o teste de 60 segundos →</button>
+      <div class="subcta">Sem cadastro · Suas respostas ficam só nesta página</div>
     </div>
   </div>
 
@@ -195,7 +195,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:33px;line-height:1.18;marg
         <div class="dots" id="dots"></div>
       </div>
       <div class="stage" id="stage"></div>
-      <button class="back hidden" id="backBtn" onclick="goBack()">← previous question</button>
+      <button class="back hidden" id="backBtn" onclick="goBack()">← pergunta anterior</button>
     </div>
   </div>
 
@@ -204,10 +204,10 @@ h1{font-family:var(--serif);font-weight:400;font-size:33px;line-height:1.18;marg
     <div class="card analyzing">
       <svg class="spinner" viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="head" cx="25" cy="25" r="20"/></svg>
       <ul class="alines" id="alines">
-        <li>Matching your timing pattern…</li>
-        <li>Comparing what you've already tried…</li>
-        <li>Checking your daily-load profile…</li>
-        <li>Building your personalized result…</li>
+        <li>Cruzando o horário em que piora…</li>
+        <li>Comparando o que você já tentou…</li>
+        <li>Analisando a sua rotina do dia…</li>
+        <li>Montando o seu resultado…</li>
       </ul>
     </div>
   </div>
@@ -215,18 +215,18 @@ h1{font-family:var(--serif);font-weight:400;font-size:33px;line-height:1.18;marg
   <!-- RESULTADO -->
   <div id="result" class="hidden">
     <div class="card">
-      <div class="rkicker">Your result</div>
+      <div class="rkicker">Seu resultado</div>
       <div class="rtitle" id="rtitle"></div>
 
       <div class="recap">
-        <h4>Based on what you told us</h4>
+        <h4>Com base no que você respondeu</h4>
         <div class="chips" id="rchips"></div>
       </div>
 
       <div class="daybox">
-        <h4>Your reported pattern through the day</h4>
+        <h4>Como o seu inchaço se comporta ao longo do dia</h4>
         <div class="dsub" id="dsub"></div>
-        <svg class="daysvg" viewBox="0 0 300 104" role="img" aria-label="Chart of when swelling peaks during your day">
+        <svg class="daysvg" viewBox="0 0 300 104" role="img" aria-label="Gráfico do horário em que o inchaço atinge o pico no seu dia">
           <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#1fa45c" stop-opacity=".22"/><stop offset="100%" stop-color="#1fa45c" stop-opacity="0"/>
           </linearGradient></defs>
@@ -234,42 +234,42 @@ h1{font-family:var(--serif);font-weight:400;font-size:33px;line-height:1.18;marg
           <path class="area" id="dArea" d=""/>
           <path class="curve" id="dCurve" d=""/>
           <g class="peak" id="dPeak"></g>
-          <text class="axis" x="18" y="94">6 AM</text>
-          <text class="axis" x="105" y="94">Noon</text>
-          <text class="axis" x="196" y="94">6 PM</text>
-          <text class="axis" x="266" y="94">Bed</text>
+          <text class="axis" x="18" y="94">6h</text>
+          <text class="axis" x="100" y="94">Meio-dia</text>
+          <text class="axis" x="200" y="94">18h</text>
+          <text class="axis" x="258" y="94">Dormir</text>
         </svg>
       </div>
 
       <div class="rbody" id="rbody"></div>
 
       <div class="mech">
-        <svg viewBox="0 0 150 96" role="img" aria-label="Cross-section of a channel: fluid backing up behind congestion">
+        <svg viewBox="0 0 150 96" role="img" aria-label="Corte de um canal: líquido represado atrás da congestão">
           <rect class="pipe-outer" x="4" y="16" width="142" height="30" rx="12"/>
           <rect class="pipe-fluid" x="8" y="21" width="72" height="20" rx="9"/>
           <ellipse class="pipe-jam" cx="94" cy="31" rx="20" ry="10"/>
           <ellipse class="pipe-jam" cx="114" cy="31" rx="11" ry="7" opacity=".6"/>
-          <text x="4" y="12" font-family="Inter,Arial" font-size="8" fill="#41564a" letter-spacing=".6">BACKED UP</text>
+          <text x="4" y="12" font-family="Inter,Arial" font-size="8" fill="#41564a" letter-spacing=".6">REPRESADO</text>
           <rect class="pipe-outer" x="4" y="62" width="142" height="30" rx="12"/>
           <rect class="pipe-fluid" x="8" y="67" width="134" height="20" rx="9" opacity=".85"/>
-          <text x="4" y="58" font-family="Inter,Arial" font-size="8" fill="#123c2a" letter-spacing=".6">MOVING FREELY</text>
+          <text x="4" y="58" font-family="Inter,Arial" font-size="8" fill="#123c2a" letter-spacing=".6">FLUINDO LIVRE</text>
         </svg>
-        <p>Think of it as <b>plumbing, not willpower</b>. When the channel that carries waste fluid slows, everything upstream pools — which is why pressing from the outside brings relief that fades by morning.</p>
+        <p>Pense em <b>encanamento, não em força de vontade</b>. Quando o canal que leva o líquido embora fica lento, tudo o que vem antes se acumula — é por isso que apertar por fora alivia, mas o inchaço volta na manhã seguinte.</p>
       </div>
 
       <div class="match">
-        <h4>How your answers clustered</h4>
+        <h4>Como as suas respostas se agruparam</h4>
         <div id="mrows"></div>
       </div>
       <ul class="rlist" id="rlist"></ul>
-      <a class="cta" id="rcta" href="#">See If Linfaflow® Is Right For You →</a>
-      <div class="subcta">Liquid botanical drops · 30-second daily ritual · money-back guarantee</div>
-      <button class="restart" onclick="restart()">↻ retake the quiz</button>
+      <a class="cta" id="rcta" href="#">Ver se o Linfaflow® faz sentido pra você →</a>
+      <div class="subcta">Gotas líquidas de origem vegetal · ritual de 30 segundos por dia · garantia de reembolso</div>
+      <button class="restart" onclick="restart()">↻ refazer o teste</button>
     </div>
   </div>
 
   <div class="note">
-    This self-assessment is for informational purposes only and is not medical advice, a diagnosis, or a substitute for consulting your doctor — especially if you take prescription medication. The "patterns" described here are groupings of self-reported answers, not medical conditions. Linfaflow® is a botanical supplement formulated to <em>support</em> the body's natural lymphatic flow and fluid balance. Individual results vary. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
+    Esta autoavaliação tem caráter apenas informativo. Não é diagnóstico, não é consulta e não substitui a orientação do seu médico — principalmente se você usa algum medicamento de uso contínuo. Os "padrões" descritos aqui são agrupamentos das suas próprias respostas, não condições médicas. Linfaflow® é um suplemento alimentar à base de plantas, formulado para <em>apoiar</em> o fluxo linfático natural e o equilíbrio de líquidos do organismo. Os resultados variam de pessoa para pessoa. Suplementos alimentares não são medicamentos, não servem para diagnosticar, tratar, curar ou prevenir doenças, e não substituem uma alimentação equilibrada e hábitos de vida saudáveis.
   </div>
 </div>
 
@@ -301,72 +301,72 @@ const ico = k => '<span class="ico"><svg viewBox="0 0 24 24">'+(ICONS[k]||ICONS.
 
 /* ---------- perguntas → pontuação por avatar ---------- */
 const QUESTIONS = [
-  {q:"When is the puffiness or heaviness at its worst?", opts:[
-    ["face","I wake up with a puffy face and puffy eyes",{mystery:2,mirror:1},"Worst in the morning"],
-    ["leg","My ankles and legs are heavy by late afternoon",{standing:2,chair:1},"Peaks late afternoon"],
-    ["belly","I look 'bloated-pregnant' by dinner time",{phantom:2,mystery:1},"Peaks by dinner"],
-    ["clock","Honestly? Pretty much all day",{external:1,phantom:1,mystery:1},"All day long"]
+  {q:"Em que momento o inchaço ou o peso ficam piores?", opts:[
+    ["face","Acordo com o rosto e os olhos inchados",{mystery:2,mirror:1},"Pior de manhã"],
+    ["leg","Meus tornozelos e pernas pesam no fim da tarde",{standing:2,chair:1},"Pico no fim da tarde"],
+    ["belly","Na hora do jantar eu pareço até grávida de tão estufada",{phantom:2,mystery:1},"Pico no jantar"],
+    ["clock","Sinceramente? O dia inteiro",{external:1,phantom:1,mystery:1},"O dia inteiro"]
   ]},
-  {q:"What have you already tried for it?", opts:[
-    ["sock","Compression socks, massage, dry brushing — the works",{external:3},"Tried compression & massage"],
-    ["pill","Water pills or detox teas",{diuretic:3},"Tried water pills"],
-    ["leaf","Cutting salt, gluten, dairy… nothing changed",{phantom:2,mystery:1},"Cut foods, no change"],
-    ["question","Nothing seriously yet — I keep hoping it passes",{mystery:2},"Nothing tried yet"]
+  {q:"O que você já tentou para resolver?", opts:[
+    ["sock","Meia de compressão, drenagem, escova a seco — de tudo",{external:3},"Já tentei compressão e drenagem"],
+    ["pill","Diurético ou chá detox",{diuretic:3},"Já tomei diurético"],
+    ["leaf","Cortei sal, glúten, leite… e não mudou nada",{phantom:2,mystery:1},"Cortei alimentos, sem mudança"],
+    ["question","Nada sério ainda — vou empurrando na esperança de passar",{mystery:2},"Ainda não tentei nada"]
   ]},
-  {q:"What did your last check-up say?", opts:[
-    ["clipboard","Everything came back NORMAL — but my body disagrees",{mystery:3},"Labs came back normal"],
-    ["rx","My doctor prescribed something for fluid retention",{diuretic:3},"On a prescription"],
-    ["calendar","I haven't been checked recently",{standing:1,phantom:1},"Not checked recently"],
-    ["hourglass","I was told it's 'just aging'",{chair:2,mystery:1},"Told it's 'just aging'"]
+  {q:"O que disseram no seu último check-up?", opts:[
+    ["clipboard","Deu tudo NORMAL — mas meu corpo diz outra coisa",{mystery:3},"Exames deram normais"],
+    ["rx","O médico receitou algo para retenção de líquido",{diuretic:3},"Uso medicamento receitado"],
+    ["calendar","Faz tempo que não faço exames",{standing:1,phantom:1},"Sem exames recentes"],
+    ["hourglass","Me disseram que 'é da idade'",{chair:2,mystery:1},"Disseram que 'é da idade'"]
   ]},
-  {q:"What does a typical day look like for you?", opts:[
-    ["standing","On my feet for hours — nursing, teaching, retail…",{standing:3},"On your feet for hours"],
-    ["chair","Sitting most of the day (desk, car, couch)",{chair:2,mystery:1},"Sitting most of the day"],
-    ["activity","Active, but the swelling shows up anyway",{phantom:2},"Active anyway"],
-    ["family","Long days caring for family or grandkids",{chair:2},"Long caregiving days"]
+  {q:"Como é o seu dia normalmente?", opts:[
+    ["standing","Em pé por horas — enfermagem, sala de aula, balcão, salão…",{standing:3},"Em pé por horas"],
+    ["chair","Sentada quase o dia todo (escritório, carro, sofá)",{chair:2,mystery:1},"Sentada quase o dia todo"],
+    ["activity","Sou ativa, mas o inchaço aparece do mesmo jeito",{phantom:2},"Ativa mesmo assim"],
+    ["family","Dias longos cuidando da família ou dos netos",{chair:2},"Dias longos cuidando de alguém"]
   ]},
-  {q:"Which of these sounds most like you?", opts:[
-    ["camera","I avoid photos — I don't recognize my own face lately",{mystery:1,phantom:1,mirror:1},"Avoiding photos"],
-    ["shoe","I keep a second pair of shoes for the afternoon",{standing:2},"Second pair of shoes"],
-    ["droplet","I'm tired of trading bathroom trips for relief",{diuretic:2},"Tired of bathroom trips"],
-    ["man","I'm a man and my face/gut got puffier every year",{mirror:3},"Puffier year after year","mirror"]
+  {q:"Qual destas frases é mais a sua cara?", opts:[
+    ["camera","Fujo de foto — ando sem me reconhecer no espelho",{mystery:1,phantom:1,mirror:1},"Fugindo de fotos"],
+    ["shoe","Tenho um segundo par de sapato pra usar de tarde",{standing:2},"Segundo par de sapato"],
+    ["droplet","Cansei de trocar alívio por corrida ao banheiro",{diuretic:2},"Cansada do banheiro"],
+    ["man","Sou homem e meu rosto e barriga incharam ano após ano",{mirror:3},"Inchando ano após ano","mirror"]
   ]}
 ];
 
 /* curva do dia — desenhada a partir da resposta 1 (relato da própria pessoa) */
 const DAY = [
-  {d:"M18,26 C58,22 104,46 152,58 C198,68 244,73 288,75", peak:[24,26], lbl:"peak on waking",
-   sub:"You reported the swelling is worst when you wake up — before the day has even loaded your system."},
-  {d:"M18,72 C58,68 100,56 148,40 C190,27 228,22 254,26 C268,29 278,36 288,44", peak:[252,25], lbl:"peak late afternoon",
-   sub:"You reported it builds through the day and peaks late afternoon — the classic gravity-plus-slow-return curve."},
-  {d:"M18,74 C68,70 118,62 168,49 C214,37 254,27 288,20", peak:[284,20], lbl:"peak at dinner",
-   sub:"You reported it climbs all day and peaks around dinner — heaviest when you finally sit down."},
-  {d:"M18,40 C60,36 100,38 150,33 C200,29 242,31 288,28", peak:[150,33], lbl:"high all day",
-   sub:"You reported it barely lets up — high from morning to night, with no real window of relief."}
+  {d:"M18,26 C58,22 104,46 152,58 C198,68 244,73 288,75", peak:[24,26], lbl:"pico ao acordar",
+   sub:"Você contou que o pior é logo ao acordar — antes mesmo de o dia ter exigido qualquer coisa do seu corpo."},
+  {d:"M18,72 C58,68 100,56 148,40 C190,27 228,22 254,26 C268,29 278,36 288,44", peak:[252,25], lbl:"pico no fim da tarde",
+   sub:"Você contou que vai acumulando e estoura no fim da tarde — a curva clássica de quem passa o dia de pé ou sentada."},
+  {d:"M18,74 C68,70 118,62 168,49 C214,37 254,27 288,20", peak:[284,20], lbl:"pico no jantar",
+   sub:"Você contou que sobe o dia todo e chega no auge perto do jantar — mais pesado bem na hora em que você finalmente senta."},
+  {d:"M18,40 C60,36 100,38 150,33 C200,29 242,31 288,28", peak:[150,33], lbl:"alto o dia todo",
+   sub:"Você contou que quase não dá trégua — alto de manhã à noite, sem uma janela real de alívio."}
 ];
 
 const RESULTS = {
-  mystery:{name:"Normal Labs, Puffy Body",title:"The 'Normal Labs, Puffy Body' Pattern",
-    body:"Your answers match the most common profile we see: every test says fine, yet the mirror says otherwise. Here's the gap — <strong>standard labs don't measure how well your lymphatic system moves fluid.</strong> After 40 it naturally slows down, and no amount of 'clean eating' speeds it back up from the outside.",
-    list:["Why 'normal' bloodwork can miss slow lymphatic flow","Why the puffiness is worst in the morning","The 3-step internal approach (awaken → mobilize → drain) used in Linfaflow"]},
-  external:{name:"Everything From the Outside",title:"The 'Everything From the Outside' Pattern",
-    body:"Compression, massage and dry brushing all squeeze from the OUTSIDE — and you've felt the catch: the relief fades by the next morning. That's because <strong>outside pressure can't change how fluid moves on the inside.</strong> The missing piece isn't more squeezing. It's internal support.",
-    list:["Why external tools feel great but don't last","What 'supporting flow from within' actually means","How a 30-second liquid ritual fits before your routine — not instead of it"]},
-  standing:{name:"On Your Feet All Day",title:"The 'On Your Feet All Day' Pattern",
-    body:"Hours of standing pushes fluid down faster than a slowed lymphatic system can move it back up — <strong>that's why your ankles 'disappear' by 3 PM.</strong> Elevation helps, but you can't put your feet up mid-shift. Your body needs support that works while you're still standing.",
-    list:["Why standing jobs overwhelm slow lymphatic flow","Why elevation-based advice fails working women","Daily internal support that doesn't require lying down"]},
-  diuretic:{name:"The Water Pill Trade-Off",title:"The 'Water Pill Trade-Off' Pattern",
-    body:"<strong>Water pills force water OUT — they don't support how fluid MOVES.</strong> That's the trade you've been living: temporary relief in exchange for bathroom runs, and the puffiness returns anyway. Gentle botanical support for flow is a different approach entirely. (Always talk to your doctor before changing anything you were prescribed.)",
-    list:["The difference between forcing water out and supporting flow","Why the puffiness comes back after diuretics wear off","4 traditional botanicals that support the lymphatic route instead"]},
-  phantom:{name:"Phantom Weight",title:"The 'Phantom Weight' Pattern",
-    body:"Here's the reframe your answers point to: <strong>what you're fighting may not respond to diets because part of it may not be fat — it can be retained fluid.</strong> That would explain the morning-vs-evening size change, and why cutting foods didn't touch it. Scales don't tell the difference. Your afternoon pattern does.",
-    list:["How fluid retention masquerades as stubborn weight","Why it fluctuates through the day (fat doesn't)","Supporting drainage instead of dieting harder"]},
-  chair:{name:"'It's Just Aging'",title:"The 'It's Just Aging' Pattern",
-    body:"You were told this is 'just getting older'. But heaviness that forces you to look for a chair isn't a personality change — it's often fluid your system is too slow to move. <strong>Age slows lymphatic flow; it doesn't switch it off.</strong> Flow can be supported at any age.",
-    list:["Why 'just aging' is a description, not an explanation","The link between slow flow, heavy legs and low energy","A gentle 30-second daily ritual — no capsules, no harsh cleanse"]},
-  mirror:{name:"The Mirror Shift (Men)",title:"The 'Mirror Shift' Pattern (Men)",
-    body:"Puffy face, softer jawline, a gut that feels 'swollen' rather than fat — <strong>for a lot of men this tracks with sluggish internal drainage, not just diet.</strong> Years of sitting, alcohol and salt slow the system that's supposed to move waste fluid out. Straight answer: it's plumbing, and plumbing can be supported.",
-    list:["Why your face changed before your weight did","What alcohol and long sitting do to internal drainage","Direct, no-wellness-fluff internal support — 30 seconds a day"]}
+  mystery:{name:"Exames Normais, Corpo Inchado",title:"O padrão 'Exames Normais, Corpo Inchado'",
+    body:"Suas respostas batem com o perfil mais comum que a gente vê: todo exame dá certo, mas o espelho diz o contrário. A falha está aí — <strong>exame de rotina não mede o quanto o seu sistema linfático consegue movimentar líquido.</strong> Depois dos 40 ele naturalmente desacelera, e nenhuma dieta 'limpa' acelera isso de fora pra dentro.",
+    list:["Por que exame de sangue normal não enxerga fluxo linfático lento","Por que o inchaço é pior logo de manhã","O sistema de 3 etapas do Linfaflow (despertar → mobilizar → drenar)"]},
+  external:{name:"Tudo Por Fora",title:"O padrão 'Tudo Por Fora'",
+    body:"Compressão, drenagem e escova a seco apertam POR FORA — e você já sentiu a pegadinha: o alívio some na manhã seguinte. Isso acontece porque <strong>pressão de fora não muda a forma como o líquido se movimenta por dentro.</strong> A peça que falta não é apertar mais. É apoiar por dentro.",
+    list:["Por que o que é feito por fora alivia mas não sustenta","O que significa, na prática, 'apoiar o fluxo por dentro'","Como um ritual líquido de 30 segundos entra antes da sua rotina — e não no lugar dela"]},
+  standing:{name:"De Pé o Dia Inteiro",title:"O padrão 'De Pé o Dia Inteiro'",
+    body:"Horas em pé empurram líquido pra baixo mais rápido do que um sistema linfático lento consegue trazer de volta — <strong>é por isso que seu tornozelo 'some' lá pelas 15h.</strong> Elevar a perna ajuda, só que você não põe o pé pra cima no meio do expediente. Seu corpo precisa de um apoio que funcione com você em pé.",
+    list:["Por que trabalhar em pé sobrecarrega um fluxo linfático lento","Por que o conselho de 'elevar as pernas' não serve pra quem trabalha","Apoio diário por dentro, sem depender de repouso"]},
+  diuretic:{name:"A Troca do Diurético",title:"O padrão 'A Troca do Diurético'",
+    body:"<strong>Diurético força a água PRA FORA — ele não apoia o jeito como o líquido CIRCULA.</strong> É essa a troca que você vem fazendo: alívio temporário em troca de corrida ao banheiro, e o inchaço volta do mesmo jeito. Apoiar o fluxo com botânicos é uma abordagem completamente diferente. (Converse sempre com seu médico antes de mudar qualquer coisa que ele receitou.)",
+    list:["A diferença entre expulsar água e apoiar o fluxo","Por que o inchaço volta quando o diurético passa","As 4 plantas que apoiam o caminho linfático em vez de forçar a saída"]},
+  phantom:{name:"Peso Fantasma",title:"O padrão 'Peso Fantasma'",
+    body:"A virada de chave que as suas respostas apontam é esta: <strong>o que você está combatendo pode não responder a dieta porque parte disso pode não ser gordura — pode ser líquido retido.</strong> Isso explicaria a diferença de tamanho entre manhã e noite, e por que cortar alimento não resolveu. A balança não distingue os dois. O seu padrão do fim do dia, sim.",
+    list:["Como a retenção de líquido se disfarça de peso teimoso","Por que oscila ao longo do dia (gordura não oscila)","Apoiar a drenagem em vez de apertar mais a dieta"]},
+  chair:{name:"'É Só a Idade'",title:"O padrão 'É Só a Idade'",
+    body:"Te disseram que 'é da idade'. Mas um peso que te obriga a procurar uma cadeira não é mudança de personalidade — costuma ser líquido que o seu sistema está lento demais pra movimentar. <strong>A idade desacelera o fluxo linfático; ela não desliga o sistema.</strong> Fluxo pode ser apoiado em qualquer idade.",
+    list:["Por que 'é da idade' é uma descrição, não uma explicação","A ligação entre fluxo lento, pernas pesadas e falta de energia","Um ritual suave de 30 segundos por dia — sem cápsula, sem detox agressivo"]},
+  mirror:{name:"O Espelho Mudou (Homens)",title:"O padrão 'O Espelho Mudou' (Homens)",
+    body:"Rosto inchado, mandíbula menos definida, uma barriga que parece mais 'estufada' do que gorda — <strong>em muitos homens isso acompanha uma drenagem interna lenta, não só a alimentação.</strong> Anos de cadeira, álcool e sal desaceleram o sistema que deveria levar o líquido embora. Resposta direta: é encanamento, e encanamento dá pra apoiar.",
+    list:["Por que o seu rosto mudou antes do seu peso","O que álcool e horas sentado fazem com a drenagem interna","Apoio interno direto, sem papo de wellness — 30 segundos por dia"]}
 };
 
 let step = 0;
@@ -386,7 +386,7 @@ function renderQ(){
   $('bar').style.width = (step/QUESTIONS.length*100)+'%';
   [...$('dots').children].forEach((d,i)=>{ d.className = i<step?'done':(i===step?'now':''); });
   $('stage').innerHTML = `<div class="step" id="stepBox">
-      <div class="qnum">Question ${step+1} of ${QUESTIONS.length}</div>
+      <div class="qnum">Pergunta ${step+1} de ${QUESTIONS.length}</div>
       <div class="qtext">${q.q}</div>
       <div>${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i},this)">${ico(o[0])}<span>${o[1]}</span></button>`).join('')}</div>
     </div>`;
@@ -430,10 +430,10 @@ function showResult(){
   picks.forEach((pi,qi)=>{
     const opt = QUESTIONS[qi].opts[pi];
     Object.entries(opt[2]).forEach(([k,v])=>{ score[k]=(score[k]||0)+v; });
-    if(opt[4]) forced = opt[4];   // declarative answer (e.g. "I'm a man") decides the result
+    if(opt[4]) forced = opt[4];   // resposta declarativa (ex.: "sou homem") manda no resultado
   });
   const ranked = Object.entries(score).sort((a,b)=>b[1]-a[1]);
-  if(forced){
+  if(forced){  // garante que o padrão declarado apareça em 1º na leitura das barras
     const i = ranked.findIndex(e=>e[0]===forced);
     const row = i>=0 ? ranked.splice(i,1)[0] : [forced, ranked.length?ranked[0][1]:1];
     ranked.unshift([row[0], Math.max(row[1], ranked.length?ranked[0][1]:row[1])]);
@@ -472,7 +472,8 @@ function showResult(){
   $('rlist').innerHTML = r.list.map((x,i)=>`<li style="animation-delay:${.5+i*.13}s">${x}</li>`).join('');
 
   const p = new URLSearchParams(location.search);
-  p.set('utm_content','quiz-'+winner);
+  p.set('utm_content','quizpt-'+winner);
+  p.set('lang','pt');
   p.set('quiz', winner);
   $('rcta').href = 'https://www.legwellnessjournal.com/go/linfaflow/?'+p.toString();
   $('result').scrollIntoView({behavior:'smooth',block:'start'});
