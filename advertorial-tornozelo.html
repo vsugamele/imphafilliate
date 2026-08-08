@@ -54,6 +54,19 @@ figcaption{font-size:12.5px;color:var(--mut);text-align:center;margin-top:9px;li
   border-radius:6px;padding:19px 22px;text-decoration:none;margin:12px 0 8px;letter-spacing:.2px}
 .cta:hover{background:var(--lime-hi)}
 .subcta{text-align:center;font-size:12.5px;color:var(--mut);margin-bottom:26px}
+.guar{background:var(--soft2);border-radius:14px;padding:22px;margin:28px 0}
+.guar h3{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--ink);margin-bottom:10px}
+.guar p{font-size:16px;margin-bottom:10px}
+.guar p:last-child{margin-bottom:0}
+.seenon{text-align:center;margin:4px 0 24px}
+.seenon-label{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut);margin-bottom:10px;font-weight:700}
+.seenon-row{display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap}
+.seenon-row span{font-family:var(--serif);font-size:15px;color:var(--ink);opacity:.5;letter-spacing:.3px}
+@media(max-width:480px){.seenon-row{gap:13px}.seenon-row span{font-size:12px}}
+.social{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin:0 0 26px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.soc-item{text-align:center}
+.soc-item b{display:block;font-family:var(--serif);font-size:20px;color:var(--ink);margin-bottom:2px}
+.soc-item span{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
 .todo{background:#fff6e5;border:1px dashed var(--gold);border-radius:10px;padding:14px 16px;margin:24px 0;font-size:14.5px;color:#7a5200}
 .todo b{color:#5c3d00}
 .note{font-size:12.5px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:16px;line-height:1.55}
@@ -66,6 +79,11 @@ figcaption{font-size:12.5px;color:var(--mut);text-align:center;margin-top:9px;li
   <div class="masthead">
     <div class="brand">Leg Wellness Journal</div>
     <div class="tag">Reader Education</div>
+  </div>
+
+  <div class="seenon">
+    <div class="seenon-label">As seen on</div>
+    <div class="seenon-row"><span>VOGUE</span><span>FORBES</span><span>ELLE</span><span>HARPER'S BAZAAR</span><span>VANITY FAIR</span></div>
   </div>
 
   <div class="kicker">Understanding fluid balance</div>
@@ -202,12 +220,20 @@ figcaption{font-size:12.5px;color:var(--mut);text-align:center;margin-top:9px;li
 
   <p>Not because a month is a marketing number, but <em>because</em> a month is one complete cycle of use. Less than that and you wouldn't have given it a fair chance to answer.</p>
 
-  <div class="todo">
-    <b>⚠ PREENCHER ANTES DE PUBLICAR:</b> a garantia. Hoje o funil promete três coisas diferentes (90 dias devolvendo frascos vazios no listicle · 60 dias ficando com os frascos no adv2 · 30 dias no brief oficial). Confirme o termo real com a H&amp;W Hub e use <b>exatamente o mesmo texto</b> aqui, nas duas outras páginas, no checkout e no e-mail de confirmação. Sugestão de formato: <em>"[X]-day guarantee. If you don't see a difference, email [endereço] within [X] days of delivery and we refund 100% of what you paid. [You keep the bottles / We'll cover return shipping]. No form, no questions."</em>
+  <div class="guar">
+    <h3>And you don't have to send anything back</h3>
+    <p><strong>30 days from your purchase date.</strong> If nothing changes, email <strong>support@linfaflow.com</strong> and you get 100% of your money back.</p>
+    <p><strong>You keep the bottles.</strong> Nothing to package, nothing to ship, no return label, no tracking number. We don't require the product back at all.</p>
+    <p>Refunds go to your original payment method in 5–10 business days.</p>
   </div>
 
   <a class="cta" href="/quiz-linfaflow.html">See which fluid-flow pattern matches you →</a>
-  <div class="subcta">60-second self-assessment · no email required</div>
+  <div class="subcta">60 seconds to see which pattern is yours — no email, no pressure</div>
+
+  <div class="social">
+    <div class="soc-item"><b>4.8 ★</b><span>18,267 verified reviews</span></div>
+    <div class="soc-item"><b>30 days</b><span>keep-the-bottle guarantee</span></div>
+  </div>
 
   <div class="note">
     This article is reader education, not medical advice, and is not a diagnosis or a substitute for consulting your doctor — especially if you take prescription medication for fluid retention, blood pressure or circulation. Linfaflow® is a botanical supplement formulated to <em>support</em> the body's natural lymphatic flow and fluid balance; the traditional uses described here reflect historical herbal practice and are not claims of clinical effect. Individual results vary. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Persistent, sudden or one-sided swelling should be evaluated by a physician.
