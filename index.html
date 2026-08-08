@@ -271,6 +271,18 @@ table.est input.wide{min-width:150px}
 .est-note{font-size:11.5px;color:var(--tx3);margin:6px 0}
 .est-save{margin-top:10px;display:flex;gap:10px;align-items:center}
 h4.est-h{margin:16px 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ac2)}
+/* ficha de produção do criativo */
+.fic-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.fic-grid .full2{grid-column:1/-1}
+.fic-hip{background:var(--card2);border:1px solid var(--border);border-left:3px solid var(--ac);border-radius:var(--rs);padding:11px 13px;margin:12px 0}
+.fic-hip h5{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ac2);margin-bottom:5px;font-weight:800}
+.fic-hip .hint{font-size:11.5px;color:var(--tx3);margin-top:5px}
+.fic-axes{font-size:11.5px;color:var(--tx2);background:var(--card);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px;margin-top:10px;line-height:1.65}
+.fic-axes b{color:var(--tx)}
+.cbadge{display:inline-block;font-size:9.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--acdim);color:var(--ac2);margin-right:4px;white-space:nowrap}
+.cbadge.f{background:rgba(0,184,148,.14);color:var(--green)}
+.cbadge.h{background:rgba(253,203,110,.14);color:var(--orange)}
+@media(max-width:640px){.fic-grid{grid-template-columns:1fr}}
 /* chat */
 .chat-log{display:flex;flex-direction:column;gap:10px;margin:6px 0 14px;min-height:120px;max-height:56vh;overflow-y:auto;padding:4px}
 .chat-msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
@@ -638,6 +650,9 @@ h4.est-h{margin:16px 0 6px;font-size:11px;text-transform:uppercase;letter-spacin
 <div id="packOverlay" class="profile-overlay hidden" onclick="if(event.target===this) closePack()">
   <div class="profile-panel" id="packPanel"></div>
 </div>
+<div id="fichaOverlay" class="profile-overlay hidden" onclick="if(event.target===this) closeFicha()">
+  <div class="profile-panel" id="fichaPanel"></div>
+</div>
 <div id="toast">ok</div>
 
 <script>
@@ -829,6 +844,11 @@ function renderCreatives(){
           ${Object.entries(FASES).map(([k,v])=>`<option value="${k}" ${c.fase===k?'selected':''}>${v}</option>`).join('')}
         </select></div>
       <div class="muted">${isImg?'🖼 imagem · ':''}${esc(c.batch||'')} · ${esc(c.ad_group||'')} ${esc(c.hook_label||'')} · ${c.duration_sec?Math.round(c.duration_sec)+'s':''} ${c.word_count?'· '+c.word_count+'w':''}</div>
+      ${(()=>{const f=fichaOf(c); const b=[];
+        if(f.persona) b.push(`<span class="cbadge">${esc(f.persona.slice(0,34))}</span>`);
+        if(f.formato) b.push(`<span class="cbadge f">${esc(f.formato.slice(0,26))}</span>`);
+        if(f.fator) b.push(`<span class="cbadge h" title="${esc(f.fator)}">🎯 hipótese</span>`);
+        return b.length?`<div style="margin:2px 0 4px">${b.join('')}</div>`:'';})()}
       ${videoUrl?`<video controls preload="none" src="${videoUrl}" ${thumbUrl?`poster="${thumbUrl}"`:''}></video>`:(thumbUrl?`<div class="thumbwrap"><img src="${thumbUrl}" loading="lazy" alt="${esc(c.code)}" ${isImg?`style="cursor:zoom-in" onclick="window.open('${thumbUrl}','_blank')"`:''}></div>`:'')}
       <div class="prev">${esc(txt.slice(0,140))}${txt.length>140?'…':''}</div>
       <div class="full" id="full-${c.id}">${esc(txt)}</div>
@@ -837,6 +857,7 @@ function renderCreatives(){
         <button class="btn-sm" onclick="copyTx('${c.id}')">📋 copiar</button>`:''}
         ${isImg ? '' : (dissections[c.id] ? `<button class="btn-sm" onclick="document.getElementById('diss-${c.id}').classList.toggle('on')">🔬 dissecção</button>` : `<button class="btn-sm" id="dissbtn-${c.id}" onclick="dissectCreative('${c.id}')">🔬 dissecar</button>`)}
         ${dissections[c.id] ? (recreations['creative:'+c.id] ? `<button class="btn-sm" onclick="document.getElementById('rec-creative-${c.id}').classList.toggle('on')">🎬 recriação</button>` : `<button class="btn-sm" id="recbtn-creative-${c.id}" onclick="generateRecreation('${c.id}','creative')">🎬 recriar cena-a-cena</button>`) : ''}
+        <button class="btn-sm" onclick="openFicha('${c.id}')">${fichaOf(c).persona||fichaOf(c).fator?'📝 ficha':'📝 criar ficha'}</button>
         ${dissections[c.id] ? `<button class="btn-sm" onclick="openProfile('${c.id}','creative')">🗂️ perfil</button>` : ''}
       </div>
       ${renderDissBlock(c.id)}
@@ -1639,7 +1660,7 @@ function estBlank(){
     params:{payout:70, cpa:45, ics:8},
     docs:{},
     data:{
-      p1:{semana:'', rows:Array.from({length:10},()=>({concept:'',gasto:'',ic:'',vendas:''}))},
+      p1:{semana:'', rows:Array.from({length:10},()=>({concept:'',hipotese:'',gasto:'',ic:'',vendas:''}))},
       p2:{concept:'', pt:'', rodada:'1', dias:Array.from({length:6},()=>({gasto:'',vendas:''})), cp:{ic:'',pv:''}, conj:Array.from({length:5},(_,i)=>({nome:'v'+(i+1),gasto:'',vendas:''}))},
       p3:{verba:'', ontem:'', lances:Array.from({length:8},()=>({lance:'',gasto:'',cresceu:''})), angulos:Array.from({length:8},()=>({nome:'',entrou:'',gasto7:'',vendas7:'',diasSem:''}))},
       p4:{rows:Array.from({length:10},()=>({nome:'',entrou:'',gasto7:'',vendas7:'',diasCpa:''}))}
@@ -1741,20 +1762,22 @@ function renderEstP1(){
   const rows = d.rows.map((r,i)=>{
     const g=estN(r.gasto), ic=estN(r.ic), v=estN(r.vendas);
     inv+=g;
-    let ver='', acao='';
+    let ver='', acao='', vcode='';
     if(!g && !r.concept){ ver=''; }
-    else if(!g){ ver='<span class="vchip v-mut">AGUARDA</span>'; acao='Preenche o gasto no fim do dia 2.'; }
+    else if(!g){ ver='<span class="vchip v-mut">AGUARDA</span>'; acao='Preenche o gasto no fim do dia 2.'; vcode='aguarda'; }
     else {
       const cIC = ic>0 ? g/ic : null;
-      if(v>0 || (cIC!==null && cIC<=tetoQ)){ ver='<span class="vchip v-ok">QUALIFICADO</span>'; acao='Vai pra P2 em ABO 1-5-10 com esse concept.'; q++; }
-      else if(cIC!==null && cIC<=tetoM){ ver='<span class="vchip v-mid">MAIS TEXTOS</span>'; acao='Concept respira — produz mais primary texts e roda de novo.'; mt++; }
-      else if(cIC===null && g>=tetoM*2){ ver='<span class="vchip v-bad">MATA</span>'; acao='Gastou sem nenhum IC. Mata o concept.'; mortos++; }
-      else if(cIC===null){ ver='<span class="vchip v-mut">CEDO</span>'; acao='Sem IC ainda, gasto baixo — espera completar os 2 dias.'; }
-      else { ver='<span class="vchip v-bad">MATA</span>'; acao='Custo por IC acima do teto. Mata o concept.'; mortos++; }
+      if(v>0 || (cIC!==null && cIC<=tetoQ)){ ver='<span class="vchip v-ok">QUALIFICADO</span>'; acao='Vai pra P2 em ABO 1-5-10 com esse concept.'; q++; vcode='qualificado'; }
+      else if(cIC!==null && cIC<=tetoM){ ver='<span class="vchip v-mid">MAIS TEXTOS</span>'; acao='Concept respira — produz mais primary texts e roda de novo.'; mt++; vcode='mais_textos'; }
+      else if(cIC===null && g>=tetoM*2){ ver='<span class="vchip v-bad">MATA</span>'; acao='Gastou sem nenhum IC. Mata o concept.'; mortos++; vcode='morto'; }
+      else if(cIC===null){ ver='<span class="vchip v-mut">CEDO</span>'; acao='Sem IC ainda, gasto baixo — espera completar os 2 dias.'; vcode='cedo'; }
+      else { ver='<span class="vchip v-bad">MATA</span>'; acao='Custo por IC acima do teto. Mata o concept.'; mortos++; vcode='morto'; }
     }
+    r.veredito = vcode;   // guarda o veredito junto da linha pra alimentar o placar de hipóteses
     const cIC = ic>0&&g ? estF(g/ic) : '—';
     return `<tr>
-      <td><input class="wide" placeholder="Ângulo · avatar (ex.: Sono profundo · M55+)" value="${esc(r.concept)}" onchange="estIn('p1','rows',${i},'concept',this.value)"></td>
+      <td><input class="wide" placeholder="Ângulo · avatar (ex.: Inchaço que custa o turno · A que Trabalha em Pé)" value="${esc(r.concept)}" onchange="estIn('p1','rows',${i},'concept',this.value)">
+        <input class="wide" style="margin-top:4px;font-size:11.5px" placeholder="🎯 hipótese testada (o que precisa ser verdade pra esse concept vender)" value="${esc(r.hipotese||'')}" onchange="estIn('p1','rows',${i},'hipotese',this.value)"></td>
       <td><input type="number" value="${esc(r.gasto)}" onchange="estIn('p1','rows',${i},'gasto',this.value)"></td>
       <td><input type="number" value="${esc(r.ic)}" onchange="estIn('p1','rows',${i},'ic',this.value)"></td>
       <td><input type="number" value="${esc(r.vendas)}" onchange="estIn('p1','rows',${i},'vendas',this.value)"></td>
@@ -1766,7 +1789,20 @@ function renderEstP1(){
     <div style="max-width:180px;margin-bottom:6px"><label>Semana</label><input placeholder="S32" value="${esc(d.semana)}" onchange="estIn('p1',null,null,'semana',this.value)"></div>
     <table class="est"><tr><th>Concept (ângulo + avatar)</th><th>Gasto $</th><th>IC</th><th>Vendas</th><th>Custo/IC</th><th>Veredito</th><th>Ação</th></tr>${rows}</table>
     <div class="est-resumo"><span>Investimento: <b>${estF(inv)}</b></span><span>Qualificados: <b>${q}</b></span><span>Mais textos: <b>${mt}</b></span><span>Mortos: <b>${mortos}</b></span><span>Custo por qualificado: <b>${q?estF(inv/q):'—'}</b></span></div>
+    ${renderPlacarHipoteses(d)}
     <div class="est-save"><button class="btn" onclick="estSave('p1')">💾 salvar P1</button><span class="muted">salva no banco — histórico da rodada</span></div>`;
+}
+
+// O que a rodada ENSINOU — não qual criativo venceu, mas qual hipótese sobreviveu.
+function renderPlacarHipoteses(d){
+  const rows = (d.rows||[]).filter(r=>r.hipotese && r.veredito && r.veredito!=='aguarda' && r.veredito!=='cedo');
+  if(!rows.length) return `<div class="est-note" style="margin-top:6px">💡 Preencha a <b>hipótese testada</b> de cada concept. No fim da rodada aparece aqui o placar do que o mercado confirmou e do que derrubou — é isso que você leva pra próxima semana, não o criativo.</div>`;
+  const map = {qualificado:{t:'CONFIRMADA',c:'v-ok'}, mais_textos:{t:'PARCIAL',c:'v-mid'}, morto:{t:'REFUTADA',c:'v-bad'}};
+  return `<h4 class="est-h">Placar de hipóteses — o que esta rodada ensinou</h4>
+    <table class="est"><tr><th>Hipótese testada</th><th>Concept</th><th>Veredito</th></tr>
+    ${rows.map(r=>`<tr><td>${esc(r.hipotese)}</td><td class="muted">${esc(r.concept||'')}</td>
+      <td><span class="vchip ${map[r.veredito].c}">${map[r.veredito].t}</span></td></tr>`).join('')}</table>
+    <div class="est-note">Hipótese <b>refutada</b> não volta com criativo novo — volta só se você mudar a premissa. Hipótese <b>confirmada</b> vira eixo de variação (avatar → headline → hook empilhado → fatia de público).</div>`;
 }
 
 function renderEstP2(){
@@ -1929,6 +1965,78 @@ function renderEstP4(){
     <table class="est"><tr><th>Ângulo · AdFormat</th><th>Entrou em</th><th>Gasto 7d</th><th>Vendas 7d</th><th>CPA</th><th>Dias seguidos no CPA</th><th>Status</th></tr>${rows}</table>
     <div class="est-resumo"><span>No cemitério: <b>${ativos}</b></span><span>Vagas até o teto (10): <b>${10-ativos}</b></span><span>Gasto 7d: <b>${estF(gasto7t)}</b> <span class="muted">(zero na maioria das semanas é o esperado)</span></span></div>
     <div class="est-save"><button class="btn" onclick="estSave('p4')">💾 salvar P4</button></div>`;
+}
+
+// ---------- FICHA DE PRODUÇÃO DO CRIATIVO ----------
+// Campos adotados do schema de produção mapeado no concorrente (Linfozen).
+// Persistência em aff_creatives.metadata (jsonb já existente) — sem migração.
+let fichaId = null;
+
+const FIC_FORMATOS = ['Talking head','UGC','Educational Confessional (Doctor POV)','Receitinha + Talking head','Character VSL 3D','Depoimento','Antes/depois','Documental / educacional','Estático','Carrossel'];
+const FIC_SPOKES = ['Creator/UGC','Médica','Médico','Paciente','Especialista','Narração sem rosto','Personagem 3D'];
+
+function openFicha(id){ fichaId = id; renderFicha(); $('fichaOverlay').classList.remove('hidden'); }
+function closeFicha(){ $('fichaOverlay').classList.add('hidden'); fichaId = null; }
+
+function fichaOf(c){ const m = (c && c.metadata) || {}; return m.ficha || {}; }
+
+function renderFicha(){
+  const c = creatives.find(x=>x.id===fichaId); if(!c) return;
+  const f = fichaOf(c);
+  const sel = (id,val,opts) => `<select id="${id}"><option value="">—</option>${opts.map(o=>`<option ${val===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+  $('fichaPanel').innerHTML = `
+    <span class="profile-close" onclick="closeFicha()">✕</span>
+    <div class="rel-kicker">Ficha de produção</div>
+    <div class="rel-title" style="font-size:21px">${esc(c.code||'')}</div>
+    <div class="muted" style="margin-bottom:14px">${esc([c.batch,c.ad_group,c.hook_label].filter(Boolean).join(' · '))}</div>
+
+    <div class="fic-grid">
+      <div><label>Persona (nome próprio)</label><input id="ficPersona" placeholder="ex.: A Paciente Rejeitada pelo Sistema Médico" value="${esc(f.persona||'')}"></div>
+      <div><label>Ângulo</label><input id="ficAngulo" placeholder="ex.: A Vindicação Médica" value="${esc(f.angulo||'')}"></div>
+      <div><label>Spokesperson</label>${sel('ficSpokes', f.spokesperson, FIC_SPOKES)}</div>
+      <div><label>Formato</label>${sel('ficFormato', f.formato, FIC_FORMATOS)}</div>
+    </div>
+
+    <div class="fic-hip">
+      <h5>🎯 Fator central de validação esperado</h5>
+      <textarea id="ficFator" rows="3" placeholder="Qual hipótese este criativo testa? ex.: o alívio de ouvir 'a culpa não é sua', apoiado por uma explicação biológica que a absolve.">${esc(f.fator||'')}</textarea>
+      <div class="hint">É isto que a Esteira P1 vai aprovar ou matar — não o criativo em si. Escrever a hipótese antes de rodar é o que transforma teste em conhecimento.</div>
+    </div>
+
+    <div class="fic-grid">
+      <div class="full2"><label>Referências visuais (links de reels/criativos pro editor)</label><textarea id="ficRefs" rows="2" placeholder="um link por linha">${esc(f.refs||'')}</textarea></div>
+      <div class="full2"><label>Instruções gerais de edição</label><textarea id="ficInstr" rows="3" placeholder="b-rolls, estilo de legenda, ritmo, o que evitar…">${esc(f.instrucoes||'')}</textarea></div>
+      <div class="full2"><label>Modelado de (link do anúncio original, se houver)</label><input id="ficModelado" placeholder="deixe vazio se veio da sua própria pesquisa de público" value="${esc(f.modelado||'')}"></div>
+    </div>
+
+    <div class="fic-axes">
+      <b>Eixos de variação</b> (quando este criativo validar, produza nesta ordem):<br>
+      1. <b>Avatar</b> — muda só o avatar &nbsp;·&nbsp; 2. <b>Headline</b> — inclui/troca headline nos hooks validados<br>
+      3. <b>Hook</b> — 3 hooks novos <b>empilhados antes</b> do validado (não substitui o corpo que converteu)<br>
+      4. <b>Fatia de público</b> — muda só o necessário pra encaixar na nova persona
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+      <button class="btn" onclick="saveFicha()">💾 salvar ficha</button>
+      <span class="muted">grava em aff_creatives.metadata</span>
+    </div>`;
+}
+
+async function saveFicha(){
+  const c = creatives.find(x=>x.id===fichaId); if(!c) return;
+  const ficha = {
+    persona: $('ficPersona').value.trim(), angulo: $('ficAngulo').value.trim(),
+    spokesperson: $('ficSpokes').value, formato: $('ficFormato').value,
+    fator: $('ficFator').value.trim(), refs: $('ficRefs').value.trim(),
+    instrucoes: $('ficInstr').value.trim(), modelado: $('ficModelado').value.trim(),
+    atualizado_em: new Date().toISOString()
+  };
+  const metadata = {...(c.metadata||{}), ficha};
+  const {error} = await db.from('aff_creatives').update({metadata}).eq('id', c.id);
+  if(error){ toast('Erro: '+error.message); return; }
+  c.metadata = metadata;
+  toast('Ficha salva!');
+  renderCreatives();
 }
 
 // ---------- CHAT (OpenRouter) ----------
