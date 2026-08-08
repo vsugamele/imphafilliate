@@ -7,184 +7,372 @@
 <meta name="robots" content="noindex">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--ink:#22303f;--mut:#5d6b7a;--bg:#f7f9fb;--card:#ffffff;--brand:#0e7c66;--brand2:#0a5c4c;--soft:#e7f3f0;--line:#e3e8ee;--warn:#b45309}
-body{font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.65}
-.wrap{max-width:640px;margin:0 auto;padding:22px 18px 70px}
-.masthead{font-family:Arial,Helvetica,sans-serif;text-align:center;border-bottom:2px solid var(--ink);padding:10px 0;margin-bottom:20px}
+:root{
+  --ink:#1e2b38;--mut:#5d6b7a;--bg:#f4f8f8;--card:#fff;
+  --brand:#0e7c66;--brand2:#0a5c4c;--brand-soft:#e6f4f0;--brand-tint:#d3ebe4;
+  --line:#e2e9ee;--warn:#b45309;--gold:#c8871a;
+  --shadow:0 10px 34px -20px rgba(30,43,56,.4);
+}
+body{font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink);line-height:1.65;
+  background-image:radial-gradient(60vw 40vw at 15% -10%, #e9f5f2, transparent 60%),radial-gradient(50vw 36vw at 100% 0%, #eef6f4, transparent 55%);
+  background-attachment:fixed;background-repeat:no-repeat}
+.wrap{max-width:660px;margin:0 auto;padding:20px 16px 70px}
+.masthead{font-family:Arial,Helvetica,sans-serif;text-align:center;border-bottom:2px solid var(--ink);padding:10px 0;margin-bottom:22px}
 .masthead .brand{font-weight:800;font-size:15px;letter-spacing:1.6px;text-transform:uppercase}
 .masthead .tag{font-size:10.5px;color:var(--mut);letter-spacing:.8px;text-transform:uppercase}
-h1{font-size:27px;line-height:1.25;margin:6px 0 10px;letter-spacing:-.01em}
-.lede{color:var(--mut);font-size:16px;margin-bottom:20px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;box-shadow:0 8px 28px -18px rgba(34,48,63,.25)}
-.progress{height:7px;background:var(--line);border-radius:99px;margin-bottom:18px;overflow:hidden}
-.progress i{display:block;height:100%;background:var(--brand);border-radius:99px;transition:width .3s ease}
-.qnum{font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--brand);margin-bottom:6px}
-.qtext{font-size:20px;font-weight:700;margin-bottom:16px;line-height:1.35}
-.opt{display:block;width:100%;text-align:left;font-family:inherit;font-size:15.5px;background:var(--bg);border:1.5px solid var(--line);border-radius:11px;padding:13px 16px;margin-bottom:10px;cursor:pointer;color:var(--ink);transition:border-color .15s, background .15s}
-.opt:hover{border-color:var(--brand);background:var(--soft)}
-.back{font-family:Arial,sans-serif;background:none;border:none;color:var(--mut);font-size:12.5px;cursor:pointer;margin-top:6px;text-decoration:underline}
+h1{font-size:28px;line-height:1.24;margin:8px 0 10px;letter-spacing:-.015em}
+.lede{color:var(--mut);font-size:16.5px;margin-bottom:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;box-shadow:var(--shadow)}
+
+/* ---- hero animado (metáfora do encanamento) ---- */
+.hero{display:block;width:100%;max-width:330px;margin:0 auto 18px}
+.pipe-wall{fill:none;stroke:#cfe0e6;stroke-width:9;stroke-linecap:round}
+.pipe-clog{fill:#e8c9a8;opacity:.9}
+.drop{fill:var(--brand)}
+.drop.slow{animation:flowSlow 4.2s ease-in-out infinite}
+.drop.slow2{animation:flowSlow 4.2s ease-in-out infinite;animation-delay:1.4s}
+.drop.slow3{animation:flowSlow 4.2s ease-in-out infinite;animation-delay:2.8s}
+@keyframes flowSlow{
+  0%{transform:translateX(0);opacity:0}
+  12%{opacity:1}
+  38%{transform:translateX(78px)}
+  58%{transform:translateX(86px)}        /* trava no ponto de congestão */
+  92%{transform:translateX(232px);opacity:1}
+  100%{transform:translateX(250px);opacity:0}
+}
+
+/* ---- progresso ---- */
+.prog{margin-bottom:18px}
+.prog-bar{height:7px;background:var(--line);border-radius:99px;overflow:hidden}
+.prog-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--brand),#2ba58a);border-radius:99px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.dots{display:flex;gap:7px;justify-content:center;margin-top:10px}
+.dots span{width:8px;height:8px;border-radius:50%;background:var(--line);transition:background .3s, transform .3s}
+.dots span.done{background:var(--brand)}
+.dots span.now{background:var(--brand);transform:scale(1.55)}
+
+/* ---- perguntas ---- */
+.stage{position:relative}
+.step{animation:slideIn .38s cubic-bezier(.22,1,.36,1) both}
+@keyframes slideIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.step.out{animation:slideOut .22s ease-in forwards}
+@keyframes slideOut{to{opacity:0;transform:translateY(-12px)}}
+.qnum{font-family:Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--brand);margin-bottom:7px}
+.qtext{font-size:21px;font-weight:700;margin-bottom:18px;line-height:1.33}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;font-family:inherit;font-size:15.5px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:13px;padding:13px 15px;margin-bottom:11px;
+  cursor:pointer;color:var(--ink);transition:border-color .18s,background .18s,transform .18s,box-shadow .18s;position:relative}
+.opt:hover,.opt:focus-visible{border-color:var(--brand);background:var(--brand-soft);transform:translateX(4px);outline:none;box-shadow:0 6px 18px -12px rgba(14,124,102,.6)}
+.opt .ico{flex:0 0 42px;width:42px;height:42px;border-radius:11px;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;color:var(--brand);transition:background .18s,transform .25s}
+.opt:hover .ico{transform:scale(1.08) rotate(-4deg)}
+.opt .ico svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.opt.picked{border-color:var(--brand);background:var(--brand-tint);animation:pop .3s ease}
+.opt.picked .ico{background:var(--brand);color:#fff}
+@keyframes pop{50%{transform:scale(1.025)}}
+.back{font-family:Arial,sans-serif;background:none;border:none;color:var(--mut);font-size:12.5px;cursor:pointer;margin-top:4px;text-decoration:underline;padding:6px 0}
+.back:hover{color:var(--brand)}
 .hidden{display:none}
-/* resultado */
+
+/* ---- interstício de análise ---- */
+.analyzing{text-align:center;padding:14px 0 6px}
+.spinner{width:56px;height:56px;margin:0 auto 18px}
+.spinner circle{fill:none;stroke-width:5;stroke-linecap:round}
+.spinner .track{stroke:var(--line)}
+.spinner .head{stroke:var(--brand);stroke-dasharray:44 150;transform-origin:center;animation:spin 1.1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.alines{list-style:none;font-family:Arial,sans-serif;font-size:14px;color:var(--mut);text-align:left;max-width:330px;margin:0 auto}
+.alines li{padding:7px 0 7px 30px;position:relative;opacity:.25;transition:opacity .3s,color .3s}
+.alines li::before{content:"○";position:absolute;left:6px;color:var(--line)}
+.alines li.on{opacity:1;color:var(--ink)}
+.alines li.on::before{content:"✓";color:var(--brand);font-weight:700}
+
+/* ---- resultado ---- */
 .rkicker{font-family:Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--brand);margin-bottom:8px}
-.rtitle{font-size:24px;line-height:1.3;margin-bottom:12px}
-.rbody{font-size:16px;margin-bottom:12px}
-.rlist{margin:14px 0 18px;padding-left:0;list-style:none}
-.rlist li{padding:7px 0 7px 30px;position:relative;font-size:15px}
-.rlist li::before{content:"✓";position:absolute;left:4px;color:var(--brand);font-weight:700;font-family:Arial,sans-serif}
-.cta{display:block;width:100%;text-align:center;font-family:Arial,sans-serif;font-weight:800;font-size:17px;color:#fff;background:var(--brand);border:none;border-radius:12px;padding:17px 20px;cursor:pointer;text-decoration:none;box-shadow:0 12px 26px -12px rgba(14,124,102,.55)}
-.cta:hover{background:var(--brand2)}
-.subcta{text-align:center;font-family:Arial,sans-serif;font-size:12px;color:var(--mut);margin-top:10px}
-.note{font-size:12.5px;color:var(--mut);border-top:1px solid var(--line);margin-top:26px;padding-top:14px;font-family:Arial,sans-serif}
-@media(max-width:480px){h1{font-size:23px}.qtext{font-size:18px}}
+.rtitle{font-size:25px;line-height:1.28;margin-bottom:14px}
+.rvis{display:block;width:100%;max-width:340px;margin:4px auto 18px}
+.rbody{font-size:16.5px;margin-bottom:16px}
+.match{margin:18px 0 6px}
+.match h4{font-family:Arial,sans-serif;font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--mut);margin-bottom:9px;font-weight:800}
+.mrow{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-family:Arial,sans-serif;font-size:12.5px}
+.mrow .mname{flex:0 0 42%;color:var(--mut)}
+.mrow.top .mname{color:var(--ink);font-weight:700}
+.mtrack{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.mtrack i{display:block;height:100%;width:0;background:#b8ccd4;border-radius:99px;transition:width .9s cubic-bezier(.2,.9,.3,1)}
+.mrow.top .mtrack i{background:linear-gradient(90deg,var(--brand),#37b394)}
+.rlist{margin:16px 0 20px;padding-left:0;list-style:none}
+.rlist li{padding:8px 0 8px 32px;position:relative;font-size:15.5px;opacity:0;transform:translateX(-8px);animation:fadeRight .45s ease forwards}
+.rlist li::before{content:"✓";position:absolute;left:5px;color:var(--brand);font-weight:700;font-family:Arial,sans-serif}
+@keyframes fadeRight{to{opacity:1;transform:none}}
+.cta{display:block;width:100%;text-align:center;font-family:Arial,sans-serif;font-weight:800;font-size:17px;color:#fff;
+  background:var(--brand);border:none;border-radius:13px;padding:18px 20px;cursor:pointer;text-decoration:none;
+  box-shadow:0 14px 30px -14px rgba(14,124,102,.65);animation:breathe 3.4s ease-in-out infinite;transition:background .2s}
+.cta:hover{background:var(--brand2);animation:none;transform:translateY(-1px)}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.017)}}
+.subcta{text-align:center;font-family:Arial,sans-serif;font-size:12px;color:var(--mut);margin-top:11px}
+.restart{display:block;margin:14px auto 0;font-family:Arial,sans-serif;font-size:12.5px;color:var(--mut);background:none;border:none;text-decoration:underline;cursor:pointer}
+.note{font-size:12.5px;color:var(--mut);border-top:1px solid var(--line);margin-top:28px;padding-top:15px;font-family:Arial,sans-serif}
+@media(max-width:480px){h1{font-size:23px}.qtext{font-size:18.5px}.card{padding:19px}.opt{font-size:14.5px;gap:11px}.opt .ico{flex-basis:38px;width:38px;height:38px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="masthead"><div class="brand">Leg Wellness Journal</div><div class="tag">Reader Self-Assessment</div></div>
 
+  <!-- INTRO -->
   <div id="intro">
     <h1>Why Do You Still Wake Up Puffy — Even When Your Labs Come Back "Normal"?</h1>
-    <p class="lede">Answer 5 quick questions and get a personalized explanation of what may be slowing your body's natural fluid flow — and what to do about it. Takes about 60 seconds.</p>
+    <p class="lede">Answer 5 quick questions and see which fluid-flow pattern your answers match — and what tends to help each one. Takes about 60 seconds.</p>
     <div class="card">
+      <svg class="hero" viewBox="0 0 300 120" role="img" aria-label="Illustration of fluid moving slowly through a congested channel">
+        <path class="pipe-wall" d="M20 40 H280"/>
+        <path class="pipe-wall" d="M20 80 H280"/>
+        <ellipse class="pipe-clog" cx="140" cy="60" rx="26" ry="15"/>
+        <ellipse class="pipe-clog" cx="168" cy="60" rx="15" ry="10" opacity=".55"/>
+        <circle class="drop slow"  cx="34" cy="60" r="7"/>
+        <circle class="drop slow2" cx="34" cy="60" r="5.5"/>
+        <circle class="drop slow3" cx="34" cy="60" r="6.2"/>
+      </svg>
       <button class="cta" onclick="startQuiz()">Start the 60-Second Quiz →</button>
       <div class="subcta">No email required · Your answers stay on this page</div>
     </div>
   </div>
 
+  <!-- QUIZ -->
   <div id="quiz" class="hidden">
     <div class="card">
-      <div class="progress"><i id="bar" style="width:0%"></i></div>
-      <div class="qnum" id="qnum"></div>
-      <div class="qtext" id="qtext"></div>
-      <div id="opts"></div>
+      <div class="prog">
+        <div class="prog-bar"><i id="bar"></i></div>
+        <div class="dots" id="dots"></div>
+      </div>
+      <div class="stage" id="stage"></div>
       <button class="back hidden" id="backBtn" onclick="goBack()">← previous question</button>
     </div>
   </div>
 
+  <!-- ANALISANDO -->
+  <div id="analyzing" class="hidden">
+    <div class="card analyzing">
+      <svg class="spinner" viewBox="0 0 50 50"><circle class="track" cx="25" cy="25" r="20"/><circle class="head" cx="25" cy="25" r="20"/></svg>
+      <ul class="alines" id="alines">
+        <li>Matching your timing pattern…</li>
+        <li>Comparing what you've already tried…</li>
+        <li>Checking your daily-load profile…</li>
+        <li>Building your personalized result…</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
   <div id="result" class="hidden">
     <div class="card">
       <div class="rkicker">Your result</div>
       <div class="rtitle" id="rtitle"></div>
+      <svg class="rvis" viewBox="0 0 300 108" role="img" aria-label="Illustration comparing congested flow with supported flow">
+        <text x="10" y="14" font-family="Arial" font-size="9" fill="#5d6b7a" letter-spacing="1">SLOWED FLOW</text>
+        <path class="pipe-wall" d="M12 30 H288" stroke-width="7"/>
+        <path class="pipe-wall" d="M12 52 H288" stroke-width="7"/>
+        <ellipse class="pipe-clog" cx="150" cy="41" rx="30" ry="9"/>
+        <circle class="drop slow" cx="24" cy="41" r="5"/>
+        <text x="10" y="76" font-family="Arial" font-size="9" fill="#0e7c66" letter-spacing="1">SUPPORTED FLOW</text>
+        <path class="pipe-wall" d="M12 90 H288" stroke-width="7" stroke="#bfe0d6"/>
+        <path class="pipe-wall" d="M12 104 H288" stroke-width="7" stroke="#bfe0d6"/>
+        <circle class="drop" cx="24" cy="97" r="5"><animate attributeName="cx" values="24;288" dur="2.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="2.1s" repeatCount="indefinite"/></circle>
+        <circle class="drop" cx="24" cy="97" r="4"><animate attributeName="cx" values="24;288" dur="2.1s" begin="0.7s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="2.1s" begin="0.7s" repeatCount="indefinite"/></circle>
+        <circle class="drop" cx="24" cy="97" r="4.5"><animate attributeName="cx" values="24;288" dur="2.1s" begin="1.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="2.1s" begin="1.4s" repeatCount="indefinite"/></circle>
+      </svg>
       <div class="rbody" id="rbody"></div>
+      <div class="match">
+        <h4>How your answers clustered</h4>
+        <div id="mrows"></div>
+      </div>
       <ul class="rlist" id="rlist"></ul>
       <a class="cta" id="rcta" href="#">See If Linfaflow® Is Right For You →</a>
       <div class="subcta">Liquid botanical drops · 30-second daily ritual · money-back guarantee</div>
+      <button class="restart" onclick="restart()">↻ retake the quiz</button>
     </div>
   </div>
 
   <div class="note">
-    This self-assessment is for informational purposes only and is not medical advice, a diagnosis, or a substitute for consulting your doctor — especially if you take prescription medication. Linfaflow® is a botanical supplement formulated to <em>support</em> the body's natural lymphatic flow and fluid balance. Individual results vary. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
+    This self-assessment is for informational purposes only and is not medical advice, a diagnosis, or a substitute for consulting your doctor — especially if you take prescription medication. The "patterns" described here are groupings of self-reported answers, not medical conditions. Linfaflow® is a botanical supplement formulated to <em>support</em> the body's natural lymphatic flow and fluid balance. Individual results vary. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.
   </div>
 </div>
 
 <script>
-// Perguntas → pontuação por avatar (slugs curtos pro utm_content)
+/* ---------- ícones (SVG inline, sem requisição externa) ---------- */
+const ICONS = {
+  face:'<circle cx="12" cy="12" r="9"/><path d="M8.5 10h.01M15.5 10h.01M8.5 15c2 1.3 5 1.3 7 0"/>',
+  leg:'<path d="M9 3v7l-2 6 3 5"/><path d="M15 3v6l2 7-3 5"/>',
+  belly:'<path d="M12 3a5 5 0 0 1 5 5c0 4 3 5 3 8a8 8 0 0 1-16 0c0-3 3-4 3-8a5 5 0 0 1 5-5z"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  sock:'<path d="M8 3h6v8l4 4a3.5 3.5 0 0 1-5 5l-5-5V3z"/>',
+  pill:'<rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(-45 12 12)"/><path d="M9 9l6 6"/>',
+  leaf:'<path d="M20 4C10 4 4 9 4 16c0 2 1 4 1 4s6-1 9-4 6-8 6-12z"/><path d="M5 20L14 11"/>',
+  question:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/><path d="M12 17h.01"/>',
+  clipboard:'<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h4"/>',
+  rx:'<path d="M7 20V9h4a3 3 0 0 1 0 6H7"/><path d="M11 15l6 5M17 15l-6 5"/>',
+  calendar:'<rect x="4" y="6" width="16" height="15" rx="2"/><path d="M4 11h16M9 4v4M15 4v4"/>',
+  hourglass:'<path d="M7 3h10M7 21h10"/><path d="M8 3c0 4 4 5 4 9s-4 5-4 9M16 3c0 4-4 5-4 9s4 5 4 9"/>',
+  standing:'<circle cx="12" cy="4.5" r="2"/><path d="M12 7v7M9 21l3-7 3 7M8 10h8"/>',
+  chair:'<path d="M6 4v8h12V4"/><path d="M4 12h16M7 12v8M17 12v8"/>',
+  activity:'<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+  family:'<path d="M12 20s-7-4.3-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.7-7 9-7 9z"/>',
+  camera:'<rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-3h5L16 7"/>',
+  shoe:'<path d="M3 16h11l3-3 4 3v3H3z"/><path d="M3 16v-4l5 2"/>',
+  droplet:'<path d="M12 3s6 6.5 6 10.5a6 6 0 0 1-12 0C6 9.5 12 3 12 3z"/>',
+  man:'<circle cx="12" cy="5" r="2.5"/><path d="M8 21v-6H6l2.5-6h7L18 15h-2v6"/>'
+};
+const ico = k => '<span class="ico"><svg viewBox="0 0 24 24">'+(ICONS[k]||ICONS.question)+'</svg></span>';
+
+/* ---------- perguntas → pontuação por avatar ---------- */
 const QUESTIONS = [
-  {q:"When is the puffiness or heaviness at its worst?",
-   opts:[
-     ["I wake up with a puffy face and puffy eyes", {mystery:2, mirror:1}],
-     ["My ankles and legs are heavy by late afternoon", {standing:2, chair:1}],
-     ["I look 'bloated-pregnant' by dinner time", {phantom:2, mystery:1}],
-     ["Honestly? Pretty much all day", {external:1, phantom:1, mystery:1}]
-   ]},
-  {q:"What have you already tried for it?",
-   opts:[
-     ["Compression socks, massage, dry brushing — the works", {external:3}],
-     ["Water pills or detox teas", {diuretic:3}],
-     ["Cutting salt, gluten, dairy… nothing changed", {phantom:2, mystery:1}],
-     ["Nothing seriously yet — I keep hoping it passes", {mystery:2}]
-   ]},
-  {q:"What did your last check-up say?",
-   opts:[
-     ["Everything came back NORMAL — but my body disagrees", {mystery:3}],
-     ["My doctor prescribed something for fluid retention", {diuretic:3}],
-     ["I haven't been checked recently", {standing:1, phantom:1}],
-     ["I was told it's 'just aging'", {chair:2, mystery:1}]
-   ]},
-  {q:"What does a typical day look like for you?",
-   opts:[
-     ["On my feet for hours — nursing, teaching, retail…", {standing:3}],
-     ["Sitting most of the day (desk, car, couch)", {chair:2, mystery:1}],
-     ["Active, but the swelling shows up anyway", {phantom:2}],
-     ["Long days caring for family or grandkids", {chair:2}]
-   ]},
-  {q:"Which of these sounds most like you?",
-   opts:[
-     ["I avoid photos — I don't recognize my own face lately", {mystery:1, phantom:1, mirror:1}],
-     ["I keep a second pair of shoes for the afternoon", {standing:2}],
-     ["I'm tired of trading bathroom trips for relief", {diuretic:2}],
-     ["I'm a man and my face/gut got puffier every year", {mirror:3}]
-   ]}
+  {q:"When is the puffiness or heaviness at its worst?", opts:[
+    ["face","I wake up with a puffy face and puffy eyes",{mystery:2,mirror:1}],
+    ["leg","My ankles and legs are heavy by late afternoon",{standing:2,chair:1}],
+    ["belly","I look 'bloated-pregnant' by dinner time",{phantom:2,mystery:1}],
+    ["clock","Honestly? Pretty much all day",{external:1,phantom:1,mystery:1}]
+  ]},
+  {q:"What have you already tried for it?", opts:[
+    ["sock","Compression socks, massage, dry brushing — the works",{external:3}],
+    ["pill","Water pills or detox teas",{diuretic:3}],
+    ["leaf","Cutting salt, gluten, dairy… nothing changed",{phantom:2,mystery:1}],
+    ["question","Nothing seriously yet — I keep hoping it passes",{mystery:2}]
+  ]},
+  {q:"What did your last check-up say?", opts:[
+    ["clipboard","Everything came back NORMAL — but my body disagrees",{mystery:3}],
+    ["rx","My doctor prescribed something for fluid retention",{diuretic:3}],
+    ["calendar","I haven't been checked recently",{standing:1,phantom:1}],
+    ["hourglass","I was told it's 'just aging'",{chair:2,mystery:1}]
+  ]},
+  {q:"What does a typical day look like for you?", opts:[
+    ["standing","On my feet for hours — nursing, teaching, retail…",{standing:3}],
+    ["chair","Sitting most of the day (desk, car, couch)",{chair:2,mystery:1}],
+    ["activity","Active, but the swelling shows up anyway",{phantom:2}],
+    ["family","Long days caring for family or grandkids",{chair:2}]
+  ]},
+  {q:"Which of these sounds most like you?", opts:[
+    ["camera","I avoid photos — I don't recognize my own face lately",{mystery:1,phantom:1,mirror:1}],
+    ["shoe","I keep a second pair of shoes for the afternoon",{standing:2}],
+    ["droplet","I'm tired of trading bathroom trips for relief",{diuretic:2}],
+    ["man","I'm a man and my face/gut got puffier every year",{mirror:3}]
+  ]}
 ];
 
 const RESULTS = {
-  mystery:{title:"The 'Normal Labs, Puffy Body' Pattern",
+  mystery:{name:"Normal Labs, Puffy Body",title:"The 'Normal Labs, Puffy Body' Pattern",
     body:"Your answers match the most common profile we see: every test says fine, yet the mirror says otherwise. Here's the gap — standard labs don't measure how well your lymphatic system moves fluid. After 40 it naturally slows down, and no amount of 'clean eating' speeds it back up from the outside.",
     list:["Why 'normal' bloodwork can miss slow lymphatic flow","Why the puffiness is worst in the morning","The 3-step internal approach (awaken → mobilize → drain) used in Linfaflow"]},
-  external:{title:"The 'Everything From the Outside' Pattern",
+  external:{name:"Everything From the Outside",title:"The 'Everything From the Outside' Pattern",
     body:"Compression, massage and dry brushing all squeeze from the OUTSIDE — and you've felt the catch: the relief fades by the next morning. That's because outside pressure can't change how fluid moves on the inside. The missing piece isn't more squeezing. It's internal support.",
     list:["Why external tools feel great but don't last","What 'supporting flow from within' actually means","How a 30-second liquid ritual fits before your routine — not instead of it"]},
-  standing:{title:"The 'On Your Feet All Day' Pattern",
+  standing:{name:"On Your Feet All Day",title:"The 'On Your Feet All Day' Pattern",
     body:"Hours of standing pushes fluid down faster than a slowed lymphatic system can move it back up — that's why your ankles 'disappear' by 3 PM. Elevation helps, but you can't put your feet up mid-shift. Your body needs support that works while you're still standing.",
     list:["Why standing jobs overwhelm slow lymphatic flow","Why elevation-based advice fails working women","Daily internal support that doesn't require lying down"]},
-  diuretic:{title:"The 'Water Pill Trade-Off' Pattern",
+  diuretic:{name:"The Water Pill Trade-Off",title:"The 'Water Pill Trade-Off' Pattern",
     body:"Water pills force water OUT — they don't support how fluid MOVES. That's the trade you've been living: temporary relief in exchange for bathroom runs, and the puffiness returns anyway. Gentle botanical support for flow is a different approach entirely. (Always talk to your doctor before changing anything you were prescribed.)",
     list:["The difference between forcing water out and supporting flow","Why the puffiness comes back after diuretics wear off","4 traditional botanicals that support the lymphatic route instead"]},
-  phantom:{title:"The 'Phantom Weight' Pattern",
-    body:"Here's the reframe your answers point to: what you're fighting may not respond to diets because part of it may not be fat — it can be retained fluid. That would explain the morning-vs-evening size change, and why cutting foods didn't touch it. Scales don't tell the difference. Your afternoon 'swelling pattern' does.",
+  phantom:{name:"Phantom Weight",title:"The 'Phantom Weight' Pattern",
+    body:"Here's the reframe your answers point to: what you're fighting may not respond to diets because part of it may not be fat — it can be retained fluid. That would explain the morning-vs-evening size change, and why cutting foods didn't touch it. Scales don't tell the difference. Your afternoon pattern does.",
     list:["How fluid retention masquerades as stubborn weight","Why it fluctuates through the day (fat doesn't)","Supporting drainage instead of dieting harder"]},
-  chair:{title:"The 'It's Just Aging' Pattern",
-    body:"You were told this is 'just getting older'. But heaviness that forces you to look for a chair isn't a personality change — it's often fluid your system is too slow to move. Age slows lymphatic flow; it doesn't switch it off. Supported properly, flow can be supported at any age.",
+  chair:{name:"'It's Just Aging'",title:"The 'It's Just Aging' Pattern",
+    body:"You were told this is 'just getting older'. But heaviness that forces you to look for a chair isn't a personality change — it's often fluid your system is too slow to move. Age slows lymphatic flow; it doesn't switch it off. Flow can be supported at any age.",
     list:["Why 'just aging' is a description, not an explanation","The link between slow flow, heavy legs and low energy","A gentle 30-second daily ritual — no capsules, no harsh cleanse"]},
-  mirror:{title:"The 'Mirror Shift' Pattern (Men)",
+  mirror:{name:"The Mirror Shift (Men)",title:"The 'Mirror Shift' Pattern (Men)",
     body:"Puffy face, softer jawline, a gut that feels 'swollen' rather than fat — for a lot of men this tracks with sluggish internal drainage, not just diet. Years of sitting, alcohol and salt slow the system that's supposed to move waste fluid out. Straight answer: it's plumbing, and plumbing can be supported.",
     list:["Why your face changed before your weight did","What alcohol and long sitting do to internal drainage","Direct, no-wellness-fluff internal support — 30 seconds a day"]}
 };
 
 let step = 0;
-const score = {};
 const picks = [];
+const $ = id => document.getElementById(id);
 
 function startQuiz(){
-  document.getElementById('intro').classList.add('hidden');
-  document.getElementById('quiz').classList.remove('hidden');
+  $('intro').classList.add('hidden');
+  $('quiz').classList.remove('hidden');
+  $('dots').innerHTML = QUESTIONS.map(()=>'<span></span>').join('');
   renderQ();
+  $('quiz').scrollIntoView({behavior:'smooth',block:'start'});
 }
+
 function renderQ(){
   const q = QUESTIONS[step];
-  document.getElementById('bar').style.width = (step/QUESTIONS.length*100)+'%';
-  document.getElementById('qnum').textContent = 'Question '+(step+1)+' of '+QUESTIONS.length;
-  document.getElementById('qtext').textContent = q.q;
-  document.getElementById('opts').innerHTML = q.opts.map((o,i)=>
-    `<button class="opt" onclick="pick(${i})">${o[0]}</button>`).join('');
-  document.getElementById('backBtn').classList.toggle('hidden', step===0);
+  $('bar').style.width = (step/QUESTIONS.length*100)+'%';
+  [...$('dots').children].forEach((d,i)=>{ d.className = i<step?'done':(i===step?'now':''); });
+  $('stage').innerHTML = `<div class="step" id="stepBox">
+      <div class="qnum">Question ${step+1} of ${QUESTIONS.length}</div>
+      <div class="qtext">${q.q}</div>
+      <div>${q.opts.map((o,i)=>`<button class="opt" onclick="pick(${i},this)">${ico(o[0])}<span>${o[1]}</span></button>`).join('')}</div>
+    </div>`;
+  $('backBtn').classList.toggle('hidden', step===0);
 }
-function pick(i){
+
+let pendingAdvance = null;
+function pick(i, el){
+  const box = el.closest('#stepBox');
+  if(box.dataset.gone) return;                     // já está saindo: ignora
+  clearTimeout(pendingAdvance);                    // deixa trocar de ideia antes de avançar
+  box.querySelectorAll('.opt.picked').forEach(b=>b.classList.remove('picked'));
+  el.classList.add('picked');
   picks[step] = i;
-  step++;
-  if(step >= QUESTIONS.length) return showResult();
-  renderQ();
+  pendingAdvance = setTimeout(()=>{
+    box.dataset.gone = '1';
+    box.classList.add('out');
+    setTimeout(()=>{
+      step++;
+      if(step >= QUESTIONS.length) return runAnalysis();
+      renderQ();
+    }, 200);
+  }, 420);
 }
-function goBack(){ if(step>0){ step--; picks.length = step; renderQ(); } }
+
+function goBack(){ if(step>0){ clearTimeout(pendingAdvance); step--; picks.length = step; renderQ(); } }
+
+function runAnalysis(){
+  $('bar').style.width = '100%';
+  $('quiz').classList.add('hidden');
+  $('analyzing').classList.remove('hidden');
+  const lines = [...$('alines').children];
+  lines.forEach(l=>l.classList.remove('on'));
+  lines.forEach((l,i)=>setTimeout(()=>l.classList.add('on'), 420*(i+1)));
+  setTimeout(showResult, 420*lines.length + 500);
+}
+
 function showResult(){
-  Object.keys(score).forEach(k=>delete score[k]);
+  const score = {};
   picks.forEach((pi,qi)=>{
-    const w = QUESTIONS[qi].opts[pi][1];
-    Object.entries(w).forEach(([k,v])=>{ score[k]=(score[k]||0)+v; });
+    Object.entries(QUESTIONS[qi].opts[pi][2]).forEach(([k,v])=>{ score[k]=(score[k]||0)+v; });
   });
-  const winner = Object.entries(score).sort((a,b)=>b[1]-a[1])[0][0];
+  const ranked = Object.entries(score).sort((a,b)=>b[1]-a[1]);
+  const winner = ranked[0][0];
   const r = RESULTS[winner];
-  document.getElementById('quiz').classList.add('hidden');
-  document.getElementById('result').classList.remove('hidden');
-  document.getElementById('rtitle').textContent = r.title;
-  document.getElementById('rbody').textContent = r.body;
-  document.getElementById('rlist').innerHTML = r.list.map(x=>`<li>${x}</li>`).join('');
-  // CTA: preserva os parâmetros de entrada e anexa o avatar
-  const inParams = new URLSearchParams(location.search);
-  inParams.set('utm_content', 'quiz-'+winner);
-  inParams.set('quiz', winner);
-  document.getElementById('rcta').href = 'https://www.legwellnessjournal.com/go/linfaflow/?'+inParams.toString();
-  document.getElementById('bar') && (document.getElementById('bar').style.width='100%');
+  const max = ranked[0][1];
+
+  $('analyzing').classList.add('hidden');
+  $('result').classList.remove('hidden');
+  $('rtitle').textContent = r.title;
+  $('rbody').textContent = r.body;
+
+  $('mrows').innerHTML = ranked.slice(0,3).map((e,i)=>
+    `<div class="mrow ${i===0?'top':''}"><span class="mname">${RESULTS[e[0]].name}</span><span class="mtrack"><i data-w="${Math.round(e[1]/max*100)}"></i></span></div>`
+  ).join('');
+  requestAnimationFrame(()=>setTimeout(()=>{
+    document.querySelectorAll('.mtrack i').forEach(el=>{ el.style.width = el.dataset.w+'%'; });
+  }, 120));
+
+  $('rlist').innerHTML = r.list.map((x,i)=>`<li style="animation-delay:${.5+i*.13}s">${x}</li>`).join('');
+
+  const p = new URLSearchParams(location.search);
+  p.set('utm_content','quiz-'+winner);
+  p.set('quiz', winner);
+  $('rcta').href = 'https://www.legwellnessjournal.com/go/linfaflow/?'+p.toString();
+  $('result').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function restart(){
+  step = 0; picks.length = 0;
+  $('result').classList.add('hidden');
+  $('quiz').classList.remove('hidden');
+  renderQ();
+  $('quiz').scrollIntoView({behavior:'smooth',block:'start'});
 }
 </script>
 </body>
