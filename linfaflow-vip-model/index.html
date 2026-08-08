@@ -1,0 +1,1297 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LinfaFlow | Official Review</title>
+  <meta name="description" content="LinfaFlow review page with product information, bundles, ingredients, benefits, guarantee and FAQ.">
+  <style>
+    :root {
+      --green-950: #063f2a;
+      --green-900: #075437;
+      --green-800: #0d6847;
+      --green-700: #11865e;
+      --green-500: #16b885;
+      --mint-50: #edfdf5;
+      --mint-100: #dff8ee;
+      --mint-200: #c2efdf;
+      --cream: #fffaf1;
+      --orange: #d96922;
+      --red: #e34b37;
+      --ink: #10221b;
+      --muted: #5b6f66;
+      --line: #cfe5da;
+      --white: #fff;
+      --shadow: 0 20px 45px rgba(6,63,42,.13);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: #f7fff9;
+      line-height: 1.45;
+      padding-bottom: 0;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+
+    .announce {
+      background: var(--green-950);
+      color: #fff;
+      text-align: center;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 8px 14px;
+    }
+
+    .announce b { color: #a7ffd8; }
+
+    .trust-strip {
+      background: #ecfbf4;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      color: var(--green-900);
+    }
+
+    .trust-strip .inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      padding: 9px 18px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .top {
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 8px 24px rgba(6,63,42,.06);
+    }
+
+    .top .inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 12px 18px;
+    }
+
+    .logo {
+      height: 34px;
+      width: auto;
+      margin-right: auto;
+    }
+
+    .top a {
+      text-decoration: none;
+      font-weight: 700;
+      color: var(--green-900);
+      font-size: 14px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      border-radius: 6px;
+      border: 0;
+      background: var(--green-500);
+      color: #fff;
+      font-weight: 900;
+      text-decoration: none;
+      padding: 12px 20px;
+      box-shadow: 0 12px 24px rgba(22,184,133,.22);
+      cursor: pointer;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .btn.dark { background: var(--green-900); }
+    .btn.full { width: 100%; }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 16px 30px rgba(22,184,133,.28); }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px;
+    }
+
+    .product-hero {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 28px;
+      align-items: start;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 18px 55px rgba(6,63,42,.08);
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: 72px 1fr 145px;
+      gap: 12px;
+    }
+
+    .thumbs {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .thumbs button, .thumbs img, .hero-main, .benefit-tile {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .thumbs button {
+      padding: 0;
+      cursor: pointer;
+      overflow: hidden;
+      transition: border .16s ease, transform .16s ease, box-shadow .16s ease;
+    }
+
+    .thumbs button.active {
+      border-color: var(--green-500);
+      box-shadow: 0 0 0 3px rgba(22,184,133,.16);
+    }
+
+    .thumbs button:hover { transform: translateY(-1px); }
+
+    .thumbs img {
+      aspect-ratio: 1;
+      object-fit: cover;
+      padding: 3px;
+      width: 100%;
+    }
+
+    .hero-main {
+      position: relative;
+      overflow: hidden;
+      min-height: 520px;
+      display: grid;
+      place-items: center;
+    }
+
+    .hero-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity .18s ease;
+    }
+
+    .seal {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 104px;
+      height: 104px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-weight: 900;
+      font-size: 16px;
+      border: 5px solid rgba(255,255,255,.7);
+      box-shadow: var(--shadow);
+    }
+
+    .benefit-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .benefit-tile {
+      min-height: 162px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      background: var(--mint-100);
+      color: var(--green-900);
+      padding: 14px;
+      font-weight: 900;
+      font-size: 20px;
+    }
+
+    .benefit-tile .icon {
+      font-size: 34px;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .buybox {
+      background: #fff;
+      padding: 4px 0 0;
+      position: sticky;
+      top: 84px;
+    }
+
+    .stars {
+      color: #f3a51d;
+      font-weight: 900;
+      letter-spacing: 1px;
+      font-size: 14px;
+    }
+
+    h1 {
+      font-size: 31px;
+      line-height: 1.08;
+      letter-spacing: 0;
+      margin: 8px 0 12px;
+    }
+
+    .subline {
+      color: var(--muted);
+      font-size: 15px;
+      margin: 0 0 16px;
+    }
+
+    .redline {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin: 10px 0 16px;
+      color: var(--red);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .bar {
+      height: 7px;
+      background: #f1d3ce;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar span {
+      display: block;
+      width: 72%;
+      height: 100%;
+      background: var(--red);
+    }
+
+    .ticks {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px 12px;
+      margin: 16px 0;
+      color: var(--green-900);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .tick::before { content: "✓ "; color: var(--green-500); font-weight: 900; }
+
+    .bundles {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .bundle {
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 10px;
+      text-align: center;
+      position: relative;
+      background: #fff;
+      min-height: 184px;
+      display: grid;
+      gap: 4px;
+      align-content: start;
+      cursor: pointer;
+      transition: transform .16s ease, border .16s ease, box-shadow .16s ease;
+    }
+
+    .bundle:hover { transform: translateY(-2px); }
+
+    .bundle.featured,
+    .bundle.selected {
+      border: 2px solid var(--green-500);
+      box-shadow: 0 0 0 3px rgba(22,184,133,.12);
+    }
+
+    .bundle .badge {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green-900);
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .bundle img {
+      height: 76px;
+      object-fit: contain;
+      margin: 14px auto 4px;
+    }
+
+    .bundle strong {
+      color: var(--green-900);
+      font-size: 13px;
+    }
+
+    .bundle .price {
+      color: var(--red);
+      font-weight: 900;
+      font-size: 14px;
+    }
+
+    .bundle .per {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .stock-note {
+      background: #fff4ef;
+      border: 1px solid #f3c2b6;
+      color: #9b392a;
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-weight: 800;
+      font-size: 13px;
+      margin: 12px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .pay {
+      display: flex;
+      justify-content: center;
+      margin-top: 8px;
+    }
+
+    .accordion {
+      margin-top: 18px;
+      display: grid;
+      gap: 9px;
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      padding: 13px 15px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 800;
+      color: var(--green-950);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    summary::after {
+      content: "+";
+      font-size: 18px;
+      color: var(--green-700);
+      font-weight: 900;
+    }
+
+    details[open] summary::after { content: "-"; }
+
+    details p {
+      color: var(--muted);
+      margin: 9px 0 0;
+      font-size: 14px;
+    }
+
+    .green-band {
+      background: var(--green-900);
+      color: #fff;
+      margin-top: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .green-band::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("assets/Linfaflow%202%20(desktop).webp") center/cover no-repeat;
+      opacity: .35;
+      pointer-events: none;
+    }
+
+    .band-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 44px 18px;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 42px;
+      align-items: center;
+    }
+
+    .band-inner .bottles {
+      height: 280px;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+
+    .band-copy h2,
+    .section h2 {
+      font-size: 30px;
+      line-height: 1.12;
+      letter-spacing: 0;
+      margin: 0 0 10px;
+      text-align: center;
+    }
+
+    .band-copy h2 { text-align: left; color: #fff; }
+
+    .band-copy p {
+      max-width: 560px;
+      margin: 0 0 18px;
+      color: #dff8ee;
+    }
+
+    .benefit-pills {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 540px;
+    }
+
+    .pill {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 6px;
+      color: #fff;
+      padding: 12px 14px;
+      font-weight: 800;
+    }
+
+    .section {
+      padding: 46px 18px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .section.light {
+      max-width: none;
+      background: var(--mint-50);
+      border-block: 1px solid var(--line);
+    }
+
+    .section.light > .inner {
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    .section .intro {
+      text-align: center;
+      color: var(--muted);
+      max-width: 720px;
+      margin: 0 auto 24px;
+    }
+
+    .cards3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .card img {
+      width: 100%;
+      aspect-ratio: 1.42;
+      object-fit: cover;
+      background: var(--mint-100);
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(6,63,42,.06);
+    }
+
+    .card .body { padding: 16px; }
+    .card h3 { margin: 0 0 8px; font-size: 17px; color: var(--green-900); }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .reviews {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .review {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      padding: 18px;
+      min-height: 150px;
+    }
+
+    .review .name {
+      color: var(--green-900);
+      font-weight: 900;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    .trust-panel {
+      background: linear-gradient(90deg, var(--green-900), var(--green-800));
+      color: #fff;
+      padding: 34px 18px;
+      text-align: center;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+    }
+
+    .trust-panel .grid {
+      max-width: 980px;
+      margin: 18px auto 0;
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trust-panel .item {
+      background: rgba(255,255,255,.11);
+      border-radius: 6px;
+      padding: 11px 8px;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .proof-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 250px;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .stat {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat::after {
+      content: "↑";
+      position: absolute;
+      right: 16px;
+      top: 14px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--mint-100);
+      color: var(--green-700);
+      font-weight: 900;
+    }
+
+    .stat b {
+      display: block;
+      font-size: 34px;
+      color: var(--green-700);
+      line-height: 1;
+    }
+
+    .stat span { color: var(--muted); font-size: 13px; }
+
+    .proof-img {
+      border-radius: 8px;
+      overflow: hidden;
+      min-height: 132px;
+    }
+
+    .proof-img img { width: 100%; height: 100%; object-fit: cover; }
+
+    .feel-grid {
+      display: grid;
+      grid-template-columns: .8fr 1.2fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .symptoms {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .symptoms span {
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .symptoms .bad { color: #ca3d35; background: #fff1ef; }
+    .symptoms .good { color: var(--green-900); background: #edfbf5; }
+
+    .full-img {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .journey {
+      background: var(--green-900);
+      color: #fff;
+      padding: 56px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .journey::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("assets/Linfaflow%202%20(desktop).webp") center/cover no-repeat;
+      opacity: .16;
+      pointer-events: none;
+    }
+
+    .journey .inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 430px 1fr;
+      gap: 44px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .journey img {
+      border-radius: 8px;
+      height: 280px;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      position: relative;
+    }
+
+    .step {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 7px;
+      padding: 13px 16px;
+      position: relative;
+      padding-left: 44px;
+    }
+
+    .step::before {
+      content: "";
+      position: absolute;
+      left: 16px;
+      top: 17px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green-500);
+      box-shadow: 0 0 0 5px rgba(22,184,133,.16);
+    }
+
+    .step strong { color: #fff; display: block; margin-bottom: 4px; }
+    .step span { color: #dff8ee; font-size: 14px; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      align-items: center;
+    }
+
+    .table {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 14px 36px rgba(6,63,42,.08);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1fr 90px 90px;
+      border-bottom: 1px solid var(--line);
+      min-height: 45px;
+      align-items: center;
+    }
+
+    .table-row:last-child { border-bottom: 0; }
+    .table-row div { padding: 10px 14px; font-size: 14px; }
+    .table-row .yes { background: var(--green-700); color: #fff; text-align: center; font-weight: 900; height: 100%; display: grid; place-items: center; }
+    .table-row .no { color: #c94a43; text-align: center; font-weight: 900; }
+
+    .wellness {
+      max-width: 650px;
+      margin: 34px auto 0;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .wellness img {
+      width: 72px;
+      margin: 0 auto 12px;
+    }
+
+    .faq-section {
+      background: var(--green-900);
+      color: #fff;
+      padding: 48px 18px;
+    }
+
+    .faq-section .inner {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .faq-section details {
+      background: rgba(255,255,255,.11);
+      border-color: rgba(255,255,255,.18);
+      color: #fff;
+    }
+
+    .faq-section summary { color: #fff; }
+    .faq-section p { color: #dff8ee; }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .guarantee {
+      max-width: 880px;
+      margin: 0 auto;
+      background: var(--green-900);
+      color: #fff;
+      border-radius: 8px;
+      padding: 26px 38px;
+      display: grid;
+      grid-template-columns: 90px 1fr 130px;
+      gap: 22px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .guarantee img { height: 110px; object-fit: contain; margin-left: auto; }
+
+    .sticky-cta {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: rgba(255,255,255,.96);
+      border-top: 1px solid var(--line);
+      padding: 10px 14px;
+      box-shadow: 0 -12px 28px rgba(6,63,42,.12);
+    }
+
+    .sticky-cta .inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .sticky-cta strong {
+      display: block;
+      color: var(--green-950);
+      font-size: 14px;
+    }
+
+    .sticky-cta span {
+      color: var(--muted);
+      font-size: 12px;
+      display: block;
+    }
+
+    footer {
+      background: var(--green-950);
+      color: #dff8ee;
+      padding: 42px 18px;
+    }
+
+    footer .inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.2fr;
+      gap: 34px;
+    }
+
+    footer h4 { margin: 0 0 10px; color: #fff; }
+    footer a, footer p { color: #dff8ee; font-size: 14px; margin: 0 0 8px; text-decoration: none; }
+    footer input { min-height: 38px; border: 0; border-radius: 4px; padding: 9px 10px; }
+
+    @media (max-width: 950px) {
+      .trust-strip .inner { grid-template-columns: 1fr 1fr; }
+      .top a:not(.btn) { display: none; }
+      .product-hero, .band-inner, .journey .inner, .feel-grid, .compare { grid-template-columns: 1fr; }
+      .product-hero { border-radius: 0; border-left: 0; border-right: 0; }
+      .gallery { grid-template-columns: 1fr; }
+      .thumbs { grid-template-columns: repeat(4, 1fr); order: 2; }
+      .benefit-stack { grid-template-columns: repeat(3, 1fr); }
+      .hero-main { min-height: 360px; }
+      .cards3, .reviews, .proof-row, .faq-grid, footer .inner { grid-template-columns: 1fr; }
+      .trust-panel .grid { grid-template-columns: repeat(2, 1fr); }
+      h1 { font-size: 28px; }
+      .guarantee { grid-template-columns: 1fr; text-align: center; }
+      .guarantee img { margin: 0 auto; }
+      .buybox { position: static; }
+      .sticky-cta { display: block; }
+      body { padding-bottom: 76px; }
+    }
+
+    @media (max-width: 620px) {
+      .bundles, .benefit-stack, .benefit-pills, .symptoms { grid-template-columns: 1fr; }
+      .page { padding-top: 16px; }
+      .trust-strip .inner { grid-template-columns: 1fr; gap: 4px; }
+      .sticky-cta .inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="announce"><b>50% Off</b> + Free Shipping Sale Ends Soon</div>
+
+  <div class="trust-strip">
+    <div class="inner">
+      <span>Reduce Puffiness</span>
+      <span>Support Gentle Detox</span>
+      <span>Enhance Skin Radiance</span>
+      <span>Pure Herbal Formula</span>
+      <span>Secure Checkout</span>
+    </div>
+  </div>
+
+  <header class="top">
+    <div class="inner">
+      <img class="logo" src="assets/linfaflow-logo.svg" alt="linfaflow">
+      <a href="#description">Product Description</a>
+      <a href="#benefits">Benefits</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a class="btn" href="AFFILIATE_CHECKOUT_URL">Order Now</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="page product-hero">
+      <div>
+        <div class="gallery">
+          <div class="thumbs">
+            <button class="active" type="button" data-gallery="assets/img1.webp" aria-label="Show LinfaFlow bottle and benefits"><img src="assets/img1.webp" alt=""></button>
+            <button type="button" data-gallery="assets/img4.webp" aria-label="Show ingredients"><img src="assets/img4.webp" alt=""></button>
+            <button type="button" data-gallery="assets/img2.webp" aria-label="Show updated formula"><img src="assets/img2.webp" alt=""></button>
+            <button type="button" data-gallery="assets/img6.webp" aria-label="Show customer reviews"><img src="assets/img6.webp" alt=""></button>
+          </div>
+          <div class="hero-main">
+            <img id="mainProductImage" src="assets/img1.webp" alt="LinfaFlow bottle">
+            <div class="seal">Tastes<br>Like<br>Honey</div>
+          </div>
+          <div class="benefit-stack">
+            <div class="benefit-tile"><div><div class="icon">⌁</div>Reduce<br>Swelling</div></div>
+            <div class="benefit-tile"><div><div class="icon">☘</div>Natural<br>Herbal Formula</div></div>
+            <div class="benefit-tile"><div><div class="icon">⚡</div>Clear Brain Fog<br>And Boost Energy</div></div>
+          </div>
+        </div>
+
+        <div class="accordion" id="description">
+          <details open>
+            <summary>Product Description</summary>
+            <p>LinfaFlow is a liquid herbal extract positioned as daily support for natural lymphatic flow, fluid balance and a lighter-feeling wellness routine.</p>
+          </details>
+          <details>
+            <summary>How to Use</summary>
+            <p>Follow the directions on the product label and the checkout page. Do not invent dosage or medical guidance.</p>
+          </details>
+          <details>
+            <summary>Why we use LinfaFlow?</summary>
+            <p>The product is built around a simple ritual: drops, water and consistency. It should be framed as wellness support, not treatment.</p>
+          </details>
+          <details>
+            <summary>Ingredients & Results</summary>
+            <p>Highlighted botanicals include Cleavers, Stillingia Root, Red Clover Blossom and Prickly Ash Bark. Results vary by individual.</p>
+          </details>
+          <details>
+            <summary>Shipping, Returns & Guarantees</summary>
+            <p>Price, shipping and guarantee terms must be confirmed on the authorized checkout before purchase.</p>
+          </details>
+        </div>
+      </div>
+
+      <aside class="buybox">
+        <div class="stars">★★★★★ <span style="color:#355044;letter-spacing:0">Rated 4.8/5 | Trusted by 10k+ Customers</span></div>
+        <h1>89% of customers report feeling lighter and less swelling in 16 days or less</h1>
+        <p class="subline">Choose your bundle below and check the current discount, stock and guarantee on the secure checkout.</p>
+
+        <div class="redline">
+          <div class="bar"><span></span></div>
+          <span>95 Sold</span>
+        </div>
+
+        <div class="stock-note">
+          <span>Low stock: bundle discount reserved for this visit</span>
+          <span id="timer">09:58</span>
+        </div>
+
+        <div class="ticks">
+          <div class="tick">Lymphatic Flow</div>
+          <div class="tick">Reduced Puffiness</div>
+          <div class="tick">Natural Detox</div>
+          <div class="tick">Steady Energy</div>
+        </div>
+
+        <div class="bundles">
+          <div class="bundle" data-price="$29.99" data-label="Buy 1">
+            <strong>Buy 1</strong>
+            <img src="assets/linfaflow-kit01.webp" alt="Buy 1">
+            <div class="price">$29.99</div>
+            <div class="per">Starter bottle</div>
+          </div>
+          <div class="bundle featured selected" data-price="$59.99" data-label="Buy 2 Get 1 Free">
+            <span class="badge">BEST VALUE</span>
+            <strong>Buy 2 Get 1 Free</strong>
+            <img src="assets/linfaflow-kit03.webp" alt="Buy 3">
+            <div class="price">$59.99</div>
+            <div class="per">Most popular</div>
+          </div>
+          <div class="bundle" data-price="$89.99" data-label="Buy 3 Get 2 Free">
+            <span class="badge">BIGGEST SAVE</span>
+            <strong>Buy 3 Get 2 Free</strong>
+            <img src="assets/linfaflow-kit05.webp" alt="Buy 5">
+            <div class="price">$89.99</div>
+            <div class="per">Best supply</div>
+          </div>
+        </div>
+
+        <a id="cartButton" class="btn full" href="AFFILIATE_CHECKOUT_URL">Add To Cart - $59.99</a>
+        <p class="subline" style="text-align:center;margin-top:10px">30 Day Guarantee · Secure Checkout</p>
+        <div class="pay"><img src="assets/Group_2131331273.png" alt="Payment methods"></div>
+      </aside>
+    </section>
+
+    <section class="green-band">
+      <div class="band-inner">
+        <img class="bottles" src="assets/linfaflow-kit03.webp" alt="LinfaFlow bundle">
+        <div class="band-copy">
+          <h2>See the Difference in How You Look and Feel</h2>
+          <p>Support your body's natural rhythm with a simple, easy-to-use liquid herbal ritual that fits into a morning wellness routine.</p>
+          <div class="benefit-pills">
+            <div class="pill">Reduce Face Puffiness</div>
+            <div class="pill">Reduce Water Retention</div>
+            <div class="pill">Supports Natural Energy</div>
+            <div class="pill">Promotes Inner Vitality</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section light" id="benefits">
+      <div class="inner">
+        <h2>The Natural Way to Restore Balance</h2>
+        <p class="intro">Built around three conversion ideas: stimulate, mobilize and drain. Keep this as wellness language, not disease treatment.</p>
+        <div class="cards3">
+          <article class="card">
+            <img src="assets/img2.webp" alt="Updated formula">
+            <div class="body">
+              <h3>Stimulate</h3>
+              <p>Supports the body's natural rhythm and helps make the daily ritual feel simple.</p>
+            </div>
+          </article>
+          <article class="card">
+            <img src="assets/img4.webp" alt="Ingredients">
+            <div class="body">
+              <h3>Mobilize</h3>
+              <p>Botanical ingredients are positioned around flow, circulation and fluid balance.</p>
+            </div>
+          </article>
+          <article class="card">
+            <img src="assets/features_1.png" alt="Product features">
+            <div class="body">
+              <h3>Drain & Balance</h3>
+              <p>Use softer claims: supports, promotes and helps maintain a lighter-feeling routine.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="reviews">
+      <h2>Results You Can See in the Mirror</h2>
+      <p class="intro">Use testimonials only when allowed by the affiliate program. These modules show the structure and tone.</p>
+      <div class="reviews">
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>"After a week, my face looked fresher and my routine finally felt consistent."</p>
+          <div class="name">Jessica R. · Verified Buyer</div>
+        </div>
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>"My legs don't feel as heavy at the end of the day. It became a simple habit."</p>
+          <div class="name">Lauren M. · Verified Buyer</div>
+        </div>
+        <div class="review">
+          <div class="stars">★★★★★</div>
+          <p>"I like that it's drops, not another complicated supplement routine."</p>
+          <div class="name">Samantha D. · Verified Buyer</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section light">
+      <div class="inner">
+        <h2>When Flow Stops, Problems Start</h2>
+        <p class="intro">A clear problem block helps the visitor connect symptoms to the product mechanism before the next proof section.</p>
+        <div class="trust-panel">
+          <h2>Why Trust LinfaFlow?</h2>
+          <div class="grid">
+            <div class="item">Trusted Ingredient</div>
+            <div class="item">Third-Party Tested</div>
+            <div class="item">Clean Ingredients</div>
+            <div class="item">No Artificial Additives</div>
+            <div class="item">Alcohol-Free</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Proven Benefits. Backed by Results.</h2>
+      <div class="proof-row">
+        <div class="stat"><b>93%</b><span>said they woke up with less puffiness and swelling</span></div>
+        <div class="stat"><b>91%</b><span>said their skin looked clearer and more refreshed</span></div>
+        <div class="stat"><b>95%</b><span>reported improved circulation and energy</span></div>
+        <div class="proof-img"><img src="assets/Linfaflow%202.webp" alt="Customer holding LinfaFlow"></div>
+      </div>
+    </section>
+
+    <section class="section light">
+      <div class="inner feel-grid">
+        <div>
+          <h2 style="text-align:left">When Flow Backs Up, You Feel It</h2>
+          <p class="intro" style="text-align:left;margin-left:0">A strong visual contrast explains the product idea quickly. Keep disease claims out of this module.</p>
+          <div class="symptoms">
+            <span class="bad">Puffiness</span>
+            <span class="good">Reduced</span>
+            <span class="bad">Swelling</span>
+            <span class="good">Balanced</span>
+            <span class="bad">Heavy Legs</span>
+            <span class="good">Lightened</span>
+            <span class="bad">Brain Fog</span>
+            <span class="good">Clear Focus</span>
+          </div>
+        </div>
+        <div class="full-img"><img src="assets/0ae94078ccac43ffbc1133caca3b25ed.thumbnail.0000000000.jpg" alt="Lymphatic system visual"></div>
+      </div>
+    </section>
+
+    <section class="journey">
+      <div class="inner">
+        <div>
+          <img src="assets/timeline_img.webp" alt="Wellness journey">
+          <h2 style="text-align:left;margin-top:18px">Lymphatic Reset Journey</h2>
+          <p>Flush, purify, progress and spark flow.</p>
+        </div>
+        <div class="timeline">
+          <div class="step"><strong>Week 1: Feel The First Signs</strong><span>Puffiness starts to ease and digestion feels lighter.</span></div>
+          <div class="step"><strong>Week 2: Notice The Lightness</strong><span>Legs and body swelling begin to reduce for some customers.</span></div>
+          <div class="step"><strong>Week 3: Glow From Within</strong><span>Skin looks clearer and more radiant.</span></div>
+          <div class="step"><strong>Week 4: Steady, Lasting Balance</strong><span>Consistent energy and clarity become part of the ritual.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section light">
+      <div class="inner">
+        <h2>5 Reasons Why Thousands Choose LinfaFlow</h2>
+        <p class="intro">Real results. Clean ingredients. Gentle daily detox.</p>
+        <div class="cards3">
+          <article class="card">
+            <img src="assets/benefits_1.png" alt="Benefits">
+            <div class="body"><h3>De-Puffs From Within</h3><p>Position the benefit as lighter-feeling wellness support, not guaranteed clinical swelling reduction.</p></div>
+          </article>
+          <article class="card">
+            <img src="assets/img3.webp" alt="Alternative supplements comparison">
+            <div class="body"><h3>Promotes Whole-Body Balance</h3><p>Contrast simple drops with more complicated routines and artificial formulas.</p></div>
+          </article>
+          <article class="card">
+            <img src="assets/img4.webp" alt="Ingredients">
+            <div class="body"><h3>Gentle Yet Effective</h3><p>Use ingredient education to support the mechanism without medical overreach.</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>See the Difference for Yourself</h2>
+      <div class="compare">
+        <div class="full-img"><img src="assets/Linfaflow%202.webp" alt="LinfaFlow customer"></div>
+        <div class="table">
+          <div class="table-row"><div></div><div class="yes">LinfaFlow</div><div class="no">Others</div></div>
+          <div class="table-row"><div>Supports Healthy Lymph Flow</div><div class="yes">✓</div><div class="no">⊗</div></div>
+          <div class="table-row"><div>Pure, Plant-Based Formula</div><div class="yes">✓</div><div class="no">⊗</div></div>
+          <div class="table-row"><div>Gentle Daily Detox</div><div class="yes">✓</div><div class="no">⊗</div></div>
+          <div class="table-row"><div>Third-Party Tested</div><div class="yes">✓</div><div class="no">⊗</div></div>
+          <div class="table-row"><div>No Artificial Changes</div><div class="yes">✓</div><div class="no">⊗</div></div>
+        </div>
+      </div>
+
+      <div class="wellness">
+        <img src="assets/money_icon_21b07699-6f4c-4d4e-8a45-d287f91987c1.webp" alt="Wellness club">
+        <h3>LinfaFlow Wellness Club</h3>
+        <p>Your complete LinfaFlow wellness partner. This is where affiliate disclosure, customer-care positioning and safe usage language should live.</p>
+      </div>
+    </section>
+
+    <section class="faq-section" id="faq">
+      <div class="inner">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-grid">
+          <details><summary>What exactly does LinfaFlow do?</summary><p>It is positioned as a wellness supplement that supports natural lymphatic flow and fluid balance.</p></details>
+          <details><summary>Is it safe for daily use?</summary><p>Follow the product label. Anyone pregnant, nursing, using medication or managing a condition should consult a professional.</p></details>
+          <details><summary>How fast will I see results?</summary><p>Do not promise a fixed timeline. Individual experience varies.</p></details>
+          <details><summary>Can I take it with other supplements?</summary><p>Ask a qualified professional before combining supplements.</p></details>
+          <details><summary>How do I take it?</summary><p>Follow the current checkout and label instructions.</p></details>
+          <details><summary>Where is it made?</summary><p>Use only verified manufacturer information from the current offer.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section light">
+      <div class="inner">
+        <div class="guarantee">
+          <img src="assets/money_icon_21b07699-6f4c-4d4e-8a45-d287f91987c1.webp" alt="Money back guarantee">
+          <div>
+            <h2 style="text-align:left;color:#fff">30 Day Money Back Guarantee</h2>
+            <p>Feel the difference within 30 days or we'll make it right. Confirm guarantee terms at checkout.</p>
+          </div>
+          <img src="assets/linfaflow-bottle.webp" alt="LinfaFlow bottle">
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="testimonials">
+      <h2>Real Transformations Start Here</h2>
+      <div class="cards3">
+        <article class="card"><div class="body"><div class="stars">★★★★★</div><h3>"I finally wake up without puffiness."</h3><p>This layout mirrors the competitor proof-card structure while keeping testimonials editable.</p></div></article>
+        <article class="card"><div class="body"><div class="stars">★★★★★</div><h3>"A clean formula that actually works."</h3><p>Use only approved testimonials and do not imply guaranteed medical outcomes.</p></div></article>
+        <article class="card"><div class="body"><div class="stars">★★★★★</div><h3>"Less swelling, more energy."</h3><p>Keep this as customer voice and include a results-vary disclosure.</p></div></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="inner">
+      <div>
+        <h4>Disclaimer</h4>
+        <p>These statements have not been evaluated by the FDA. This product is not intended to diagnose, treat, cure or prevent any disease. This affiliate site may earn commissions.</p>
+      </div>
+      <div>
+        <h4>Menu</h4>
+        <p><a href="#description">Shop Now</a></p>
+        <p><a href="#reviews">Reviews</a></p>
+        <p><a href="#faq">Contact Us</a></p>
+      </div>
+      <div>
+        <h4>Let's Stay Connected</h4>
+        <p>Subscribe to receive product updates and special savings.</p>
+        <input type="email" placeholder="Your Email"> <button class="btn dark" type="button">Submit</button>
+      </div>
+    </div>
+  </footer>
+
+  <div class="sticky-cta">
+    <div class="inner">
+      <div>
+        <strong id="stickyBundle">Buy 2 Get 1 Free - $59.99</strong>
+        <span>Secure checkout · 30 day guarantee</span>
+      </div>
+      <a id="stickyButton" class="btn" href="AFFILIATE_CHECKOUT_URL">Order Now</a>
+    </div>
+  </div>
+
+  <script>
+    const mainImage = document.getElementById("mainProductImage");
+    const thumbs = document.querySelectorAll("[data-gallery]");
+    const bundles = document.querySelectorAll(".bundle[data-price]");
+    const cartButton = document.getElementById("cartButton");
+    const stickyBundle = document.getElementById("stickyBundle");
+    const timer = document.getElementById("timer");
+
+    thumbs.forEach((thumb) => {
+      thumb.addEventListener("click", () => {
+        thumbs.forEach((item) => item.classList.remove("active"));
+        thumb.classList.add("active");
+        mainImage.style.opacity = "0";
+        setTimeout(() => {
+          mainImage.src = thumb.dataset.gallery;
+          mainImage.style.opacity = "1";
+        }, 120);
+      });
+    });
+
+    bundles.forEach((bundle) => {
+      bundle.addEventListener("click", () => {
+        bundles.forEach((item) => item.classList.remove("selected"));
+        bundle.classList.add("selected");
+        const label = bundle.dataset.label;
+        const price = bundle.dataset.price;
+        cartButton.textContent = `Add To Cart - ${price}`;
+        stickyBundle.textContent = `${label} - ${price}`;
+      });
+    });
+
+    let seconds = 9 * 60 + 58;
+    setInterval(() => {
+      seconds = Math.max(0, seconds - 1);
+      const min = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const sec = String(seconds % 60).padStart(2, "0");
+      timer.textContent = `${min}:${sec}`;
+    }, 1000);
+  </script>
+</body>
+</html>
