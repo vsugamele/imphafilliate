@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The hour you lose every morning waiting for your own face</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#123c2a;--body:#20302a;--mut:#41564a;--brand:#1fa45c;
+  --lime:#c8f58a;--lime-hi:#d8f7a8;--soft2:#e4f7ec;--soft3:#f4fbf6;
+  --line:#cfe3d6;--gold:#f5a623;--red:#b3402e;--redsoft:#fdecec;
+  --serif:'DM Serif Display',Georgia,serif;--sans:'Inter',Arial,Helvetica,sans-serif;
+}
+body{font-family:var(--sans);background:#fff;color:var(--body);line-height:1.66;font-size:17.5px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:600px;margin:0 auto;padding:18px 18px 80px}
+.masthead{text-align:center;border-bottom:2px solid var(--ink);padding:10px 0;margin-bottom:20px}
+.masthead .brand{font-family:var(--serif);font-size:20px;color:var(--ink);letter-spacing:.4px}
+.masthead .tag{font-size:10.5px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.kicker{font-size:11px;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;color:var(--brand);margin-bottom:8px}
+h1{font-family:var(--serif);font-weight:400;font-size:36px;line-height:1.13;color:var(--ink);margin-bottom:14px}
+.dek{font-size:19px;color:var(--mut);margin-bottom:16px;line-height:1.55}
+.byline{font-size:12.5px;color:var(--mut);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0;margin-bottom:26px}
+h2{font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.22;color:var(--ink);margin:36px 0 12px}
+p{margin-bottom:16px}
+strong{font-weight:700;color:var(--ink)}
+.lead::first-letter{font-family:var(--serif);font-size:54px;float:left;line-height:.85;padding:5px 10px 0 0;color:var(--ink)}
+.math{background:var(--ink);color:#fff;border-radius:14px;padding:24px;margin:28px 0;text-align:center}
+.math .big{font-family:var(--serif);font-size:46px;line-height:1;color:var(--lime);margin-bottom:6px}
+.math .lbl{font-size:15px;color:#cfe3d6;line-height:1.5}
+.math .sub{font-size:13px;color:#93b3a3;margin-top:10px}
+.pull{border-left:4px solid var(--brand);background:var(--soft3);padding:16px 20px;margin:26px 0;font-family:var(--serif);font-size:22px;line-height:1.34;color:var(--ink)}
+.checks{margin:22px 0}
+.checks .ci{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:16.5px}
+.checks .ci:first-child{border-top:1px solid var(--line)}
+.checks .ci span{flex:0 0 20px;color:var(--brand);font-weight:800}
+.kill{background:var(--redsoft);border-radius:12px;padding:18px 20px;margin:26px 0}
+.kill h3{font-family:var(--sans);font-size:11px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--red);margin-bottom:12px}
+.kill .k{padding:10px 0;border-top:1px solid #f3d6d2;font-size:16px}
+.kill .k:first-of-type{border-top:0}
+.kill .k b{color:var(--red);display:block;margin-bottom:2px}
+.steps{margin:20px 0}
+.step{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.step .n{flex:0 0 34px;height:34px;border-radius:50%;background:var(--ink);color:var(--lime);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center}
+.step .t b{display:block;color:var(--ink);font-size:16.5px;margin-bottom:2px}
+.step .t i{color:var(--mut);font-style:normal;font-size:15px}
+.notfor{border:2px solid var(--ink);border-radius:12px;padding:20px;margin:30px 0}
+.notfor h3{font-family:var(--serif);font-weight:400;font-size:23px;color:var(--ink);margin-bottom:12px}
+.notfor li{list-style:none;padding:8px 0 8px 26px;position:relative;font-size:16px}
+.notfor li::before{content:"✕";position:absolute;left:2px;color:var(--red);font-weight:800}
+.guar{background:var(--soft2);border-radius:14px;padding:22px;margin:28px 0}
+.guar h3{font-family:var(--serif);font-weight:400;font-size:24px;color:var(--ink);margin-bottom:10px}
+.guar p{font-size:16px;margin-bottom:10px}
+.guar p:last-child{margin-bottom:0}
+.cta{display:block;text-align:center;font-weight:800;font-size:17.5px;color:var(--ink);background:var(--lime);
+  border-radius:6px;padding:20px 22px;text-decoration:none;margin:14px 0 8px;letter-spacing:.2px}
+.cta:hover{background:var(--lime-hi)}
+.subcta{text-align:center;font-size:12.5px;color:var(--mut);margin-bottom:26px}
+.todo{background:#fff6e5;border:1px dashed var(--gold);border-radius:10px;padding:14px 16px;margin:24px 0;font-size:14.5px;color:#7a5200}
+.todo b{color:#5c3d00}
+.note{font-size:12.5px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:16px;line-height:1.55}
+@media(max-width:480px){h1{font-size:29px}h2{font-size:24px}body{font-size:17px}.math .big{font-size:38px}.pull{font-size:19.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="brand">Leg Wellness Journal</div>
+    <div class="tag">Reader Education</div>
+  </div>
+
+  <div class="kicker">The morning tax</div>
+  <h1>The hour you lose every morning waiting for your own face to come back</h1>
+  <p class="dek">You don't call it that. You call it "getting ready slowly." But you know exactly which hour I mean — and you know it didn't used to be there.</p>
+  <div class="byline">Reader education · Leg Wellness Journal · 7 min read</div>
+
+  <p class="lead">Somewhere in your late thirties or early forties, a new step got added to your morning. Nobody announced it. It just appeared.</p>
+
+  <p>You wake up. You go to the mirror. And what's there isn't quite your face yet — it's a puffier draft of it. Cheeks fuller than they should be. Eyes smaller than they were last night. And so you start the waiting.</p>
+
+  <p>Cold water. Maybe the little roller in the fridge. Coffee. You busy yourself with things that don't need doing, and you check again in twenty minutes. You get dressed in something forgiving, because the ring won't go on yet either. And somewhere around 9 or 10 a.m., your face finally shows up.</p>
+
+  <p><strong>Now do the arithmetic on that.</strong></p>
+
+  <div class="math">
+    <div class="big">15 days</div>
+    <div class="lbl">One hour every morning, waiting.<br>That's what it costs you per year.</div>
+    <div class="sub">365 hours. Fifteen entire days, spent standing in a bathroom<br>waiting to look like yourself.</div>
+  </div>
+
+  <p>Fifteen days a year. Gone. And not gone doing something — gone <em>waiting</em>.</p>
+
+  <p>That's the number nobody puts on this, because "morning puffiness" sounds like a small complaint. It isn't small. It's the largest recurring appointment in your calendar, and you never agreed to it.</p>
+
+  <h2>If any of this is you, keep reading. If not, this article isn't for you.</h2>
+
+  <div class="checks">
+    <div class="ci"><span>✓</span><div>You keep a second pair of shoes in the car, because the ones you left in won't be the ones that fit at 4 p.m.</div></div>
+    <div class="ci"><span>✓</span><div>You stopped wearing your rings on certain days — not because you don't like them, but because getting them off has become a project.</div></div>
+    <div class="ci"><span>✓</span><div>There's a sock mark pressed into your ankle at night, and you've started to think of it as normal.</div></div>
+    <div class="ci"><span>✓</span><div>You avoid photos taken before noon.</div></div>
+    <div class="ci"><span>✓</span><div>You've been told your bloodwork is fine — more than once — and walked out of the appointment feeling worse than when you walked in.</div></div>
+  </div>
+
+  <p>Four or more of those and you already know this isn't in your head. What you've never been given is the reason.</p>
+
+  <h2>It was never water weight</h2>
+
+  <p>Here's the thing that reframes everything, and it takes about ninety seconds to explain.</p>
+
+  <p>Your blood has a pump. Your heart. It runs whether you think about it or not.</p>
+
+  <p>But blood isn't the only fluid in you. Every day fluid seeps out of your smallest vessels into your tissue — that's normal, that's how cells eat — and every day it has to be collected and carried back. The system that does that collecting is your lymphatic system.</p>
+
+  <div class="pull">And your lymphatic system has no pump. There is no lymphatic heart. It moves because <em>you</em> move — muscle, breath, and one-way valves that only let fluid travel upward.</div>
+
+  <p>Upward. Which means from your legs, the return trip is a climb — the longest, most gravity-punished route in your body. That's why your ankles are the worst by evening, and why your hands, which spend the day near heart level, are basically fine.</p>
+
+  <p>And then you lie down for eight hours. Horizontal, the climb from your legs disappears — <strong>and so does the downhill drainage away from your face.</strong></p>
+
+  <p>That's your morning. That's the hour. It isn't salt, it isn't wine, and it isn't you failing at some discipline. It's a drainage system that isn't keeping up, doing exactly what a drainage system that isn't keeping up would do.</p>
+
+  <h2>Which is why everything you've tried worked — and then stopped</h2>
+
+  <p>This is the part that usually makes women angry, and I think the anger is earned.</p>
+
+  <div class="kill">
+    <h3>What you've already paid for</h3>
+    <div class="k"><b>The lymphatic massage.</b> It worked. You floated for six hours. Then you woke up and your face was back to the draft version. You paid up to $180 to rent the result for an evening.</div>
+    <div class="k"><b>The compression socks.</b> They work too — while they're on. They squeeze fluid out of the tissue from the outside. Take them off, stand up, and the system that was supposed to do that job still isn't doing it.</div>
+    <div class="k"><b>The water pill your friend swore by.</b> You spent the day in the bathroom and woke up puffier than before. It pulled water out through your kidneys. Nothing about the return route changed.</div>
+    <div class="k"><b>"Just drink more water."</b> The problem was never what goes in. It's what doesn't come out.</div>
+    <div class="k"><b>The weight-loss injections.</b> Look at what they actually did: your face got smaller, your arms got smaller — and your legs didn't move. That's not a coincidence. That's fat responding to a fat drug while retained fluid sits there ignoring it, because it was never fat to begin with.</div>
+  </div>
+
+  <p>Notice what every one of those has in common. <strong>They all do the system's job for it. Not one of them changes how well the system does its own job.</strong></p>
+
+  <p>Which is also the good news, and it's the most important sentence on this page: the fact that massage and compression <em>work at all</em> proves the fluid can still move. It isn't stuck. It isn't permanent. Give it a route and it goes exactly where it's supposed to go.</p>
+
+  <p>You've never had a drainage problem you couldn't fix. You've had a support problem — from the inside, where a sock can't reach.</p>
+
+  <h2>What supporting it from the inside looks like</h2>
+
+  <p>Traditional Western herbalism never treated lymphatic support as one action. It treated it as a sequence, and the order is the entire point:</p>
+
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div class="t"><b>Cleavers Aerial Parts — the lymphatic broom</b><i>Leads the sequence. Traditionally used to sweep what's loose and moving near the surface of the system.</i></div></div>
+    <div class="step"><div class="n">2</div><div class="t"><b>Stillingia Root — the deep pathway</b><i>Goes after what's settled further in, where the broom can't reach from above.</i></div></div>
+    <div class="step"><div class="n">3</div><div class="t"><b>Prickly Ash Bark — the circulation spark</b><i>Wakes circulation, so what's moving doesn't simply settle again.</i></div></div>
+    <div class="step"><div class="n">4</div><div class="t"><b>Red Clover Blossom — the steady flow</b><i>Closes the sequence — sustained support instead of one push.</i></div></div>
+  </div>
+
+  <p>Take any one out and the sequence has a hole. That's the difference between a system and a single-ingredient capsule, and it's why "four popular herbs" is the wrong description. It's four jobs, in order.</p>
+
+  <p>It's liquid, under the tongue, for a plain reason: absorption there doesn't wait on a digestive pace that in this particular group of women is frequently sluggish too. Thirty seconds, twice a day, before you've even left the bathroom.</p>
+
+  <p>It's called <strong>Linfaflow</strong>. It is not a diuretic. There is no flush, no cleanse, and no bathroom sprint — because forcing water out was never the goal. Supporting the route was.</p>
+
+  <h2>Who this is not for</h2>
+
+  <div class="notfor">
+    <h3>Please don't order if any of these is you</h3>
+    <ul>
+      <li><strong>You want a harsh flush.</strong> This supports your body's own drain. If you're looking for the water-pill effect, you'll be disappointed on purpose.</li>
+      <li><strong>You want to take it once and forget it.</strong> The system has no pump. It responds to consistency, not to a dose.</li>
+      <li><strong>You want it to work without you.</strong> Two drops, twice a day, every day. If thirty seconds is too much to commit to, nothing here will help you.</li>
+      <li><strong>You're under 18, pregnant or nursing</strong> without your doctor's approval.</li>
+      <li><strong>You have sudden, one-sided or painful swelling.</strong> That needs a physician today, not a supplement. Please close this page and call one.</li>
+    </ul>
+  </div>
+
+  <p>I'd rather lose the sale than have you order this expecting something it isn't.</p>
+
+  <h2>The honest deal</h2>
+
+  <p><strong>If</strong> you can find thirty seconds a day — two drops under the tongue, morning and night, without changing your diet, joining a gym, or booking another appointment —</p>
+
+  <p><strong>then</strong> give your drainage system one full month of support and find out what it does when it finally gets some. Not because a month is a marketing number, but <em>because</em> a month is one complete cycle of use. Less than that and you wouldn't have given it a fair test.</p>
+
+  <div class="guar">
+    <h3>And you don't have to send anything back</h3>
+    <p><strong>30 days from your purchase date.</strong> If nothing changes, email <strong>support@linfaflow.com</strong> and you get 100% of your money back.</p>
+    <p><strong>You keep the bottles.</strong> There's nothing to package, nothing to ship, no return label to print, no tracking number to chase. Most companies make you mail back the empties precisely because they're counting on you not bothering. We don't require the product back at all.</p>
+    <p>Refunds go to your original payment method in 5–10 business days.</p>
+  </div>
+
+  <p>Fifteen days a year is what the waiting costs you. Thirty days is what it costs to find out whether it has to.</p>
+
+  <a class="cta" href="/quiz-linfaflow.html">See which fluid-flow pattern matches you →</a>
+  <div class="subcta">60-second self-assessment · no email required · then decide</div>
+
+  <div class="todo">
+    <b>⚠ CONFERIR ANTES DE PUBLICAR — a garantia.</b> Escrevi <b>30 dias, sem devolver frascos, support@linfaflow.com</b> porque é o que diz a <b>política oficial de reembolso do próprio fornecedor</b> (cc.linfaflow.com/dtcnew/lgl/refund-policy.php): 30 dias da data da compra, <em>"we do not require you to return the product in order to receive a refund"</em>, reembolso em 5–10 dias úteis.<br><br>
+    <b>A LP oficial contradiz a própria política</b> — ela anuncia "90-Day Money Back Guarantee" e "return the empty bottles for a full refund". Isso é 3× o prazo real e inverte a regra de devolução. Confirme com a H&amp;W Hub qual vale <b>antes de rodar tráfego</b>: se um cliente pedir reembolso no dia 45 confiando na LP, ele será negado — e vira chargeback no seu tráfego.
+  </div>
+
+  <div class="note">
+    This article is reader education, not medical advice, and is not a diagnosis or a substitute for consulting your doctor — especially if you take prescription medication for fluid retention, blood pressure or circulation. Linfaflow® is a botanical supplement formulated to <em>support</em> the body's natural lymphatic flow and fluid balance; the traditional uses described here reflect historical herbal practice and are not claims of clinical effect. Individual results vary. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Sudden, one-sided or painful swelling should be evaluated by a physician.
+  </div>
+
+</div>
+</body>
+</html>
