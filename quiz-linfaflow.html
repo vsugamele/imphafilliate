@@ -87,9 +87,49 @@ h1{font-size:28px;line-height:1.24;margin:8px 0 10px;letter-spacing:-.015em}
 
 /* ---- resultado ---- */
 .rkicker{font-family:Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--brand);margin-bottom:8px}
-.rtitle{font-size:25px;line-height:1.28;margin-bottom:14px}
-.rvis{display:block;width:100%;max-width:340px;margin:4px auto 18px}
-.rbody{font-size:16.5px;margin-bottom:16px}
+.rtitle{font-size:25px;line-height:1.28;margin-bottom:16px}
+.rbody{font-size:16.5px;margin-bottom:18px}
+.rbody strong{background:linear-gradient(transparent 62%, #ffe9a8 62%);padding:0 2px}
+
+/* recap das respostas — personalização real */
+.recap{background:var(--brand-soft);border-radius:12px;padding:13px 15px;margin-bottom:18px}
+.recap h4{font-family:Arial,sans-serif;font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--brand2);margin-bottom:9px;font-weight:800}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+/* estado final é o padrão; a animação só define o ponto de partida (fill-mode backwards).
+   Assim, se a animação não rodar (reduced-motion, aba throttled), o conteúdo continua visível. */
+.chip{font-family:Arial,sans-serif;font-size:12px;background:#fff;border:1px solid var(--brand-tint);color:var(--ink);
+  border-radius:99px;padding:5px 11px;display:inline-flex;align-items:center;gap:6px;
+  animation:chipIn .38s cubic-bezier(.2,1,.3,1) backwards}
+.chip svg{width:13px;height:13px;fill:none;stroke:var(--brand);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@keyframes chipIn{from{opacity:0;transform:translateY(6px)}}
+
+/* curva do dia — personalizada pela resposta 1 */
+.daybox{border:1px solid var(--line);border-radius:12px;padding:14px 14px 8px;margin-bottom:18px}
+.daybox h4{font-family:Arial,sans-serif;font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--mut);margin-bottom:4px;font-weight:800}
+.daybox .dsub{font-family:Arial,sans-serif;font-size:12.5px;color:var(--mut);margin-bottom:8px}
+.daysvg{display:block;width:100%}
+.daysvg .grid{stroke:var(--line);stroke-width:1}
+.daysvg .curve{fill:none;stroke:var(--brand);stroke-width:2.6;stroke-linecap:round;
+  stroke-dasharray:600;stroke-dashoffset:0;animation:draw 1.15s ease-out .25s backwards}
+@keyframes draw{from{stroke-dashoffset:600}}
+.daysvg .area{fill:url(#dg);animation:fadeIn .6s ease-out 1s backwards}
+@keyframes fadeIn{from{opacity:0}}
+.daysvg .peak{animation:fadeIn .4s ease-out 1.25s backwards}
+.daysvg .peak circle.halo{fill:var(--brand);opacity:.18;animation:pulse 2s ease-in-out 1.6s infinite}
+@keyframes pulse{0%,100%{r:9}50%{r:13}}
+.daysvg .peak circle.dot{fill:var(--brand);stroke:#fff;stroke-width:2.5}
+.daysvg .peaklbl{font-family:Arial,sans-serif;font-size:9.5px;font-weight:700;fill:var(--brand2)}
+.daysvg .axis{font-family:Arial,sans-serif;font-size:9px;fill:var(--mut)}
+
+/* mecanismo (encanamento) — compacto, com legenda */
+.mech{display:flex;gap:13px;align-items:center;background:#fbfdfd;border:1px solid var(--line);border-radius:12px;padding:13px 14px;margin-bottom:6px}
+.mech svg{flex:0 0 118px;width:118px}
+.mech p{font-family:Arial,sans-serif;font-size:12.5px;color:var(--mut);line-height:1.5}
+.mech p b{color:var(--ink)}
+.pipe-outer{fill:#eef4f6;stroke:#d3e2e7;stroke-width:1.5}
+.pipe-fluid{fill:#8fd0bd}
+.pipe-jam{fill:#e0bb92}
+@media(max-width:480px){.mech{flex-direction:column;text-align:center}.mech svg{flex-basis:auto;width:150px}}
 .match{margin:18px 0 6px}
 .match h4{font-family:Arial,sans-serif;font-size:10.5px;letter-spacing:1.1px;text-transform:uppercase;color:var(--mut);margin-bottom:9px;font-weight:800}
 .mrow{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-family:Arial,sans-serif;font-size:12.5px}
@@ -99,9 +139,9 @@ h1{font-size:28px;line-height:1.24;margin:8px 0 10px;letter-spacing:-.015em}
 .mtrack i{display:block;height:100%;width:0;background:#b8ccd4;border-radius:99px;transition:width .9s cubic-bezier(.2,.9,.3,1)}
 .mrow.top .mtrack i{background:linear-gradient(90deg,var(--brand),#37b394)}
 .rlist{margin:16px 0 20px;padding-left:0;list-style:none}
-.rlist li{padding:8px 0 8px 32px;position:relative;font-size:15.5px;opacity:0;transform:translateX(-8px);animation:fadeRight .45s ease forwards}
+.rlist li{padding:8px 0 8px 32px;position:relative;font-size:15.5px;animation:fadeRight .45s ease backwards}
 .rlist li::before{content:"✓";position:absolute;left:5px;color:var(--brand);font-weight:700;font-family:Arial,sans-serif}
-@keyframes fadeRight{to{opacity:1;transform:none}}
+@keyframes fadeRight{from{opacity:0;transform:translateX(-8px)}}
 .cta{display:block;width:100%;text-align:center;font-family:Arial,sans-serif;font-weight:800;font-size:17px;color:#fff;
   background:var(--brand);border:none;border-radius:13px;padding:18px 20px;cursor:pointer;text-decoration:none;
   box-shadow:0 14px 30px -14px rgba(14,124,102,.65);animation:breathe 3.4s ease-in-out infinite;transition:background .2s}
@@ -167,20 +207,46 @@ h1{font-size:28px;line-height:1.24;margin:8px 0 10px;letter-spacing:-.015em}
     <div class="card">
       <div class="rkicker">Your result</div>
       <div class="rtitle" id="rtitle"></div>
-      <svg class="rvis" viewBox="0 0 300 108" role="img" aria-label="Illustration comparing congested flow with supported flow">
-        <text x="10" y="14" font-family="Arial" font-size="9" fill="#5d6b7a" letter-spacing="1">SLOWED FLOW</text>
-        <path class="pipe-wall" d="M12 30 H288" stroke-width="7"/>
-        <path class="pipe-wall" d="M12 52 H288" stroke-width="7"/>
-        <ellipse class="pipe-clog" cx="150" cy="41" rx="30" ry="9"/>
-        <circle class="drop slow" cx="24" cy="41" r="5"/>
-        <text x="10" y="76" font-family="Arial" font-size="9" fill="#0e7c66" letter-spacing="1">SUPPORTED FLOW</text>
-        <path class="pipe-wall" d="M12 90 H288" stroke-width="7" stroke="#bfe0d6"/>
-        <path class="pipe-wall" d="M12 104 H288" stroke-width="7" stroke="#bfe0d6"/>
-        <circle class="drop" cx="24" cy="97" r="5"><animate attributeName="cx" values="24;288" dur="2.1s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="2.1s" repeatCount="indefinite"/></circle>
-        <circle class="drop" cx="24" cy="97" r="4"><animate attributeName="cx" values="24;288" dur="2.1s" begin="0.7s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="2.1s" begin="0.7s" repeatCount="indefinite"/></circle>
-        <circle class="drop" cx="24" cy="97" r="4.5"><animate attributeName="cx" values="24;288" dur="2.1s" begin="1.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;1;1;0" dur="2.1s" begin="1.4s" repeatCount="indefinite"/></circle>
-      </svg>
+
+      <div class="recap">
+        <h4>Based on what you told us</h4>
+        <div class="chips" id="rchips"></div>
+      </div>
+
+      <div class="daybox">
+        <h4>Your reported pattern through the day</h4>
+        <div class="dsub" id="dsub"></div>
+        <svg class="daysvg" viewBox="0 0 300 104" role="img" aria-label="Chart of when swelling peaks during your day">
+          <defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0e7c66" stop-opacity=".22"/><stop offset="100%" stop-color="#0e7c66" stop-opacity="0"/>
+          </linearGradient></defs>
+          <line class="grid" x1="18" y1="78" x2="288" y2="78"/>
+          <path class="area" id="dArea" d=""/>
+          <path class="curve" id="dCurve" d=""/>
+          <g class="peak" id="dPeak"></g>
+          <text class="axis" x="18" y="94">6 AM</text>
+          <text class="axis" x="105" y="94">Noon</text>
+          <text class="axis" x="196" y="94">6 PM</text>
+          <text class="axis" x="266" y="94">Bed</text>
+        </svg>
+      </div>
+
       <div class="rbody" id="rbody"></div>
+
+      <div class="mech">
+        <svg viewBox="0 0 150 96" role="img" aria-label="Cross-section of a channel: fluid backing up behind congestion">
+          <rect class="pipe-outer" x="4" y="16" width="142" height="30" rx="12"/>
+          <rect class="pipe-fluid" x="8" y="21" width="72" height="20" rx="9"/>
+          <ellipse class="pipe-jam" cx="94" cy="31" rx="20" ry="10"/>
+          <ellipse class="pipe-jam" cx="114" cy="31" rx="11" ry="7" opacity=".6"/>
+          <text x="4" y="12" font-family="Arial" font-size="8" fill="#5d6b7a" letter-spacing=".6">BACKED UP</text>
+          <rect class="pipe-outer" x="4" y="62" width="142" height="30" rx="12"/>
+          <rect class="pipe-fluid" x="8" y="67" width="134" height="20" rx="9" opacity=".85"/>
+          <text x="4" y="58" font-family="Arial" font-size="8" fill="#0e7c66" letter-spacing=".6">MOVING FREELY</text>
+        </svg>
+        <p>Think of it as <b>plumbing, not willpower</b>. When the channel that carries waste fluid slows, everything upstream pools — which is why pressing from the outside brings relief that fades by morning.</p>
+      </div>
+
       <div class="match">
         <h4>How your answers clustered</h4>
         <div id="mrows"></div>
@@ -226,58 +292,70 @@ const ico = k => '<span class="ico"><svg viewBox="0 0 24 24">'+(ICONS[k]||ICONS.
 /* ---------- perguntas → pontuação por avatar ---------- */
 const QUESTIONS = [
   {q:"When is the puffiness or heaviness at its worst?", opts:[
-    ["face","I wake up with a puffy face and puffy eyes",{mystery:2,mirror:1}],
-    ["leg","My ankles and legs are heavy by late afternoon",{standing:2,chair:1}],
-    ["belly","I look 'bloated-pregnant' by dinner time",{phantom:2,mystery:1}],
-    ["clock","Honestly? Pretty much all day",{external:1,phantom:1,mystery:1}]
+    ["face","I wake up with a puffy face and puffy eyes",{mystery:2,mirror:1},"Worst in the morning"],
+    ["leg","My ankles and legs are heavy by late afternoon",{standing:2,chair:1},"Peaks late afternoon"],
+    ["belly","I look 'bloated-pregnant' by dinner time",{phantom:2,mystery:1},"Peaks by dinner"],
+    ["clock","Honestly? Pretty much all day",{external:1,phantom:1,mystery:1},"All day long"]
   ]},
   {q:"What have you already tried for it?", opts:[
-    ["sock","Compression socks, massage, dry brushing — the works",{external:3}],
-    ["pill","Water pills or detox teas",{diuretic:3}],
-    ["leaf","Cutting salt, gluten, dairy… nothing changed",{phantom:2,mystery:1}],
-    ["question","Nothing seriously yet — I keep hoping it passes",{mystery:2}]
+    ["sock","Compression socks, massage, dry brushing — the works",{external:3},"Tried compression & massage"],
+    ["pill","Water pills or detox teas",{diuretic:3},"Tried water pills"],
+    ["leaf","Cutting salt, gluten, dairy… nothing changed",{phantom:2,mystery:1},"Cut foods, no change"],
+    ["question","Nothing seriously yet — I keep hoping it passes",{mystery:2},"Nothing tried yet"]
   ]},
   {q:"What did your last check-up say?", opts:[
-    ["clipboard","Everything came back NORMAL — but my body disagrees",{mystery:3}],
-    ["rx","My doctor prescribed something for fluid retention",{diuretic:3}],
-    ["calendar","I haven't been checked recently",{standing:1,phantom:1}],
-    ["hourglass","I was told it's 'just aging'",{chair:2,mystery:1}]
+    ["clipboard","Everything came back NORMAL — but my body disagrees",{mystery:3},"Labs came back normal"],
+    ["rx","My doctor prescribed something for fluid retention",{diuretic:3},"On a prescription"],
+    ["calendar","I haven't been checked recently",{standing:1,phantom:1},"Not checked recently"],
+    ["hourglass","I was told it's 'just aging'",{chair:2,mystery:1},"Told it's 'just aging'"]
   ]},
   {q:"What does a typical day look like for you?", opts:[
-    ["standing","On my feet for hours — nursing, teaching, retail…",{standing:3}],
-    ["chair","Sitting most of the day (desk, car, couch)",{chair:2,mystery:1}],
-    ["activity","Active, but the swelling shows up anyway",{phantom:2}],
-    ["family","Long days caring for family or grandkids",{chair:2}]
+    ["standing","On my feet for hours — nursing, teaching, retail…",{standing:3},"On your feet for hours"],
+    ["chair","Sitting most of the day (desk, car, couch)",{chair:2,mystery:1},"Sitting most of the day"],
+    ["activity","Active, but the swelling shows up anyway",{phantom:2},"Active anyway"],
+    ["family","Long days caring for family or grandkids",{chair:2},"Long caregiving days"]
   ]},
   {q:"Which of these sounds most like you?", opts:[
-    ["camera","I avoid photos — I don't recognize my own face lately",{mystery:1,phantom:1,mirror:1}],
-    ["shoe","I keep a second pair of shoes for the afternoon",{standing:2}],
-    ["droplet","I'm tired of trading bathroom trips for relief",{diuretic:2}],
-    ["man","I'm a man and my face/gut got puffier every year",{mirror:3}]
+    ["camera","I avoid photos — I don't recognize my own face lately",{mystery:1,phantom:1,mirror:1},"Avoiding photos"],
+    ["shoe","I keep a second pair of shoes for the afternoon",{standing:2},"Second pair of shoes"],
+    ["droplet","I'm tired of trading bathroom trips for relief",{diuretic:2},"Tired of bathroom trips"],
+    ["man","I'm a man and my face/gut got puffier every year",{mirror:3},"Puffier year after year"]
   ]}
+];
+
+/* curva do dia — desenhada a partir da resposta 1 (relato da própria pessoa) */
+const DAY = [
+  {d:"M18,26 C58,22 104,46 152,58 C198,68 244,73 288,75", peak:[24,26], lbl:"peak on waking",
+   sub:"You reported the swelling is worst when you wake up — before the day has even loaded your system."},
+  {d:"M18,72 C58,68 100,56 148,40 C190,27 228,22 254,26 C268,29 278,36 288,44", peak:[252,25], lbl:"peak late afternoon",
+   sub:"You reported it builds through the day and peaks late afternoon — the classic gravity-plus-slow-return curve."},
+  {d:"M18,74 C68,70 118,62 168,49 C214,37 254,27 288,20", peak:[284,20], lbl:"peak at dinner",
+   sub:"You reported it climbs all day and peaks around dinner — heaviest when you finally sit down."},
+  {d:"M18,40 C60,36 100,38 150,33 C200,29 242,31 288,28", peak:[150,33], lbl:"high all day",
+   sub:"You reported it barely lets up — high from morning to night, with no real window of relief."}
 ];
 
 const RESULTS = {
   mystery:{name:"Normal Labs, Puffy Body",title:"The 'Normal Labs, Puffy Body' Pattern",
-    body:"Your answers match the most common profile we see: every test says fine, yet the mirror says otherwise. Here's the gap — standard labs don't measure how well your lymphatic system moves fluid. After 40 it naturally slows down, and no amount of 'clean eating' speeds it back up from the outside.",
+    body:"Your answers match the most common profile we see: every test says fine, yet the mirror says otherwise. Here's the gap — <strong>standard labs don't measure how well your lymphatic system moves fluid.</strong> After 40 it naturally slows down, and no amount of 'clean eating' speeds it back up from the outside.",
     list:["Why 'normal' bloodwork can miss slow lymphatic flow","Why the puffiness is worst in the morning","The 3-step internal approach (awaken → mobilize → drain) used in Linfaflow"]},
   external:{name:"Everything From the Outside",title:"The 'Everything From the Outside' Pattern",
-    body:"Compression, massage and dry brushing all squeeze from the OUTSIDE — and you've felt the catch: the relief fades by the next morning. That's because outside pressure can't change how fluid moves on the inside. The missing piece isn't more squeezing. It's internal support.",
+    body:"Compression, massage and dry brushing all squeeze from the OUTSIDE — and you've felt the catch: the relief fades by the next morning. That's because <strong>outside pressure can't change how fluid moves on the inside.</strong> The missing piece isn't more squeezing. It's internal support.",
     list:["Why external tools feel great but don't last","What 'supporting flow from within' actually means","How a 30-second liquid ritual fits before your routine — not instead of it"]},
   standing:{name:"On Your Feet All Day",title:"The 'On Your Feet All Day' Pattern",
-    body:"Hours of standing pushes fluid down faster than a slowed lymphatic system can move it back up — that's why your ankles 'disappear' by 3 PM. Elevation helps, but you can't put your feet up mid-shift. Your body needs support that works while you're still standing.",
+    body:"Hours of standing pushes fluid down faster than a slowed lymphatic system can move it back up — <strong>that's why your ankles 'disappear' by 3 PM.</strong> Elevation helps, but you can't put your feet up mid-shift. Your body needs support that works while you're still standing.",
     list:["Why standing jobs overwhelm slow lymphatic flow","Why elevation-based advice fails working women","Daily internal support that doesn't require lying down"]},
   diuretic:{name:"The Water Pill Trade-Off",title:"The 'Water Pill Trade-Off' Pattern",
-    body:"Water pills force water OUT — they don't support how fluid MOVES. That's the trade you've been living: temporary relief in exchange for bathroom runs, and the puffiness returns anyway. Gentle botanical support for flow is a different approach entirely. (Always talk to your doctor before changing anything you were prescribed.)",
+    body:"<strong>Water pills force water OUT — they don't support how fluid MOVES.</strong> That's the trade you've been living: temporary relief in exchange for bathroom runs, and the puffiness returns anyway. Gentle botanical support for flow is a different approach entirely. (Always talk to your doctor before changing anything you were prescribed.)",
     list:["The difference between forcing water out and supporting flow","Why the puffiness comes back after diuretics wear off","4 traditional botanicals that support the lymphatic route instead"]},
   phantom:{name:"Phantom Weight",title:"The 'Phantom Weight' Pattern",
-    body:"Here's the reframe your answers point to: what you're fighting may not respond to diets because part of it may not be fat — it can be retained fluid. That would explain the morning-vs-evening size change, and why cutting foods didn't touch it. Scales don't tell the difference. Your afternoon pattern does.",
+    body:"Here's the reframe your answers point to: <strong>what you're fighting may not respond to diets because part of it may not be fat — it can be retained fluid.</strong> That would explain the morning-vs-evening size change, and why cutting foods didn't touch it. Scales don't tell the difference. Your afternoon pattern does.",
     list:["How fluid retention masquerades as stubborn weight","Why it fluctuates through the day (fat doesn't)","Supporting drainage instead of dieting harder"]},
   chair:{name:"'It's Just Aging'",title:"The 'It's Just Aging' Pattern",
-    body:"You were told this is 'just getting older'. But heaviness that forces you to look for a chair isn't a personality change — it's often fluid your system is too slow to move. Age slows lymphatic flow; it doesn't switch it off. Flow can be supported at any age.",
+    body:"You were told this is 'just getting older'. But heaviness that forces you to look for a chair isn't a personality change — it's often fluid your system is too slow to move. <strong>Age slows lymphatic flow; it doesn't switch it off.</strong> Flow can be supported at any age.",
     list:["Why 'just aging' is a description, not an explanation","The link between slow flow, heavy legs and low energy","A gentle 30-second daily ritual — no capsules, no harsh cleanse"]},
   mirror:{name:"The Mirror Shift (Men)",title:"The 'Mirror Shift' Pattern (Men)",
-    body:"Puffy face, softer jawline, a gut that feels 'swollen' rather than fat — for a lot of men this tracks with sluggish internal drainage, not just diet. Years of sitting, alcohol and salt slow the system that's supposed to move waste fluid out. Straight answer: it's plumbing, and plumbing can be supported.",
+    body:"Puffy face, softer jawline, a gut that feels 'swollen' rather than fat — <strong>for a lot of men this tracks with sluggish internal drainage, not just diet.</strong> Years of sitting, alcohol and salt slow the system that's supposed to move waste fluid out. Straight answer: it's plumbing, and plumbing can be supported.",
     list:["Why your face changed before your weight did","What alcohol and long sitting do to internal drainage","Direct, no-wellness-fluff internal support — 30 seconds a day"]}
 };
 
@@ -349,7 +427,22 @@ function showResult(){
   $('analyzing').classList.add('hidden');
   $('result').classList.remove('hidden');
   $('rtitle').textContent = r.title;
-  $('rbody').textContent = r.body;
+  $('rbody').innerHTML = r.body;
+
+  // 1) recap: devolve as próprias respostas dela
+  $('rchips').innerHTML = picks.map((pi,qi)=>{
+    const o = QUESTIONS[qi].opts[pi];
+    return `<span class="chip" style="animation-delay:${.08*qi}s"><svg viewBox="0 0 24 24">${ICONS[o[0]]}</svg>${o[3]}</span>`;
+  }).join('');
+
+  // 2) curva do dia, escolhida pela resposta 1
+  const day = DAY[picks[0]] || DAY[3];
+  $('dsub').textContent = day.sub;
+  $('dCurve').setAttribute('d', day.d);
+  $('dArea').setAttribute('d', day.d + ' L288,78 L18,78 Z');
+  $('dPeak').innerHTML = `<circle class="halo" cx="${day.peak[0]}" cy="${day.peak[1]}" r="9"/>`+
+    `<circle class="dot" cx="${day.peak[0]}" cy="${day.peak[1]}" r="5"/>`+
+    `<text class="peaklbl" x="${day.peak[0] + (day.peak[0]>170?-10:10)}" y="${Math.max(day.peak[1]-13, 11)}" text-anchor="${day.peak[0]>170?'end':'start'}">${day.lbl}</text>`;
 
   $('mrows').innerHTML = ranked.slice(0,3).map((e,i)=>
     `<div class="mrow ${i===0?'top':''}"><span class="mname">${RESULTS[e[0]].name}</span><span class="mtrack"><i data-w="${Math.round(e[1]/max*100)}"></i></span></div>`
