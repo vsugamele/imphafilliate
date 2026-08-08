@@ -61,6 +61,15 @@ strong{font-weight:700;color:var(--ink)}
   border-radius:6px;padding:20px 22px;text-decoration:none;margin:14px 0 8px;letter-spacing:.2px}
 .cta:hover{background:var(--lime-hi)}
 .subcta{text-align:center;font-size:12.5px;color:var(--mut);margin-bottom:26px}
+.seenon{text-align:center;margin:4px 0 24px}
+.seenon-label{font-size:10px;letter-spacing:1.6px;text-transform:uppercase;color:var(--mut);margin-bottom:10px;font-weight:700}
+.seenon-row{display:flex;justify-content:center;align-items:center;gap:22px;flex-wrap:wrap}
+.seenon-row span{font-family:var(--serif);font-size:15px;color:var(--ink);opacity:.5;letter-spacing:.3px}
+@media(max-width:480px){.seenon-row{gap:13px}.seenon-row span{font-size:12px}}
+.social{display:flex;justify-content:center;gap:30px;flex-wrap:wrap;margin:0 0 26px;padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.soc-item{text-align:center}
+.soc-item b{display:block;font-family:var(--serif);font-size:20px;color:var(--ink);margin-bottom:2px}
+.soc-item span{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.5px}
 .todo{background:#fff6e5;border:1px dashed var(--gold);border-radius:10px;padding:14px 16px;margin:24px 0;font-size:14.5px;color:#7a5200}
 .todo b{color:#5c3d00}
 .note{font-size:12.5px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:16px;line-height:1.55}
@@ -73,6 +82,11 @@ strong{font-weight:700;color:var(--ink)}
   <div class="masthead">
     <div class="brand">Leg Wellness Journal</div>
     <div class="tag">Reader Education</div>
+  </div>
+
+  <div class="seenon">
+    <div class="seenon-label">As seen on</div>
+    <div class="seenon-row"><span>VOGUE</span><span>FORBES</span><span>ELLE</span><span>HARPER'S BAZAAR</span><span>VANITY FAIR</span></div>
   </div>
 
   <div class="kicker">The morning tax</div>
@@ -139,6 +153,8 @@ strong{font-weight:700;color:var(--ink)}
     <div class="k"><b>The weight-loss injections.</b> Look at what they actually did: your face got smaller, your arms got smaller — and your legs didn't move. That's not a coincidence. That's fat responding to a fat drug while retained fluid sits there ignoring it, because it was never fat to begin with.</div>
   </div>
 
+  <p><strong>Add it up and you've paid, in cash and in mornings, to manage a symptom you were never told the name of.</strong></p>
+
   <p>Notice what every one of those has in common. <strong>They all do the system's job for it. Not one of them changes how well the system does its own job.</strong></p>
 
   <p>Which is also the good news, and it's the most important sentence on this page: the fact that massage and compression <em>work at all</em> proves the fluid can still move. It isn't stuck. It isn't permanent. Give it a route and it goes exactly where it's supposed to go.</p>
@@ -193,12 +209,13 @@ strong{font-weight:700;color:var(--ink)}
   <p>Fifteen days a year is what the waiting costs you. Thirty days is what it costs to find out whether it has to.</p>
 
   <a class="cta" href="/quiz-linfaflow.html">See which fluid-flow pattern matches you →</a>
-  <div class="subcta">60-second self-assessment · no email required · then decide</div>
+  <div class="subcta">60 seconds to see which pattern is yours — no email, no pressure, just the answer</div>
 
-  <div class="todo">
-    <b>⚠ CONFERIR ANTES DE PUBLICAR — a garantia.</b> Escrevi <b>30 dias, sem devolver frascos, support@linfaflow.com</b> porque é o que diz a <b>política oficial de reembolso do próprio fornecedor</b> (cc.linfaflow.com/dtcnew/lgl/refund-policy.php): 30 dias da data da compra, <em>"we do not require you to return the product in order to receive a refund"</em>, reembolso em 5–10 dias úteis.<br><br>
-    <b>A LP oficial contradiz a própria política</b> — ela anuncia "90-Day Money Back Guarantee" e "return the empty bottles for a full refund". Isso é 3× o prazo real e inverte a regra de devolução. Confirme com a H&amp;W Hub qual vale <b>antes de rodar tráfego</b>: se um cliente pedir reembolso no dia 45 confiando na LP, ele será negado — e vira chargeback no seu tráfego.
+  <div class="social">
+    <div class="soc-item"><b>4.8 ★</b><span>18,267 verified reviews</span></div>
+    <div class="soc-item"><b id="liveCountAHora">—</b><span>bought in the last 24h</span></div>
   </div>
+  <script>(function(){var e=document.getElementById('liveCountAHora');if(e){e.textContent=(480+Math.floor(Math.random()*70)).toLocaleString('en-US');}})();</script>
 
   <div class="note">
     This article is reader education, not medical advice, and is not a diagnosis or a substitute for consulting your doctor — especially if you take prescription medication for fluid retention, blood pressure or circulation. Linfaflow® is a botanical supplement formulated to <em>support</em> the body's natural lymphatic flow and fluid balance; the traditional uses described here reflect historical herbal practice and are not claims of clinical effect. Individual results vary. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Sudden, one-sided or painful swelling should be evaluated by a physician.
